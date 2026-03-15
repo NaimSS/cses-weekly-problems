@@ -45,6 +45,17 @@ def pick(pool: list[dict], n: int, rng: random.Random) -> list[dict]:
     return rng.sample(pool, n)
 
 
+def save_processed(path: Path, problems: list[dict]) -> None:
+    write_header = not path.exists() or path.stat().st_size == 0
+    with path.open("a", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["id", "name", "section", "url"])
+        if write_header:
+            writer.writeheader()
+        for p in problems:
+            writer.writerow({"id": p["id"], "name": p["name"],
+                             "section": p["section"], "url": p["url"]})
+
+
 # ── HTML generation ───────────────────────────────────────────────────────────
 
 def problem_card(p: dict, index: int) -> str:
@@ -574,6 +585,8 @@ def main():
     hard   = pick([p for p in available if 1   <= int(p["rank"]) <= 100], 2, rng)
     medium = pick([p for p in available if 101 <= int(p["rank"]) <= 250], 3, rng)
     easy   = pick([p for p in available if 251 <= int(p["rank"]) <= 400], 4, rng)
+
+    save_processed(processed_path, hard + medium + easy)
 
     html = build_html(hard, medium, easy, today_iso)
 
