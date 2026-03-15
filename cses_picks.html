@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSES Daily Picks · March 15, 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0f1117;
+      --surface:    #1a1d27;
+      --border:     #2a2d3a;
+      --text:       #e8eaf0;
+      --muted:      #6b7280;
+      --hard:       #ef4444;
+      --hard-dim:   #3b1515;
+      --medium:     #f59e0b;
+      --medium-dim: #3b2a0a;
+      --easy:       #22c55e;
+      --easy-dim:   #0d2e18;
+      --accent:     #6366f1;
+      --radius:     12px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+    }
+
+    /* ── header ── */
+    header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .logo svg { opacity: .5; }
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.1;
+    }
+    h1 span { color: var(--accent); }
+    .date {
+      margin-top: .6rem;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .summary {
+      display: inline-flex;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      padding: .6rem 1.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .summary b { color: var(--text); }
+
+    /* ── layout ── */
+    .wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    /* ── section ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .pill {
+      padding: .3rem .9rem;
+      border-radius: 99px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .pill.hard   { background: var(--hard-dim);   color: var(--hard);   }
+    .pill.medium { background: var(--medium-dim); color: var(--medium); }
+    .pill.easy   { background: var(--easy-dim);   color: var(--easy);   }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .section-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── cards ── */
+    .cards { display: flex; flex-direction: column; gap: .75rem; }
+
+    .card {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1.1rem 1.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+
+    .card-index {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--border);
+      min-width: 1.8rem;
+      text-align: right;
+    }
+    .card-body { flex: 1; min-width: 0; }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .35rem;
+    }
+    .tag {
+      font-size: .72rem;
+      color: var(--muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .15rem .5rem;
+    }
+
+    .card-stats {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .stat-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-label {
+      font-size: .7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .rate {
+      display: block;
+      font-size: .7rem;
+      color: var(--muted);
+      margin-top: .2rem;
+    }
+
+    /* left accent bar per tier */
+    .hard-section   .card { border-left: 3px solid var(--hard);   }
+    .medium-section .card { border-left: 3px solid var(--medium); }
+    .easy-section   .card { border-left: 3px solid var(--easy);   }
+
+    /* ── footer ── */
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: underline; }
+
+    @media (max-width: 540px) {
+      .card { flex-wrap: wrap; }
+      .card-stats { width: 100%; text-align: left; border-top: 1px solid var(--border); padding-top: .6rem; margin-top: .4rem; }
+      .rate { display: inline; margin-left: .5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      CSES Problem Set
+    </div>
+    <h1>Daily <span>Practice</span> Picks</h1>
+    <div class="date">March 15, 2026</div>
+    <div class="summary">
+      <span><b>2</b> Hard</span>
+      <span><b>3</b> Medium</span>
+      <span><b>4</b> Easy</span>
+      <span><b>9</b> Total</span>
+    </div>
+  </header>
+
+  <div class="wrapper">
+
+    <div class="hard-section">
+      <div class="section-header">
+        <span class="pill hard">Hard</span>
+        <span class="section-title">Ranks 1 – 100 · least solved</span>
+        <div class="section-rule"></div>
+      </div>
+      <div class="cards">
+        
+        <a class="card" href="https://cses.fi/problemset/task/3175" target="_blank" rel="noopener">
+          <span class="card-index">01</span>
+          <div class="card-body">
+            <div class="card-title">Beautiful Permutation II</div>
+            <div class="card-meta">
+              <span class="tag">Additional Problems I</span>
+              <span class="tag">ID 3175</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">495</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">65.1% solve rate</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://cses.fi/problemset/task/3416" target="_blank" rel="noopener">
+          <span class="card-index">02</span>
+          <div class="card-body">
+            <div class="card-title">All Letter Subgrid Count II</div>
+            <div class="card-meta">
+              <span class="tag">Counting Problems</span>
+              <span class="tag">ID 3416</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">124</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">78.5% solve rate</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="medium-section">
+      <div class="section-header">
+        <span class="pill medium">Medium</span>
+        <span class="section-title">Ranks 101 – 200</span>
+        <div class="section-rule"></div>
+      </div>
+      <div class="cards">
+        
+        <a class="card" href="https://cses.fi/problemset/task/1086" target="_blank" rel="noopener">
+          <span class="card-index">01</span>
+          <div class="card-body">
+            <div class="card-title">Writing Numbers</div>
+            <div class="card-meta">
+              <span class="tag">Additional Problems I</span>
+              <span class="tag">ID 1086</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">742</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">92.5% solve rate</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://cses.fi/problemset/task/2137" target="_blank" rel="noopener">
+          <span class="card-index">02</span>
+          <div class="card-body">
+            <div class="card-title">Corner Subgrid Count</div>
+            <div class="card-meta">
+              <span class="tag">Advanced Techniques</span>
+              <span class="tag">ID 2137</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">2,325</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">89.2% solve rate</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://cses.fi/problemset/task/1149" target="_blank" rel="noopener">
+          <span class="card-index">03</span>
+          <div class="card-body">
+            <div class="card-title">Distinct Subsequences</div>
+            <div class="card-meta">
+              <span class="tag">String Algorithms</span>
+              <span class="tag">ID 1149</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">1,140</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">94.0% solve rate</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="easy-section">
+      <div class="section-header">
+        <span class="pill easy">Easy</span>
+        <span class="section-title">Ranks 201 – 400 · most solved</span>
+        <div class="section-rule"></div>
+      </div>
+      <div class="cards">
+        
+        <a class="card" href="https://cses.fi/problemset/task/1751" target="_blank" rel="noopener">
+          <span class="card-index">01</span>
+          <div class="card-body">
+            <div class="card-title">Planets Cycles</div>
+            <div class="card-meta">
+              <span class="tag">Graph Algorithms</span>
+              <span class="tag">ID 1751</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">7,208</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">89.7% solve rate</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://cses.fi/problemset/task/1691" target="_blank" rel="noopener">
+          <span class="card-index">02</span>
+          <div class="card-body">
+            <div class="card-title">Mail Delivery</div>
+            <div class="card-meta">
+              <span class="tag">Graph Algorithms</span>
+              <span class="tag">ID 1691</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">6,810</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">91.5% solve rate</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://cses.fi/problemset/task/1739" target="_blank" rel="noopener">
+          <span class="card-index">03</span>
+          <div class="card-body">
+            <div class="card-title">Forest Queries II</div>
+            <div class="card-meta">
+              <span class="tag">Range Queries</span>
+              <span class="tag">ID 1739</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">4,612</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">93.1% solve rate</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://cses.fi/problemset/task/1618" target="_blank" rel="noopener">
+          <span class="card-index">04</span>
+          <div class="card-body">
+            <div class="card-title">Trailing Zeros</div>
+            <div class="card-meta">
+              <span class="tag">Introductory Problems</span>
+              <span class="tag">ID 1618</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="stat-value">62,127</div>
+            <div class="stat-label">solves</div>
+            <span class="rate">94.1% solve rate</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count · seed 42
+  </footer>
+</body>
+</html>
