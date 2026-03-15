@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CSES Daily Picks · March 15, 2026</title>
+  <title>CSES Weekly Picks · March 15, 2026</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -30,6 +30,29 @@
       color: var(--text);
       min-height: 100vh;
       padding: 3rem 1.5rem;
+    }
+
+    /* ── nav ── */
+    .week-nav {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 860px;
+      margin: 0 auto 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-back {
+      font-size: .85rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-back:hover { color: var(--text); }
+    .nav-date {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-left: auto;
     }
 
     /* ── header ── */
@@ -124,8 +147,6 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      text-decoration: none;
-      color: inherit;
       transition: border-color .15s, transform .15s, box-shadow .15s;
     }
     .card:hover {
@@ -143,6 +164,10 @@
       text-align: right;
     }
     .card-body { flex: 1; min-width: 0; }
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+    }
     .card-title {
       font-size: 1rem;
       font-weight: 600;
@@ -165,27 +190,21 @@
       padding: .15rem .5rem;
     }
 
-    .card-stats {
-      text-align: right;
+    /* ── check button ── */
+    .check-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: .3rem .55rem;
+      font-size: .9rem;
       flex-shrink: 0;
+      transition: background .15s, color .15s;
     }
-    .stat-value {
-      font-size: 1.05rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-    .stat-label {
-      font-size: .7rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-    .rate {
-      display: block;
-      font-size: .7rem;
-      color: var(--muted);
-      margin-top: .2rem;
-    }
+    .check-btn:hover { border-color: var(--easy); color: var(--easy); }
+    .card.done .check-btn { background: var(--easy-dim); color: var(--easy); border-color: var(--easy); }
+    .card.done .card-title { text-decoration: line-through; opacity: .45; }
 
     /* left accent bar per tier */
     .hard-section   .card { border-left: 3px solid var(--hard);   }
@@ -203,12 +222,15 @@
 
     @media (max-width: 540px) {
       .card { flex-wrap: wrap; }
-      .card-stats { width: 100%; text-align: left; border-top: 1px solid var(--border); padding-top: .6rem; margin-top: .4rem; }
-      .rate { display: inline; margin-left: .5rem; }
     }
   </style>
 </head>
 <body>
+  <nav class="week-nav">
+    <a href="../index.html" class="nav-back">← All Weeks</a>
+    <span class="nav-date">Week of March 15, 2026</span>
+  </nav>
+
   <header>
     <div class="logo">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -229,174 +251,153 @@
     <div class="hard-section">
       <div class="section-header">
         <span class="pill hard">Hard</span>
-        <span class="section-title">Ranks 1 – 100 · least solved</span>
         <div class="section-rule"></div>
       </div>
       <div class="cards">
         
-        <a class="card" href="https://cses.fi/problemset/task/3175" target="_blank" rel="noopener">
+        <div class="card" data-id="3175">
           <span class="card-index">01</span>
           <div class="card-body">
-            <div class="card-title">Beautiful Permutation II</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/3175" target="_blank" rel="noopener">
+              <div class="card-title">Beautiful Permutation II</div>
+            </a>
             <div class="card-meta">
               <span class="tag">Additional Problems I</span>
               <span class="tag">ID 3175</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">495</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">65.1% solve rate</span>
-          </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
 
-        <a class="card" href="https://cses.fi/problemset/task/3416" target="_blank" rel="noopener">
+        <div class="card" data-id="3416">
           <span class="card-index">02</span>
           <div class="card-body">
-            <div class="card-title">All Letter Subgrid Count II</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/3416" target="_blank" rel="noopener">
+              <div class="card-title">All Letter Subgrid Count II</div>
+            </a>
             <div class="card-meta">
               <span class="tag">Counting Problems</span>
               <span class="tag">ID 3416</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">124</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">78.5% solve rate</span>
-          </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
       </div>
     </div>
 
     <div class="medium-section">
       <div class="section-header">
         <span class="pill medium">Medium</span>
-        <span class="section-title">Ranks 101 – 200</span>
         <div class="section-rule"></div>
       </div>
       <div class="cards">
         
-        <a class="card" href="https://cses.fi/problemset/task/1086" target="_blank" rel="noopener">
+        <div class="card" data-id="1078">
           <span class="card-index">01</span>
           <div class="card-body">
-            <div class="card-title">Writing Numbers</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/1078" target="_blank" rel="noopener">
+              <div class="card-title">Grid Paths II</div>
+            </a>
             <div class="card-meta">
-              <span class="tag">Additional Problems I</span>
-              <span class="tag">ID 1086</span>
+              <span class="tag">Counting Problems</span>
+              <span class="tag">ID 1078</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">742</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">92.5% solve rate</span>
-          </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
 
-        <a class="card" href="https://cses.fi/problemset/task/2137" target="_blank" rel="noopener">
+        <div class="card" data-id="2105">
           <span class="card-index">02</span>
           <div class="card-body">
-            <div class="card-title">Corner Subgrid Count</div>
-            <div class="card-meta">
-              <span class="tag">Advanced Techniques</span>
-              <span class="tag">ID 2137</span>
-            </div>
-          </div>
-          <div class="card-stats">
-            <div class="stat-value">2,325</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">89.2% solve rate</span>
-          </div>
-        </a>
-
-        <a class="card" href="https://cses.fi/problemset/task/1149" target="_blank" rel="noopener">
-          <span class="card-index">03</span>
-          <div class="card-body">
-            <div class="card-title">Distinct Subsequences</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/2105" target="_blank" rel="noopener">
+              <div class="card-title">Distinct Substrings</div>
+            </a>
             <div class="card-meta">
               <span class="tag">String Algorithms</span>
-              <span class="tag">ID 1149</span>
+              <span class="tag">ID 2105</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">1,140</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">94.0% solve rate</span>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
+
+        <div class="card" data-id="2214">
+          <span class="card-index">03</span>
+          <div class="card-body">
+            <a class="card-link" href="https://cses.fi/problemset/task/2214" target="_blank" rel="noopener">
+              <div class="card-title">Inverse Inversions</div>
+            </a>
+            <div class="card-meta">
+              <span class="tag">Construction Problems</span>
+              <span class="tag">ID 2214</span>
+            </div>
           </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
       </div>
     </div>
 
     <div class="easy-section">
       <div class="section-header">
         <span class="pill easy">Easy</span>
-        <span class="section-title">Ranks 201 – 400 · most solved</span>
         <div class="section-rule"></div>
       </div>
       <div class="cards">
         
-        <a class="card" href="https://cses.fi/problemset/task/1751" target="_blank" rel="noopener">
+        <div class="card" data-id="1133">
           <span class="card-index">01</span>
           <div class="card-body">
-            <div class="card-title">Planets Cycles</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/1133" target="_blank" rel="noopener">
+              <div class="card-title">Tree Distances II</div>
+            </a>
             <div class="card-meta">
-              <span class="tag">Graph Algorithms</span>
-              <span class="tag">ID 1751</span>
+              <span class="tag">Tree Algorithms</span>
+              <span class="tag">ID 1133</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">7,208</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">89.7% solve rate</span>
-          </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
 
-        <a class="card" href="https://cses.fi/problemset/task/1691" target="_blank" rel="noopener">
+        <div class="card" data-id="2220">
           <span class="card-index">02</span>
           <div class="card-body">
-            <div class="card-title">Mail Delivery</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/2220" target="_blank" rel="noopener">
+              <div class="card-title">Counting Numbers</div>
+            </a>
             <div class="card-meta">
-              <span class="tag">Graph Algorithms</span>
-              <span class="tag">ID 1691</span>
+              <span class="tag">Dynamic Programming</span>
+              <span class="tag">ID 2220</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">6,810</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">91.5% solve rate</span>
-          </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
 
-        <a class="card" href="https://cses.fi/problemset/task/1739" target="_blank" rel="noopener">
+        <div class="card" data-id="1715">
           <span class="card-index">03</span>
           <div class="card-body">
-            <div class="card-title">Forest Queries II</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/1715" target="_blank" rel="noopener">
+              <div class="card-title">Creating Strings II</div>
+            </a>
             <div class="card-meta">
-              <span class="tag">Range Queries</span>
-              <span class="tag">ID 1739</span>
+              <span class="tag">Mathematics</span>
+              <span class="tag">ID 1715</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">4,612</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">93.1% solve rate</span>
-          </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
 
-        <a class="card" href="https://cses.fi/problemset/task/1618" target="_blank" rel="noopener">
+        <div class="card" data-id="1635">
           <span class="card-index">04</span>
           <div class="card-body">
-            <div class="card-title">Trailing Zeros</div>
+            <a class="card-link" href="https://cses.fi/problemset/task/1635" target="_blank" rel="noopener">
+              <div class="card-title">Coin Combinations I</div>
+            </a>
             <div class="card-meta">
-              <span class="tag">Introductory Problems</span>
-              <span class="tag">ID 1618</span>
+              <span class="tag">Dynamic Programming</span>
+              <span class="tag">ID 1635</span>
             </div>
           </div>
-          <div class="card-stats">
-            <div class="stat-value">62,127</div>
-            <div class="stat-label">solves</div>
-            <span class="rate">94.1% solve rate</span>
-          </div>
-        </a>
+          <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
+        </div>
       </div>
     </div>
 
@@ -405,5 +406,27 @@
   <footer>
     Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count · seed 42
   </footer>
+
+  <script>
+    const KEY = id => `cses-done-${id}`;
+
+    function toggleDone(btn) {
+      const card = btn.closest('.card');
+      const id = card.dataset.id;
+      const done = localStorage.getItem(KEY(id)) === '1';
+      setDone(card, !done);
+    }
+
+    function setDone(card, done) {
+      localStorage.setItem(KEY(card.dataset.id), done ? '1' : '0');
+      card.classList.toggle('done', done);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.card[data-id]').forEach(card => {
+        if (localStorage.getItem(KEY(card.dataset.id)) === '1') card.classList.add('done');
+      });
+    });
+  </script>
 </body>
 </html>

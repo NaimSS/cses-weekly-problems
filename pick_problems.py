@@ -6,8 +6,8 @@ skipping any already-processed problems.
 
 Picks (seed=42):
   2 hard   — top 100   (ranks   1–100)
-  3 medium — ranks 101–200
-  4 easy   — ranks 201–400
+  3 medium — ranks 101–250
+  4 easy   — ranks 251–400
 """
 
 import csv
@@ -105,8 +105,8 @@ def main():
     available = [p for p in all_problems if p["id"] not in processed_ids]
 
     hard   = [p for p in available if 1   <= int(p["rank"]) <= 100]
-    medium = [p for p in available if 101 <= int(p["rank"]) <= 200]
-    easy   = [p for p in available if 201 <= int(p["rank"]) <= 400]
+    medium = [p for p in available if 101 <= int(p["rank"]) <= 250]
+    easy   = [p for p in available if 251 <= int(p["rank"]) <= 400]
 
     print(f"Available pool  →  hard: {len(hard)}  medium: {len(medium)}  easy: {len(easy)}")
 
@@ -124,8 +124,8 @@ def main():
     print("║       Today's CSES Problem Set       ║")
     print("╚══════════════════════════════════════╝")
     print_results("HARD   (2 problems — ranks   1–100)", picked_hard)
-    print_results("MEDIUM (3 problems — ranks 101–200)", picked_medium)
-    print_results("EASY   (4 problems — ranks 201–400)", picked_easy)
+    print_results("MEDIUM (3 problems — ranks 101–250)", picked_medium)
+    print_results("EASY   (4 problems — ranks 251–400)", picked_easy)
     print()
 
 
