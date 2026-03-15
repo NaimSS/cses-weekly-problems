@@ -14,6 +14,7 @@ RANKING_CSV   = Path(__file__).parent / "cses_difficulty_ranking.csv"
 PROCESSED_CSV = Path(__file__).parent / "processed.csv"
 OUTPUT_DIR    = Path(__file__).parent / "weeks"
 INDEX_HTML    = Path(__file__).parent / "index.html"
+ALL_HTML      = Path(__file__).parent / "all.html"
 
 
 # ── data loading (mirrors pick_problems.py) ───────────────────────────────────
@@ -299,7 +300,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
 </head>
 <body>
   <nav class="week-nav">
-    <a href="../index.html" class="nav-back">← All Weeks</a>
+    <a href="../all.html" class="nav-back">← All Weeks</a>
     <span class="nav-date">Week of {today_display}</span>
   </nav>
 
@@ -308,7 +309,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       CSES Problem Set
     </div>
-    <h1>Daily <span>Practice</span> Picks</h1>
+    <h1>Weekly <span>Practice</span> Picks</h1>
     <div class="date">{today_display}</div>
     <div class="summary">
       <span><b>2</b> Hard</span>
@@ -377,6 +378,21 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
       }});
     }});
   </script>
+</body>
+</html>"""
+
+
+def build_redirect(latest: Path) -> str:
+    target = f"weeks/{latest.name}"
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="refresh" content="0; url={target}" />
+  <title>CSES Weekly Picks</title>
+</head>
+<body>
+  <script>location.replace("{target}");</script>
 </body>
 </html>"""
 
@@ -521,8 +537,14 @@ def build_index(week_files: list[Path]) -> str:
 
 def regenerate_index() -> None:
     week_files = sorted(OUTPUT_DIR.glob("*.html"))
-    INDEX_HTML.write_text(build_index(week_files), encoding="utf-8")
-    print(f"Index  → {INDEX_HTML}")
+    latest = week_files[-1] if week_files else None
+
+    ALL_HTML.write_text(build_index(week_files), encoding="utf-8")
+    print(f"All    → {ALL_HTML}")
+
+    if latest:
+        INDEX_HTML.write_text(build_redirect(latest), encoding="utf-8")
+        print(f"Index  → {INDEX_HTML}  (redirects to {latest.name})")
 
 
 # ── main ─────────────────────────────────────────────────────────────────────
