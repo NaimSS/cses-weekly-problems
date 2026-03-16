@@ -898,8 +898,6 @@ def build_rank_html(weeks_data: dict) -> str:
     /* cell colour coding */
     .cell-high  {{ background: var(--easy-dim);   color: var(--easy);   font-weight: 700; }}
     .cell-mid   {{ background: var(--medium-dim); color: var(--medium); font-weight: 700; }}
-    .cell-low   {{ background: var(--hard-dim);   color: var(--hard);   }}
-    .cell-zero  {{ color: var(--muted); }}
     .cell-total {{ font-weight: 700; font-size: 1rem; border-left: 2px solid var(--accent); }}
 
     .week-link {{ color: inherit; text-decoration: none; }}
@@ -961,8 +959,7 @@ def build_rank_html(weeks_data: dict) -> str:
 
   <div class="legend">
     <span class="legend-item"><span class="legend-dot" style="background:var(--easy-dim);border:1px solid var(--easy)"></span> ≥ 75 %</span>
-    <span class="legend-item"><span class="legend-dot" style="background:var(--medium-dim);border:1px solid var(--medium)"></span> 44 – 74 %</span>
-    <span class="legend-item"><span class="legend-dot" style="background:var(--hard-dim);border:1px solid var(--hard)"></span> 1 – 43 %</span>
+    <span class="legend-item"><span class="legend-dot" style="background:var(--medium-dim);border:1px solid var(--medium)"></span> &lt; 75 %</span>
     <span class="legend-item"><span class="legend-dot" style="background:var(--border)"></span> 0</span>
   </div>
 
@@ -1074,10 +1071,9 @@ def build_rank_html(weeks_data: dict) -> str:
           const count = [...wps].filter(id => u.solved.has(id)).length;
           const pct   = count / wps.size;
           total += count;
-          let cls = 'cell-zero';
-          if (pct >= 0.75)       cls = 'cell-high';
-          else if (pct >= 0.44)  cls = 'cell-mid';
-          else if (count > 0)    cls = 'cell-low';
+          let cls = '';
+          if (pct >= 0.75)  cls = 'cell-high';
+          else if (count > 0) cls = 'cell-mid';
           body += `<td class="week-summary ${{cls}}" data-week="${{w}}">${{count > 0 ? count + '<span class="sf">/' + wps.size + '</span>' : '—'}}</td>`;
           for (const p of weekProbs[w]) {{
             const done = u.solved.has(p.id);
