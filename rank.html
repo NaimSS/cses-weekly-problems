@@ -269,8 +269,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-    const SUPABASE_URL      = "";
-    const SUPABASE_ANON_KEY = "";
+    const SUPABASE_URL      = "https://ugwnwhnuadolypyvrnsq.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6";
     const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
     const sb = USE_SUPABASE
@@ -285,7 +285,7 @@
     async function loadAllRankings() {
       const container = document.getElementById('rank-container');
       if (!USE_SUPABASE || !sb) {
-        container.innerHTML = '<p class="no-sb">Configure Supabase to see group rankings.</p>';
+        container.innerHTML = '<p class="no-sb">Rankings not available.</p>';
         return;
       }
 

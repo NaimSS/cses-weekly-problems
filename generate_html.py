@@ -5,9 +5,10 @@ Produces: weeks/YYYY-MM-DD.html, all.html, rank.html, index.html
 """
 
 import argparse
-import json
-import random
 import csv
+import json
+import os
+import random
 from datetime import date
 from pathlib import Path
 
@@ -20,7 +21,15 @@ INDEX_HTML      = Path(__file__).parent / "index.html"
 ALL_HTML        = Path(__file__).parent / "all.html"
 RANK_HTML       = Path(__file__).parent / "rank.html"
 
-import os
+# Load .env file if present (for local development)
+_env_file = Path(__file__).parent / ".env"
+if _env_file.exists():
+    for _line in _env_file.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _v = _line.split("=", 1)
+            os.environ.setdefault(_k.strip(), _v.strip())
+
 SUPABASE_URL      = os.environ.get("SUPABASE_URL", "")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "")
 
@@ -668,7 +677,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
     async function loadRankings() {{
       const container = document.getElementById('rankings-container');
       if (!USE_SUPABASE || !sb) {{
-        container.innerHTML = '<p class="no-sb">Configure Supabase to see group rankings.</p>';
+        container.innerHTML = '<p class="no-sb">Rankings not available.</p>';
         return;
       }}
 
@@ -983,7 +992,7 @@ def build_rank_html(weeks_data: dict) -> str:
     async function loadAllRankings() {{
       const container = document.getElementById('rank-container');
       if (!USE_SUPABASE || !sb) {{
-        container.innerHTML = '<p class="no-sb">Configure Supabase to see group rankings.</p>';
+        container.innerHTML = '<p class="no-sb">Rankings not available.</p>';
         return;
       }}
 
