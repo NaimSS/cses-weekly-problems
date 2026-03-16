@@ -19,6 +19,9 @@ jobs:
           python-version: '3.12'
 
       - name: Generate weekly picks
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: python generate_html.py
 
       - name: Commit & push

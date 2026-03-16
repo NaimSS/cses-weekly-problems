@@ -1,0 +1,19 @@
+{
+  "2026-03-15": {
+    "hard": [
+      {"id": "3175", "name": "Beautiful Permutation II", "section": "Additional Problems I", "url": "https://cses.fi/problemset/task/3175"},
+      {"id": "3416", "name": "All Letter Subgrid Count II", "section": "Counting Problems", "url": "https://cses.fi/problemset/task/3416"}
+    ],
+    "medium": [
+      {"id": "1078", "name": "Grid Paths II", "section": "Counting Problems", "url": "https://cses.fi/problemset/task/1078"},
+      {"id": "2105", "name": "Distinct Substrings", "section": "String Algorithms", "url": "https://cses.fi/problemset/task/2105"},
+      {"id": "2214", "name": "Inverse Inversions", "section": "Construction Problems", "url": "https://cses.fi/problemset/task/2214"}
+    ],
+    "easy": [
+      {"id": "1133", "name": "Tree Distances II", "section": "Tree Algorithms", "url": "https://cses.fi/problemset/task/1133"},
+      {"id": "2220", "name": "Counting Numbers", "section": "Dynamic Programming", "url": "https://cses.fi/problemset/task/2220"},
+      {"id": "1715", "name": "Creating Strings II", "section": "Mathematics", "url": "https://cses.fi/problemset/task/1715"},
+      {"id": "1635", "name": "Coin Combinations I", "section": "Dynamic Programming", "url": "https://cses.fi/problemset/task/1635"}
+    ]
+  }
+}
