@@ -896,6 +896,17 @@ def build_rank_html(weeks_data: dict) -> str:
     .week-link {{ color: inherit; text-decoration: none; }}
     .week-link:hover {{ color: var(--accent); text-decoration: underline; }}
 
+    .week-summary {{ cursor: pointer; user-select: none; }}
+    .week-summary:hover {{ color: var(--accent); }}
+    .expand-icon {{ font-size: .7rem; margin-left: .3rem; opacity: .6; vertical-align: middle; }}
+    .week-prob {{ font-size: .8rem; padding: .4rem .45rem !important; min-width: 2rem; }}
+    .prob-hard   {{ color: var(--hard);   }}
+    .prob-medium {{ color: var(--medium); }}
+    .prob-easy   {{ color: var(--easy);   }}
+    .cell-done {{ color: var(--easy); font-weight: 700; }}
+    .cell-miss {{ color: var(--muted); opacity: .4; }}
+    .sf {{ font-size: .75rem; opacity: .6; }}
+
     .no-sb, .no-data, .loading-msg {{
       color: var(--muted);
       text-align: center;
@@ -1016,9 +1027,15 @@ def build_rank_html(weeks_data: dict) -> str:
 
       // week problem sets
       const weekSets = {{}};
+      const weekProbs = {{}};
       for (const w of weeks) {{
         const wd = ALL_WEEKS[w];
         weekSets[w] = new Set([...wd.hard.map(p => p.id), ...wd.medium.map(p => p.id), ...wd.easy.map(p => p.id)]);
+        weekProbs[w] = [
+          ...wd.hard.map((p, i) => ({{ ...p, tier: 'hard', lbl: 'H' + (i+1) }})),
+          ...wd.medium.map((p, i) => ({{ ...p, tier: 'medium', lbl: 'M' + (i+1) }})),
+          ...wd.easy.map((p, i) => ({{ ...p, tier: 'easy', lbl: 'E' + (i+1) }})),
+        ];
       }}
 
       // sort users by total solved descending
@@ -1029,7 +1046,12 @@ def build_rank_html(weeks_data: dict) -> str:
       for (const w of weeks) {{
         const d = new Date(w + 'T12:00:00');
         const label = d.toLocaleDateString('en-US', {{ month: 'short', day: 'numeric' }});
-        head += `<th><a class="week-link" href="weeks/${{w}}.html">${{label}}</a></th>`;
+        head += `<th class="week-summary" data-week="${{w}}" onclick="toggleWeek('${{w}}')">`
+              + `<a class="week-link" href="weeks/${{w}}.html" onclick="event.stopPropagation()">${{label}}</a>`
+              + `<span class="expand-icon">▶</span></th>`;
+        for (const p of weekProbs[w]) {{
+          head += `<th class="week-prob prob-${{p.tier}}" data-week="${{w}}" style="display:none" title="${{p.name}}">${{p.lbl}}</th>`;
+        }}
       }}
       head += `<th class="cell-total">Total</th></tr>`;
 
@@ -1047,7 +1069,11 @@ def build_rank_html(weeks_data: dict) -> str:
           if (pct >= 0.75)       cls = 'cell-high';
           else if (pct >= 0.44)  cls = 'cell-mid';
           else if (count > 0)    cls = 'cell-low';
-          body += `<td class="${{cls}}">${{count > 0 ? count + '<span style="font-size:.75rem;opacity:.6"> /' + wps.size + '</span>' : '—'}}</td>`;
+          body += `<td class="week-summary ${{cls}}" data-week="${{w}}">${{count > 0 ? count + '<span class="sf">/' + wps.size + '</span>' : '—'}}</td>`;
+          for (const p of weekProbs[w]) {{
+            const done = u.solved.has(p.id);
+            body += `<td class="week-prob ${{done ? 'cell-done' : 'cell-miss'}}" data-week="${{w}}" style="display:none">${{done ? '✓' : '✗'}}</td>`;
+          }}
         }}
         body += `<td class="cell-total">${{total}}</td></tr>`;
       }}
@@ -1061,6 +1087,17 @@ def build_rank_html(weeks_data: dict) -> str:
             </table>
           </div>
         </div>`;
+    }}
+
+    // ── Week expand/collapse ──────────────────────────────────────────────────
+    function toggleWeek(week) {{
+      const summaries = document.querySelectorAll(`.week-summary[data-week="${{week}}"]`);
+      const probs     = document.querySelectorAll(`.week-prob[data-week="${{week}}"]`);
+      const expand    = probs[0].style.display === 'none';
+      summaries.forEach(el => el.style.display = expand ? 'none' : '');
+      probs.forEach(el     => el.style.display = expand ? ''     : 'none');
+      const icon = document.querySelector(`th.week-summary[data-week="${{week}}"] .expand-icon`);
+      if (icon) icon.textContent = expand ? '▼' : '▶';
     }}
 
     // ── Auth ──────────────────────────────────────────────────────────────────
