@@ -15,5 +15,22 @@
       {"id": "1715", "name": "Creating Strings II", "section": "Mathematics", "url": "https://cses.fi/problemset/task/1715"},
       {"id": "1635", "name": "Coin Combinations I", "section": "Dynamic Programming", "url": "https://cses.fi/problemset/task/1635"}
     ]
+  },
+  "2026-03-22": {
+    "hard": [
+      {"id": "2426", "name": "Programmers and Artists", "section": "Additional Problems II", "url": "https://cses.fi/problemset/task/2426"},
+      {"id": "3312", "name": "Grid Coloring II", "section": "Additional Problems II", "url": "https://cses.fi/problemset/task/3312"}
+    ],
+    "medium": [
+      {"id": "1162", "name": "Sorting Methods", "section": "Additional Problems I", "url": "https://cses.fi/problemset/task/1162"},
+      {"id": "2103", "name": "Counting Patterns", "section": "String Algorithms", "url": "https://cses.fi/problemset/task/2103"},
+      {"id": "1080", "name": "Empty String", "section": "Counting Problems", "url": "https://cses.fi/problemset/task/1080"}
+    ],
+    "easy": [
+      {"id": "1673", "name": "High Score", "section": "Graph Algorithms", "url": "https://cses.fi/problemset/task/1673"},
+      {"id": "1750", "name": "Planets Queries I", "section": "Graph Algorithms", "url": "https://cses.fi/problemset/task/1750"},
+      {"id": "1139", "name": "Distinct Colors", "section": "Tree Algorithms", "url": "https://cses.fi/problemset/task/1139"},
+      {"id": "1621", "name": "Distinct Numbers", "section": "Sorting and Searching", "url": "https://cses.fi/problemset/task/1621"}
+    ]
   }
 }
