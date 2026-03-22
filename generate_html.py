@@ -30,8 +30,8 @@ if _env_file.exists():
             _k, _v = _line.split("=", 1)
             os.environ.setdefault(_k.strip(), _v.strip())
 
-SUPABASE_URL      = os.environ.get("SUPABASE_URL", "")
-SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "")
+SUPABASE_URL      = os.environ.get("SUPABASE_URL", "https://ugwnwhnuadolypyvrnsq.supabase.co")
+SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6")
 
 
 # ── data loading ──────────────────────────────────────────────────────────────
@@ -641,7 +641,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
   </div>
 
   <footer>
-    Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count · seed {SEED}
+    Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count · seed {SEED} · <a href="https://github.com/NaimSS/cses-weekly-problems" target="_blank">source</a>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -968,7 +968,7 @@ def build_rank_html(weeks_data: dict) -> str:
   </div>
 
   <footer>
-    Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count
+    Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count · <a href="https://github.com/NaimSS/cses-weekly-problems" target="_blank">source</a>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1256,7 +1256,7 @@ def build_index(week_files: list[Path]) -> str:
   </div>
 
   <footer>
-    Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count
+    Generated from <a href="https://cses.fi/problemset/" target="_blank">cses.fi/problemset</a> · ranked by solve count · <a href="https://github.com/NaimSS/cses-weekly-problems" target="_blank">source</a>
   </footer>
 </body>
 </html>"""
