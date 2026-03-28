@@ -10,48 +10,16 @@ Picks (seed=42):
   4 easy   — ranks 251–400
 """
 
-import csv
 import random
 import argparse
 from pathlib import Path
+
+from common import DIFFICULTY_BANDS, load_processed_ids, load_ranking, pick_all_tiers
 
 SEED = 42
 
 RANKING_CSV   = Path(__file__).parent / "cses_difficulty_ranking.csv"
 PROCESSED_CSV = Path(__file__).parent / "processed.csv"
-
-
-# ── helpers ──────────────────────────────────────────────────────────────────
-
-def load_ranking(path: Path) -> list[dict]:
-    with path.open(encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-def load_processed_ids(path: Path) -> set[str]:
-    """Return a set of problem IDs (as strings) that have already been done."""
-    if not path.exists():
-        return set()
-    with path.open(encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        # accept a column named 'id' or 'problem_id'
-        id_col = next((c for c in (reader.fieldnames or [])
-                       if c.strip().lower() in ("id", "problem_id")), None)
-        if id_col is None:
-            # fall back: treat first column as ID
-            f.seek(0)
-            reader = csv.reader(f)
-            next(reader, None)          # skip header
-            return {row[0].strip() for row in reader if row}
-        return {row[id_col].strip() for row in reader}
-
-
-def pick(pool: list[dict], n: int, rng: random.Random) -> list[dict]:
-    if len(pool) < n:
-        raise ValueError(
-            f"Not enough problems in pool: need {n}, have {len(pool)}."
-        )
-    return rng.sample(pool, n)
 
 
 def print_results(label: str, problems: list[dict]) -> None:
@@ -104,28 +72,30 @@ def main():
     # Filter out processed problems, then split by difficulty tier
     available = [p for p in all_problems if p["id"] not in processed_ids]
 
-    hard   = [p for p in available if 1   <= int(p["rank"]) <= 100]
-    medium = [p for p in available if 101 <= int(p["rank"]) <= 250]
-    easy   = [p for p in available if 251 <= int(p["rank"]) <= 400]
-
-    print(f"Available pool  →  hard: {len(hard)}  medium: {len(medium)}  easy: {len(easy)}")
+    pool_sizes = {
+        tier: len([p for p in available if band["min"] <= int(p["rank"]) <= band["max"]])
+        for tier, band in DIFFICULTY_BANDS.items()
+    }
+    print(f"Available pool  →  hard: {pool_sizes['hard']}  medium: {pool_sizes['medium']}  easy: {pool_sizes['easy']}")
 
     rng = random.Random(args.seed)
 
     try:
-        picked_hard   = pick(hard,   2, rng)
-        picked_medium = pick(medium, 3, rng)
-        picked_easy   = pick(easy,   4, rng)
+        picked = pick_all_tiers(available, rng)
     except ValueError as e:
         print(f"ERROR: {e}")
         raise SystemExit(1)
 
+    hard_label   = f"HARD   ({DIFFICULTY_BANDS['hard']['count']} problems — ranks {DIFFICULTY_BANDS['hard']['min']}–{DIFFICULTY_BANDS['hard']['max']})"
+    medium_label = f"MEDIUM ({DIFFICULTY_BANDS['medium']['count']} problems — ranks {DIFFICULTY_BANDS['medium']['min']}–{DIFFICULTY_BANDS['medium']['max']})"
+    easy_label   = f"EASY   ({DIFFICULTY_BANDS['easy']['count']} problems — ranks {DIFFICULTY_BANDS['easy']['min']}–{DIFFICULTY_BANDS['easy']['max']})"
+
     print("\n╔══════════════════════════════════════╗")
     print("║       Today's CSES Problem Set       ║")
     print("╚══════════════════════════════════════╝")
-    print_results("HARD   (2 problems — ranks   1–100)", picked_hard)
-    print_results("MEDIUM (3 problems — ranks 101–250)", picked_medium)
-    print_results("EASY   (4 problems — ranks 251–400)", picked_easy)
+    print_results(hard_label,   picked["hard"])
+    print_results(medium_label, picked["medium"])
+    print_results(easy_label,   picked["easy"])
     print()
 
 

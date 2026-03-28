@@ -120,14 +120,14 @@ def main():
     html_path = Path(args.file)
     if not html_path.exists():
         print(f"ERROR: File not found: {html_path}", file=sys.stderr)
-        sys.exit(1)
+        raise SystemExit(1)
 
     print(f"Parsing {html_path} …")
     problems = parse_html(html_path.read_text(encoding="utf-8"))
 
     if not problems:
         print("No problems found. Make sure this is a CSES problem-set page.")
-        sys.exit(1)
+        raise SystemExit(1)
 
     ranked = rank_by_difficulty(problems)
     print(f"Found {len(ranked)} problems, ranked least → most solved.")
