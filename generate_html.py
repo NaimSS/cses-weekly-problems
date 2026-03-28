@@ -12,6 +12,8 @@ import random
 from datetime import date
 from pathlib import Path
 
+from common import load_processed_ids, load_ranking, pick_all_tiers
+
 SEED = 42
 RANKING_CSV     = Path(__file__).parent / "cses_difficulty_ranking.csv"
 PROCESSED_CSV   = Path(__file__).parent / "processed.csv"
@@ -36,27 +38,8 @@ SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "sb_publishable_Df8xVwyl
 
 # ── data loading ──────────────────────────────────────────────────────────────
 
-def load_ranking(path: Path) -> list[dict]:
-    with path.open(encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-def load_processed_ids(path: Path) -> set[str]:
-    if not path.exists():
-        return set()
-    with path.open(encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        id_col = next((c for c in (reader.fieldnames or [])
-                       if c.strip().lower() in ("id", "problem_id")), None)
-        if id_col is None:
-            f.seek(0)
-            reader = csv.reader(f)
-            next(reader, None)
-            return {row[0].strip() for row in reader if row}
-        return {row[id_col].strip() for row in reader}
-
-
 def load_weeks_data() -> dict:
+    """Load the weeks→problems mapping from weeks_data.json."""
     if not WEEKS_DATA_JSON.exists():
         return {}
     with WEEKS_DATA_JSON.open(encoding="utf-8") as f:
@@ -64,17 +47,13 @@ def load_weeks_data() -> dict:
 
 
 def save_weeks_data(data: dict) -> None:
+    """Persist the weeks→problems mapping to weeks_data.json."""
     with WEEKS_DATA_JSON.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def pick(pool: list[dict], n: int, rng: random.Random) -> list[dict]:
-    if len(pool) < n:
-        raise ValueError(f"Need {n} problems but only {len(pool)} available.")
-    return rng.sample(pool, n)
-
-
 def save_processed(path: Path, problems: list[dict]) -> None:
+    """Append newly picked problems to the processed.csv log."""
     write_header = not path.exists() or path.stat().st_size == 0
     with path.open("a", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["id", "name", "section", "url"])
@@ -1317,19 +1296,23 @@ def main():
     processed_ids = load_processed_ids(processed_path)
     available     = [p for p in all_problems if p["id"] not in processed_ids]
 
+    # Guard: refuse to re-pick for an already-published week
+    weeks_data = load_weeks_data()
+    if today_iso in weeks_data:
+        print(f"ERROR: Week {today_iso} already exists in weeks_data.json.")
+        print("Use --rebuild-only to regenerate HTML without re-picking.")
+        raise SystemExit(1)
+
     rng    = random.Random(args.seed)
-    hard   = pick([p for p in available if 1   <= int(p["rank"]) <= 100], 2, rng)
-    medium = pick([p for p in available if 101 <= int(p["rank"]) <= 250], 3, rng)
-    easy   = pick([p for p in available if 251 <= int(p["rank"]) <= 400], 4, rng)
+    picked = pick_all_tiers(available, rng)
+    hard, medium, easy = picked["hard"], picked["medium"], picked["easy"]
 
     save_processed(processed_path, hard + medium + easy)
 
     # Save week→problems mapping for rank page
-    weeks_data = load_weeks_data()
     weeks_data[today_iso] = {
-        "hard":   [{"id": p["id"], "name": p["name"], "section": p["section"], "url": p["url"]} for p in hard],
-        "medium": [{"id": p["id"], "name": p["name"], "section": p["section"], "url": p["url"]} for p in medium],
-        "easy":   [{"id": p["id"], "name": p["name"], "section": p["section"], "url": p["url"]} for p in easy],
+        tier: [{"id": p["id"], "name": p["name"], "section": p["section"], "url": p["url"]} for p in probs]
+        for tier, probs in picked.items()
     }
     save_weeks_data(weeks_data)
     print(f"Weeks  → {WEEKS_DATA_JSON}")
