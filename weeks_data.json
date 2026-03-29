@@ -1,36 +1,188 @@
 {
   "2026-03-15": {
     "hard": [
-      {"id": "3175", "name": "Beautiful Permutation II", "section": "Additional Problems I", "url": "https://cses.fi/problemset/task/3175"},
-      {"id": "3416", "name": "All Letter Subgrid Count II", "section": "Counting Problems", "url": "https://cses.fi/problemset/task/3416"}
+      {
+        "id": "3175",
+        "name": "Beautiful Permutation II",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3175"
+      },
+      {
+        "id": "3416",
+        "name": "All Letter Subgrid Count II",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3416"
+      }
     ],
     "medium": [
-      {"id": "1078", "name": "Grid Paths II", "section": "Counting Problems", "url": "https://cses.fi/problemset/task/1078"},
-      {"id": "2105", "name": "Distinct Substrings", "section": "String Algorithms", "url": "https://cses.fi/problemset/task/2105"},
-      {"id": "2214", "name": "Inverse Inversions", "section": "Construction Problems", "url": "https://cses.fi/problemset/task/2214"}
+      {
+        "id": "1078",
+        "name": "Grid Paths II",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/1078"
+      },
+      {
+        "id": "2105",
+        "name": "Distinct Substrings",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2105"
+      },
+      {
+        "id": "2214",
+        "name": "Inverse Inversions",
+        "section": "Construction Problems",
+        "url": "https://cses.fi/problemset/task/2214"
+      }
     ],
     "easy": [
-      {"id": "1133", "name": "Tree Distances II", "section": "Tree Algorithms", "url": "https://cses.fi/problemset/task/1133"},
-      {"id": "2220", "name": "Counting Numbers", "section": "Dynamic Programming", "url": "https://cses.fi/problemset/task/2220"},
-      {"id": "1715", "name": "Creating Strings II", "section": "Mathematics", "url": "https://cses.fi/problemset/task/1715"},
-      {"id": "1635", "name": "Coin Combinations I", "section": "Dynamic Programming", "url": "https://cses.fi/problemset/task/1635"}
+      {
+        "id": "1133",
+        "name": "Tree Distances II",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1133"
+      },
+      {
+        "id": "2220",
+        "name": "Counting Numbers",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/2220"
+      },
+      {
+        "id": "1715",
+        "name": "Creating Strings II",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1715"
+      },
+      {
+        "id": "1635",
+        "name": "Coin Combinations I",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1635"
+      }
     ]
   },
   "2026-03-22": {
     "hard": [
-      {"id": "2426", "name": "Programmers and Artists", "section": "Additional Problems II", "url": "https://cses.fi/problemset/task/2426"},
-      {"id": "3312", "name": "Grid Coloring II", "section": "Additional Problems II", "url": "https://cses.fi/problemset/task/3312"}
+      {
+        "id": "2426",
+        "name": "Programmers and Artists",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/2426"
+      },
+      {
+        "id": "3312",
+        "name": "Grid Coloring II",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3312"
+      }
     ],
     "medium": [
-      {"id": "1162", "name": "Sorting Methods", "section": "Additional Problems I", "url": "https://cses.fi/problemset/task/1162"},
-      {"id": "2103", "name": "Counting Patterns", "section": "String Algorithms", "url": "https://cses.fi/problemset/task/2103"},
-      {"id": "1080", "name": "Empty String", "section": "Counting Problems", "url": "https://cses.fi/problemset/task/1080"}
+      {
+        "id": "1162",
+        "name": "Sorting Methods",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/1162"
+      },
+      {
+        "id": "2103",
+        "name": "Counting Patterns",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2103"
+      },
+      {
+        "id": "1080",
+        "name": "Empty String",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/1080"
+      }
     ],
     "easy": [
-      {"id": "1673", "name": "High Score", "section": "Graph Algorithms", "url": "https://cses.fi/problemset/task/1673"},
-      {"id": "1750", "name": "Planets Queries I", "section": "Graph Algorithms", "url": "https://cses.fi/problemset/task/1750"},
-      {"id": "1139", "name": "Distinct Colors", "section": "Tree Algorithms", "url": "https://cses.fi/problemset/task/1139"},
-      {"id": "1621", "name": "Distinct Numbers", "section": "Sorting and Searching", "url": "https://cses.fi/problemset/task/1621"}
+      {
+        "id": "1673",
+        "name": "High Score",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1673"
+      },
+      {
+        "id": "1750",
+        "name": "Planets Queries I",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1750"
+      },
+      {
+        "id": "1139",
+        "name": "Distinct Colors",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1139"
+      },
+      {
+        "id": "1621",
+        "name": "Distinct Numbers",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1621"
+      }
+    ]
+  },
+  "2026-03-29": {
+    "hard": [
+      {
+        "id": "3228",
+        "name": "Permuted Binary Strings",
+        "section": "Interactive Problems",
+        "url": "https://cses.fi/problemset/task/3228"
+      },
+      {
+        "id": "3402",
+        "name": "Minimum Cost Pairs",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3402"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2132",
+        "name": "Increasing Array II",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/2132"
+      },
+      {
+        "id": "2106",
+        "name": "Repeating Substring",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2106"
+      },
+      {
+        "id": "2107",
+        "name": "String Functions",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2107"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1712",
+        "name": "Exponentiation II",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1712"
+      },
+      {
+        "id": "1644",
+        "name": "Maximum Subarray Sum II",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1644"
+      },
+      {
+        "id": "1077",
+        "name": "Sliding Window Cost",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/1077"
+      },
+      {
+        "id": "1069",
+        "name": "Repetitions",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1069"
+      }
     ]
   }
 }
