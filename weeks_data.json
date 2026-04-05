@@ -184,5 +184,67 @@
         "url": "https://cses.fi/problemset/task/1069"
       }
     ]
+  },
+  "2026-04-05": {
+    "hard": [
+      {
+        "id": "1189",
+        "name": "Food Division",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1189"
+      },
+      {
+        "id": "3301",
+        "name": "Maximum Average Subarrays",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3301"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2121",
+        "name": "Parcel Delivery",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2121"
+      },
+      {
+        "id": "2076",
+        "name": "Necessary Roads",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2076"
+      },
+      {
+        "id": "3405",
+        "name": "Sliding Window Or",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3405"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1130",
+        "name": "Tree Matching",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1130"
+      },
+      {
+        "id": "1753",
+        "name": "String Matching",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/1753"
+      },
+      {
+        "id": "1138",
+        "name": "Path Queries",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1138"
+      },
+      {
+        "id": "1686",
+        "name": "Coin Collector",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1686"
+      }
+    ]
   }
 }
