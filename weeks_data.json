@@ -246,5 +246,67 @@
         "url": "https://cses.fi/problemset/task/1686"
       }
     ]
+  },
+  "2026-04-12": {
+    "hard": [
+      {
+        "id": "1113",
+        "name": "String Transform",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/1113"
+      },
+      {
+        "id": "3213",
+        "name": "Water Containers Moves",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3213"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2087",
+        "name": "Houses and Schools",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2087"
+      },
+      {
+        "id": "2208",
+        "name": "Another Game",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2208"
+      },
+      {
+        "id": "2207",
+        "name": "Grundy's Game",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2207"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1164",
+        "name": "Room Allocation",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1164"
+      },
+      {
+        "id": "1632",
+        "name": "Movie Festival II",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1632"
+      },
+      {
+        "id": "1136",
+        "name": "Counting Paths",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1136"
+      },
+      {
+        "id": "1082",
+        "name": "Sum of Divisors",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1082"
+      }
+    ]
   }
 }
