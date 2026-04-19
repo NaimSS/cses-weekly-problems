@@ -308,5 +308,67 @@
         "url": "https://cses.fi/problemset/task/1082"
       }
     ]
+  },
+  "2026-04-19": {
+    "hard": [
+      {
+        "id": "3406",
+        "name": "Triangle Number Sums",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/3406"
+      },
+      {
+        "id": "3415",
+        "name": "All Letter Subgrid Count I",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3415"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2109",
+        "name": "Substring Order II",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2109"
+      },
+      {
+        "id": "1147",
+        "name": "Maximum Building I",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/1147"
+      },
+      {
+        "id": "2210",
+        "name": "Counting Grids",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2210"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1651",
+        "name": "Range Update Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1651"
+      },
+      {
+        "id": "1076",
+        "name": "Sliding Window Median",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/1076"
+      },
+      {
+        "id": "1625",
+        "name": "Grid Path Description",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1625"
+      },
+      {
+        "id": "1716",
+        "name": "Distributing Apples",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1716"
+      }
+    ]
   }
 }
