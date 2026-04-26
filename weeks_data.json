@@ -370,5 +370,67 @@
         "url": "https://cses.fi/problemset/task/1716"
       }
     ]
+  },
+  "2026-04-26": {
+    "hard": [
+      {
+        "id": "3411",
+        "name": "All Manhattan Distances",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/3411"
+      },
+      {
+        "id": "3307",
+        "name": "Nearest Campsites II",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3307"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2078",
+        "name": "Eulerian Subgraphs",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2078"
+      },
+      {
+        "id": "3112",
+        "name": "Hidden Integer",
+        "section": "Interactive Problems",
+        "url": "https://cses.fi/problemset/task/3112"
+      },
+      {
+        "id": "1757",
+        "name": "Course Schedule II",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1757"
+      }
+    ],
+    "easy": [
+      {
+        "id": "2168",
+        "name": "Nested Ranges Check",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2168"
+      },
+      {
+        "id": "1190",
+        "name": "Subarray Sum Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1190"
+      },
+      {
+        "id": "1646",
+        "name": "Static Range Sum Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1646"
+      },
+      {
+        "id": "1734",
+        "name": "Distinct Values Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1734"
+      }
+    ]
   }
 }
