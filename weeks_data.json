@@ -432,5 +432,67 @@
         "url": "https://cses.fi/problemset/task/1734"
       }
     ]
+  },
+  "2026-05-03": {
+    "hard": [
+      {
+        "id": "2130",
+        "name": "Distinct Routes II",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2130"
+      },
+      {
+        "id": "3306",
+        "name": "Nearest Campsites I",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3306"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2113",
+        "name": "Signal Processing",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2113"
+      },
+      {
+        "id": "1756",
+        "name": "Acyclic Graph Edges",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1756"
+      },
+      {
+        "id": "1670",
+        "name": "Swap Game",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/1670"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1653",
+        "name": "Elevator Rides",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1653"
+      },
+      {
+        "id": "1690",
+        "name": "Hamiltonian Flights",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1690"
+      },
+      {
+        "id": "1623",
+        "name": "Apple Division",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1623"
+      },
+      {
+        "id": "1722",
+        "name": "Fibonacci Numbers",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1722"
+      }
+    ]
   }
 }
