@@ -494,5 +494,67 @@
         "url": "https://cses.fi/problemset/task/1722"
       }
     ]
+  },
+  "2026-05-10": {
+    "hard": [
+      {
+        "id": "3150",
+        "name": "Distinct Values Sum",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3150"
+      },
+      {
+        "id": "3108",
+        "name": "K Subset Sums I",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3108"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1086",
+        "name": "Writing Numbers",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/1086"
+      },
+      {
+        "id": "1729",
+        "name": "Stick Game",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1729"
+      },
+      {
+        "id": "2108",
+        "name": "Substring Order I",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2108"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1196",
+        "name": "Flight Routes",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1196"
+      },
+      {
+        "id": "1081",
+        "name": "Common Divisors",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1081"
+      },
+      {
+        "id": "2166",
+        "name": "Prefix Sum Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/2166"
+      },
+      {
+        "id": "1619",
+        "name": "Restaurant Customers",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1619"
+      }
+    ]
   }
 }
