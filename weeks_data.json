@@ -556,5 +556,67 @@
         "url": "https://cses.fi/problemset/task/1619"
       }
     ]
+  },
+  "2026-05-17": {
+    "hard": [
+      {
+        "id": "2228",
+        "name": "Counting Sequences",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/2228"
+      },
+      {
+        "id": "3149",
+        "name": "Tree Coin Collecting II",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3149"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2184",
+        "name": "Missing Coin Sum Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/2184"
+      },
+      {
+        "id": "1743",
+        "name": "String Reorder",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1743"
+      },
+      {
+        "id": "3398",
+        "name": "Permutation Rounds",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/3398"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1197",
+        "name": "Cycle Finding",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1197"
+      },
+      {
+        "id": "1143",
+        "name": "Hotel Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1143"
+      },
+      {
+        "id": "1732",
+        "name": "Finding Borders",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/1732"
+      },
+      {
+        "id": "1158",
+        "name": "Book Shop",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1158"
+      }
+    ]
   }
 }
