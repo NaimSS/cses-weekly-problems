@@ -618,5 +618,67 @@
         "url": "https://cses.fi/problemset/task/1158"
       }
     ]
+  },
+  "2026-05-24": {
+    "hard": [
+      {
+        "id": "2402",
+        "name": "Two Stacks Sorting",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/2402"
+      },
+      {
+        "id": "3358",
+        "name": "Split into Two Paths",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3358"
+      }
+    ],
+    "medium": [
+      {
+        "id": "3426",
+        "name": "Sliding Window Xor",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3426"
+      },
+      {
+        "id": "1702",
+        "name": "Tree Traversals",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1702"
+      },
+      {
+        "id": "2084",
+        "name": "Monster Game I",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2084"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1682",
+        "name": "Flight Routes Check",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1682"
+      },
+      {
+        "id": "1144",
+        "name": "Salary Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1144"
+      },
+      {
+        "id": "1754",
+        "name": "Coin Piles",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1754"
+      },
+      {
+        "id": "2079",
+        "name": "Finding a Centroid",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/2079"
+      }
+    ]
   }
 }
