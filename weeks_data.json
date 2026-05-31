@@ -680,5 +680,67 @@
         "url": "https://cses.fi/problemset/task/2079"
       }
     ]
+  },
+  "2026-05-31": {
+    "hard": [
+      {
+        "id": "3214",
+        "name": "Water Containers Queries",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3214"
+      },
+      {
+        "id": "3418",
+        "name": "Border Subgrid Count II",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3418"
+      }
+    ],
+    "medium": [
+      {
+        "id": "3311",
+        "name": "Grid Coloring I",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/3311"
+      },
+      {
+        "id": "1706",
+        "name": "School Excursion",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1706"
+      },
+      {
+        "id": "1697",
+        "name": "Chess Tournament",
+        "section": "Construction Problems",
+        "url": "https://cses.fi/problemset/task/1697"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1688",
+        "name": "Company Queries II",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1688"
+      },
+      {
+        "id": "1079",
+        "name": "Binomial Coefficients",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1079"
+      },
+      {
+        "id": "1092",
+        "name": "Two Sets",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1092"
+      },
+      {
+        "id": "2181",
+        "name": "Counting Tilings",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/2181"
+      }
+    ]
   }
 }
