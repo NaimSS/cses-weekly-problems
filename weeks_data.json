@@ -742,5 +742,67 @@
         "url": "https://cses.fi/problemset/task/2181"
       }
     ]
+  },
+  "2026-06-07": {
+    "hard": [
+      {
+        "id": "2427",
+        "name": "Letter Pair Move Game",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/2427"
+      },
+      {
+        "id": "3109",
+        "name": "K Subset Sums II",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3109"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2417",
+        "name": "Counting Coprime Pairs",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2417"
+      },
+      {
+        "id": "2074",
+        "name": "Reversals and Sums",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2074"
+      },
+      {
+        "id": "1159",
+        "name": "Book Shop II",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1159"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1681",
+        "name": "Game Routes",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1681"
+      },
+      {
+        "id": "1137",
+        "name": "Subtree Queries",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1137"
+      },
+      {
+        "id": "1617",
+        "name": "Bit Strings",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1617"
+      },
+      {
+        "id": "2189",
+        "name": "Point Location Test",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/2189"
+      }
+    ]
   }
 }
