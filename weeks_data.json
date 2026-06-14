@@ -804,5 +804,67 @@
         "url": "https://cses.fi/problemset/task/2189"
       }
     ]
+  },
+  "2026-06-14": {
+    "hard": [
+      {
+        "id": "3193",
+        "name": "Square Subsets",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3193"
+      },
+      {
+        "id": "3232",
+        "name": "Tournament Graph Distribution",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3232"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1736",
+        "name": "Polynomial Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1736"
+      },
+      {
+        "id": "2086",
+        "name": "Subarray Squares",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2086"
+      },
+      {
+        "id": "3163",
+        "name": "Range Interval Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/3163"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1631",
+        "name": "Reading Books",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1631"
+      },
+      {
+        "id": "1749",
+        "name": "List Removals",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1749"
+      },
+      {
+        "id": "1070",
+        "name": "Permutations",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1070"
+      },
+      {
+        "id": "2169",
+        "name": "Nested Ranges Count",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2169"
+      }
+    ]
   }
 }
