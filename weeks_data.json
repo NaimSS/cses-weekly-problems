@@ -866,5 +866,67 @@
         "url": "https://cses.fi/problemset/task/2169"
       }
     ]
+  },
+  "2026-06-21": {
+    "hard": [
+      {
+        "id": "3308",
+        "name": "Graph Coloring",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3308"
+      },
+      {
+        "id": "3400",
+        "name": "Raab Game II",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3400"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1111",
+        "name": "Longest Palindrome",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/1111"
+      },
+      {
+        "id": "2177",
+        "name": "Strongly Connected Edges",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/2177"
+      },
+      {
+        "id": "2179",
+        "name": "Even Outdegree Edges",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/2179"
+      }
+    ],
+    "easy": [
+      {
+        "id": "2162",
+        "name": "Josephus Problem I",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2162"
+      },
+      {
+        "id": "2217",
+        "name": "Collecting Numbers II",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2217"
+      },
+      {
+        "id": "3403",
+        "name": "Longest Common Subsequence",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/3403"
+      },
+      {
+        "id": "1637",
+        "name": "Removing Digits",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1637"
+      }
+    ]
   }
 }
