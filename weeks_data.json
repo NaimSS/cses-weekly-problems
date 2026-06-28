@@ -928,5 +928,67 @@
         "url": "https://cses.fi/problemset/task/1637"
       }
     ]
+  },
+  "2026-06-28": {
+    "hard": [
+      {
+        "id": "2429",
+        "name": "Grid Completion",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/2429"
+      },
+      {
+        "id": "3425",
+        "name": "Same Sum Subsets",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3425"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1730",
+        "name": "Nim Game I",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1730"
+      },
+      {
+        "id": "1727",
+        "name": "Candy Lottery",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1727"
+      },
+      {
+        "id": "2073",
+        "name": "Substring Reversals",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2073"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1194",
+        "name": "Monsters",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1194"
+      },
+      {
+        "id": "1135",
+        "name": "Distance Queries",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1135"
+      },
+      {
+        "id": "2163",
+        "name": "Josephus Problem II",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2163"
+      },
+      {
+        "id": "1633",
+        "name": "Dice Combinations",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1633"
+      }
+    ]
   }
 }
