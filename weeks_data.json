@@ -990,5 +990,67 @@
         "url": "https://cses.fi/problemset/task/1633"
       }
     ]
+  },
+  "2026-07-05": {
+    "hard": [
+      {
+        "id": "3404",
+        "name": "Permutation Subsequence",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3404"
+      },
+      {
+        "id": "3218",
+        "name": "Knight Moves Queries",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3218"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2164",
+        "name": "Josephus Queries",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2164"
+      },
+      {
+        "id": "2104",
+        "name": "Pattern Positions",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2104"
+      },
+      {
+        "id": "1664",
+        "name": "Movie Festival Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1664"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1645",
+        "name": "Nearest Smaller Values",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1645"
+      },
+      {
+        "id": "1642",
+        "name": "Sum of Four Values",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1642"
+      },
+      {
+        "id": "1683",
+        "name": "Planets and Kingdoms",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1683"
+      },
+      {
+        "id": "1091",
+        "name": "Concert Tickets",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1091"
+      }
+    ]
   }
 }
