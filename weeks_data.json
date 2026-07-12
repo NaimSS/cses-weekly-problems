@@ -1052,5 +1052,67 @@
         "url": "https://cses.fi/problemset/task/1091"
       }
     ]
+  },
+  "2026-07-12": {
+    "hard": [
+      {
+        "id": "3225",
+        "name": "Inverse Suffix Array",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/3225"
+      },
+      {
+        "id": "3157",
+        "name": "Collecting Numbers Distribution",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3157"
+      }
+    ],
+    "medium": [
+      {
+        "id": "3399",
+        "name": "Raab Game I",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/3399"
+      },
+      {
+        "id": "3304",
+        "name": "Visible Buildings Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/3304"
+      },
+      {
+        "id": "1665",
+        "name": "Coding Company",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1665"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1630",
+        "name": "Tasks and Deadlines",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1630"
+      },
+      {
+        "id": "1675",
+        "name": "Road Reparation",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1675"
+      },
+      {
+        "id": "1202",
+        "name": "Investigation",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1202"
+      },
+      {
+        "id": "1640",
+        "name": "Sum of Two Values",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1640"
+      }
+    ]
   }
 }
