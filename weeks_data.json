@@ -1114,5 +1114,67 @@
         "url": "https://cses.fi/problemset/task/1640"
       }
     ]
+  },
+  "2026-07-19": {
+    "hard": [
+      {
+        "id": "2421",
+        "name": "Counting Reorders",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/2421"
+      },
+      {
+        "id": "3424",
+        "name": "Distinct Sums Grid",
+        "section": "Construction Problems",
+        "url": "https://cses.fi/problemset/task/3424"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2191",
+        "name": "Polygon Area",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/2191"
+      },
+      {
+        "id": "2081",
+        "name": "Fixed-Length Paths II",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/2081"
+      },
+      {
+        "id": "1134",
+        "name": "Prüfer Code",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1134"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1662",
+        "name": "Subarray Divisibility",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1662"
+      },
+      {
+        "id": "2431",
+        "name": "Digit Queries",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/2431"
+      },
+      {
+        "id": "2428",
+        "name": "Distinct Values Subarrays II",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2428"
+      },
+      {
+        "id": "1192",
+        "name": "Counting Rooms",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1192"
+      }
+    ]
   }
 }
