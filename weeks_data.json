@@ -1176,5 +1176,67 @@
         "url": "https://cses.fi/problemset/task/1192"
       }
     ]
+  },
+  "2026-07-26": {
+    "hard": [
+      {
+        "id": "2115",
+        "name": "Bit Substrings",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/2115"
+      },
+      {
+        "id": "2174",
+        "name": "Removing Digits II",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/2174"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1747",
+        "name": "Pyramid Array",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/1747"
+      },
+      {
+        "id": "3226",
+        "name": "Subarray Sum Queries II",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/3226"
+      },
+      {
+        "id": "2143",
+        "name": "Reachability Queries",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2143"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1624",
+        "name": "Chessboard and Queens",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1624"
+      },
+      {
+        "id": "1132",
+        "name": "Tree Distances I",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1132"
+      },
+      {
+        "id": "1680",
+        "name": "Longest Flight Route",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1680"
+      },
+      {
+        "id": "1071",
+        "name": "Number Spiral",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1071"
+      }
+    ]
   }
 }
