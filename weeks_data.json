@@ -1238,5 +1238,67 @@
         "url": "https://cses.fi/problemset/task/1071"
       }
     ]
+  },
+  "2026-08-02": {
+    "hard": [
+      {
+        "id": "3305",
+        "name": "K-th Highest Score",
+        "section": "Interactive Problems",
+        "url": "https://cses.fi/problemset/task/3305"
+      },
+      {
+        "id": "3227",
+        "name": "Sliding Window Advertisement",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3227"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1157",
+        "name": "Mex Grid Queries",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1157"
+      },
+      {
+        "id": "2102",
+        "name": "Finding Patterns",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2102"
+      },
+      {
+        "id": "1726",
+        "name": "Moving Robots",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1726"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1163",
+        "name": "Traffic Lights",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1163"
+      },
+      {
+        "id": "1652",
+        "name": "Forest Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1652"
+      },
+      {
+        "id": "1678",
+        "name": "Round Trip II",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1678"
+      },
+      {
+        "id": "1068",
+        "name": "Weird Algorithm",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1068"
+      }
+    ]
   }
 }
