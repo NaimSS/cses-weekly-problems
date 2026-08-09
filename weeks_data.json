@@ -1300,5 +1300,67 @@
         "url": "https://cses.fi/problemset/task/1068"
       }
     ]
+  },
+  "2026-08-09": {
+    "hard": [
+      {
+        "id": "3141",
+        "name": "And Subset Count",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/3141"
+      },
+      {
+        "id": "3215",
+        "name": "Bouncing Ball Steps",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3215"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1705",
+        "name": "Forbidden Cities",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1705"
+      },
+      {
+        "id": "2419",
+        "name": "Xor Pyramid Peak",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/2419"
+      },
+      {
+        "id": "2077",
+        "name": "Necessary Cities",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2077"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1661",
+        "name": "Subarray Sums II",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1661"
+      },
+      {
+        "id": "1195",
+        "name": "Flight Discount",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1195"
+      },
+      {
+        "id": "1687",
+        "name": "Company Queries I",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1687"
+      },
+      {
+        "id": "1717",
+        "name": "Christmas Party",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1717"
+      }
+    ]
   }
 }
