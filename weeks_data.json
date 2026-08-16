@@ -1362,5 +1362,67 @@
         "url": "https://cses.fi/problemset/task/1717"
       }
     ]
+  },
+  "2026-08-16": {
+    "hard": [
+      {
+        "id": "1728",
+        "name": "Inversion Probability",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1728"
+      },
+      {
+        "id": "3408",
+        "name": "MST Edge Set Check",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3408"
+      }
+    ],
+    "medium": [
+      {
+        "id": "3211",
+        "name": "Number of Subset Xors",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/3211"
+      },
+      {
+        "id": "1654",
+        "name": "SOS Bit Problem",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/1654"
+      },
+      {
+        "id": "3219",
+        "name": "Sliding Window Mex",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3219"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1097",
+        "name": "Removal Game",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1097"
+      },
+      {
+        "id": "2422",
+        "name": "Multiplication Table",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/2422"
+      },
+      {
+        "id": "1622",
+        "name": "Creating Strings",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1622"
+      },
+      {
+        "id": "2185",
+        "name": "Prime Multiples",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2185"
+      }
+    ]
   }
 }
