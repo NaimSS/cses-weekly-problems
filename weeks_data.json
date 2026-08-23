@@ -1424,5 +1424,67 @@
         "url": "https://cses.fi/problemset/task/2185"
       }
     ]
+  },
+  "2026-08-23": {
+    "hard": [
+      {
+        "id": "3192",
+        "name": "K Subset Xors",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/3192"
+      },
+      {
+        "id": "2423",
+        "name": "Filling Trominos",
+        "section": "Construction Problems",
+        "url": "https://cses.fi/problemset/task/2423"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2112",
+        "name": "One Bit Positions",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2112"
+      },
+      {
+        "id": "2209",
+        "name": "Counting Necklaces",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2209"
+      },
+      {
+        "id": "2194",
+        "name": "Minimum Euclidean Distance",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/2194"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1713",
+        "name": "Counting Divisors",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1713"
+      },
+      {
+        "id": "1628",
+        "name": "Meet in the Middle",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/1628"
+      },
+      {
+        "id": "1643",
+        "name": "Maximum Subarray Sum",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1643"
+      },
+      {
+        "id": "1691",
+        "name": "Mail Delivery",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1691"
+      }
+    ]
   }
 }
