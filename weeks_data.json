@@ -1486,5 +1486,67 @@
         "url": "https://cses.fi/problemset/task/1691"
       }
     ]
+  },
+  "2026-08-30": {
+    "hard": [
+      {
+        "id": "3154",
+        "name": "System of Linear Equations",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/3154"
+      },
+      {
+        "id": "2415",
+        "name": "Functional Graph Distribution",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/2415"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1709",
+        "name": "Coin Grid",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1709"
+      },
+      {
+        "id": "2138",
+        "name": "Reachable Nodes",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2138"
+      },
+      {
+        "id": "3224",
+        "name": "Sliding Window Mode",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3224"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1649",
+        "name": "Dynamic Range Minimum Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1649"
+      },
+      {
+        "id": "1676",
+        "name": "Road Construction",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1676"
+      },
+      {
+        "id": "1090",
+        "name": "Ferris Wheel",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1090"
+      },
+      {
+        "id": "3420",
+        "name": "Distinct Values Subarrays",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/3420"
+      }
+    ]
   }
 }
