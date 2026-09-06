@@ -1548,5 +1548,67 @@
         "url": "https://cses.fi/problemset/task/3420"
       }
     ]
+  },
+  "2026-09-06": {
+    "hard": [
+      {
+        "id": "3190",
+        "name": "Distinct Values Splits",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3190"
+      },
+      {
+        "id": "3152",
+        "name": "Bubble Sort Rounds II",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3152"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1075",
+        "name": "Counting Permutations",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/1075"
+      },
+      {
+        "id": "1099",
+        "name": "Stair Game",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1099"
+      },
+      {
+        "id": "2137",
+        "name": "Corner Subgrid Count",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2137"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1647",
+        "name": "Static Range Minimum Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1647"
+      },
+      {
+        "id": "2413",
+        "name": "Counting Towers",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/2413"
+      },
+      {
+        "id": "1634",
+        "name": "Minimizing Coins",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1634"
+      },
+      {
+        "id": "1751",
+        "name": "Planets Cycles",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1751"
+      }
+    ]
   }
 }
