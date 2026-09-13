@@ -1610,5 +1610,67 @@
         "url": "https://cses.fi/problemset/task/1751"
       }
     ]
+  },
+  "2026-09-13": {
+    "hard": [
+      {
+        "id": "1699",
+        "name": "Flight Route Requests",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1699"
+      },
+      {
+        "id": "3158",
+        "name": "Bus Companies",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3158"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1701",
+        "name": "Tree Isomorphism II",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1701"
+      },
+      {
+        "id": "2192",
+        "name": "Point in Polygon",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/2192"
+      },
+      {
+        "id": "2193",
+        "name": "Polygon Lattice Points",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/2193"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1648",
+        "name": "Dynamic Range Sum Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1648"
+      },
+      {
+        "id": "1085",
+        "name": "Array Division",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1085"
+      },
+      {
+        "id": "1140",
+        "name": "Projects",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1140"
+      },
+      {
+        "id": "1618",
+        "name": "Trailing Zeros",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1618"
+      }
+    ]
   }
 }
