@@ -1672,5 +1672,67 @@
         "url": "https://cses.fi/problemset/task/1618"
       }
     ]
+  },
+  "2026-09-20": {
+    "hard": [
+      {
+        "id": "2432",
+        "name": "Grid Puzzle I",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/2432"
+      },
+      {
+        "id": "3195",
+        "name": "Xor Pyramid Row",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/3195"
+      }
+    ],
+    "medium": [
+      {
+        "id": "3139",
+        "name": "Hidden Permutation",
+        "section": "Interactive Problems",
+        "url": "https://cses.fi/problemset/task/3139"
+      },
+      {
+        "id": "1724",
+        "name": "Graph Paths II",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1724"
+      },
+      {
+        "id": "3222",
+        "name": "Sliding Window Distinct Values",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3222"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1145",
+        "name": "Increasing Subsequence",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1145"
+      },
+      {
+        "id": "1131",
+        "name": "Tree Diameter",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1131"
+      },
+      {
+        "id": "1679",
+        "name": "Course Schedule",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1679"
+      },
+      {
+        "id": "1666",
+        "name": "Building Roads",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1666"
+      }
+    ]
   }
 }
