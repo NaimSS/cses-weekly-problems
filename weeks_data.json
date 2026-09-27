@@ -1734,5 +1734,67 @@
         "url": "https://cses.fi/problemset/task/1666"
       }
     ]
+  },
+  "2026-09-27": {
+    "hard": [
+      {
+        "id": "2425",
+        "name": "Stack Weights",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/2425"
+      },
+      {
+        "id": "3140",
+        "name": "Inversion Sorting",
+        "section": "Interactive Problems",
+        "url": "https://cses.fi/problemset/task/3140"
+      }
+    ],
+    "medium": [
+      {
+        "id": "3397",
+        "name": "Permutation Order",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/3397"
+      },
+      {
+        "id": "1655",
+        "name": "Maximum Xor Subarray",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/1655"
+      },
+      {
+        "id": "1689",
+        "name": "Knight's Tour",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1689"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1669",
+        "name": "Round Trip",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1669"
+      },
+      {
+        "id": "1641",
+        "name": "Sum of Three Values",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1641"
+      },
+      {
+        "id": "1095",
+        "name": "Exponentiation",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1095"
+      },
+      {
+        "id": "1638",
+        "name": "Grid Paths I",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1638"
+      }
+    ]
   }
 }
