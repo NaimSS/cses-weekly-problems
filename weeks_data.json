@@ -1796,5 +1796,67 @@
         "url": "https://cses.fi/problemset/task/1638"
       }
     ]
+  },
+  "2026-10-04": {
+    "hard": [
+      {
+        "id": "3410",
+        "name": "Maximum Manhattan Distances",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/3410"
+      },
+      {
+        "id": "3169",
+        "name": "Counting LCM Arrays",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3169"
+      }
+    ],
+    "medium": [
+      {
+        "id": "3303",
+        "name": "Nearest Shops",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3303"
+      },
+      {
+        "id": "1695",
+        "name": "Police Chase",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1695"
+      },
+      {
+        "id": "3223",
+        "name": "Sliding Window Inversions",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3223"
+      }
+    ],
+    "easy": [
+      {
+        "id": "2205",
+        "name": "Gray Code",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/2205"
+      },
+      {
+        "id": "2183",
+        "name": "Missing Coin Sum",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2183"
+      },
+      {
+        "id": "1620",
+        "name": "Factory Machines",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1620"
+      },
+      {
+        "id": "1650",
+        "name": "Range Xor Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1650"
+      }
+    ]
   }
 }
