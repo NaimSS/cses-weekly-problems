@@ -1858,5 +1858,67 @@
         "url": "https://cses.fi/problemset/task/1650"
       }
     ]
+  },
+  "2026-10-11": {
+    "hard": [
+      {
+        "id": "3233",
+        "name": "All Subarray Xors",
+        "section": "Bitwise Operations",
+        "url": "https://cses.fi/problemset/task/3233"
+      },
+      {
+        "id": "3216",
+        "name": "Bouncing Ball Cycle",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/3216"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1142",
+        "name": "Advertisement",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/1142"
+      },
+      {
+        "id": "1741",
+        "name": "Area of Rectangles",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/1741"
+      },
+      {
+        "id": "2110",
+        "name": "Substring Distribution",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/2110"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1093",
+        "name": "Two Sets II",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1093"
+      },
+      {
+        "id": "1733",
+        "name": "Finding Periods",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/1733"
+      },
+      {
+        "id": "1074",
+        "name": "Stick Lengths",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1074"
+      },
+      {
+        "id": "1735",
+        "name": "Range Updates and Sums",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1735"
+      }
+    ]
   }
 }
