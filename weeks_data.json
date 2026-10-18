@@ -1920,5 +1920,67 @@
         "url": "https://cses.fi/problemset/task/1735"
       }
     ]
+  },
+  "2026-10-18": {
+    "hard": [
+      {
+        "id": "3414",
+        "name": "Filled Subgrid Count II",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3414"
+      },
+      {
+        "id": "3417",
+        "name": "Border Subgrid Count I",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/3417"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1739",
+        "name": "Forest Queries II",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1739"
+      },
+      {
+        "id": "2072",
+        "name": "Cut and Paste",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2072"
+      },
+      {
+        "id": "1677",
+        "name": "Network Breakdown",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1677"
+      }
+    ],
+    "easy": [
+      {
+        "id": "2165",
+        "name": "Tower of Hanoi",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/2165"
+      },
+      {
+        "id": "1672",
+        "name": "Shortest Routes II",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1672"
+      },
+      {
+        "id": "1084",
+        "name": "Apartments",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1084"
+      },
+      {
+        "id": "2206",
+        "name": "Pizzeria Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/2206"
+      }
+    ]
   }
 }
