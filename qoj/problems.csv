@@ -1,4 +1,62 @@
 id,name,list,source,tags,url
+141,8 染色,D,,Communication,https://qoj.ac/problem/141
+1243,Territories,D,Petrozavodsk Summer 2020 Day 1 · PA 2019 Final,,https://qoj.ac/problem/1243
+1643,Archeologists,D,SEERC 2020,,https://qoj.ac/problem/1643
+1877,Matryoshka Dolls,D,Petrozavodsk Summer 2021 Day 7,,https://qoj.ac/problem/1877
+1963,Squid Game,D,Seoul Regional 2021 · Moscow International Workshops 2021 Day 4,,https://qoj.ac/problem/1963
+2115,Od deski do deski [A],D,PA 2021,,https://qoj.ac/problem/2115
+2128,Drzewo czerwono-czarne [C],D,PA 2021,,https://qoj.ac/problem/2128
+2376,Game on a Tree,D,SEERC 2019,,https://qoj.ac/problem/2376
+2486,Build the String,D,GP of Urals,,https://qoj.ac/problem/2486
+2507,方差,D,NOIP 2021,,https://qoj.ac/problem/2507
+2544,Flatland Currency,D,Petrozavodsk Winter 2022 Day 1,,https://qoj.ac/problem/2544
+2582,物理实验,D,SDOI 2018,,https://qoj.ac/problem/2582
+2617,Browsing the Collection,D,Petrozavodsk Winter 2022 Day 7 · Gennady Korotkevich Contest,,https://qoj.ac/problem/2617
+2836,Permutation Pattern,D,CCPC Final 2020,,https://qoj.ac/problem/2836
+3002,Busy Board,D,NAIPC 2019,,https://qoj.ac/problem/3002
+4212,Brackets,D,RuCode 2020 Division A+B Championship,,https://qoj.ac/problem/4212
+4220,Joining Points,D,RuCode 2020 Division A+B Championship,,https://qoj.ac/problem/4220
+4244,Circle Convertation,D,Discover Singapore 2019 Day 5 · 300iq Contest,,https://qoj.ac/problem/4244
+4561,Catfish Farm,D,IOI 2022 Day 1,,https://qoj.ac/problem/4561
+4629,Longest Increasing Subsequence,D,ByteDance-Moscow Workshops Camp 2022 Final,,https://qoj.ac/problem/4629
+4636,Optimal Assortment,D,ByteDance-Moscow Workshops Camp 2022 Final,,https://qoj.ac/problem/4636
+4810,Add One,D,Petrozavodsk Summer 2022 Day 3,,https://qoj.ac/problem/4810
+4812,Counting Sequence,D,Petrozavodsk Summer 2022 Day 3,,https://qoj.ac/problem/4812
+4926,Where Is the Root?,D,eJOI 2022 Day 1,Interactive,https://qoj.ac/problem/4926
+5042,Flow,D,EC-Final 2019,,https://qoj.ac/problem/5042
+5256,Insertions,D,CERC 2022,,https://qoj.ac/problem/5256
+5504,Flower Garden,D,AMPPZ 2022,,https://qoj.ac/problem/5504
+5528,Least Annoying Constructive Problem,D,Osijek Competitive Programming Camp Winter 2023 Day 1 · Anton Trygub Contest 1,,https://qoj.ac/problem/5528
+5699,单调上升路径,D,CTSC 2016 Day 2 · CTS 2016 Day 2,,https://qoj.ac/problem/5699
+6307,Chase Game 2,D,EC-Final 2022,,https://qoj.ac/problem/6307
+6331,Jewel Game,D,,,https://qoj.ac/problem/6331
+6501,Graph Partitioning,D,CCPC Final 2022,,https://qoj.ac/problem/6501
+6512,Completely Multiplicative Function,D,CCPC Final 2022,,https://qoj.ac/problem/6512
+6521,Swapping Operation,D,Universal Cup · Guangdong Provincial 2023,,https://qoj.ac/problem/6521
+6683,Difficult Constructive Problem,D,Shandong Provincial 2023,,https://qoj.ac/problem/6683
+6844,Suffix Automaton,D,CCPC Guilin 2021,,https://qoj.ac/problem/6844
+6845,Tax,D,CCPC Guilin 2021,,https://qoj.ac/problem/6845
+7523,Partially Free Meal,D,CCPC Online 2023 · Universal Cup,,https://qoj.ac/problem/7523
+7739,Knapsack,D,Nanjing Regional 2023,,https://qoj.ac/problem/7739
+7743,Grand Finale,D,Nanjing Regional 2023,,https://qoj.ac/problem/7743
+8650,Island Hopping,D,JOISC 2024 Day 4 · JOIST 2024 Day 4,Interactive,https://qoj.ac/problem/8650
+8815,Space Station,D,The 2nd Universal Cup Semifinals,,https://qoj.ac/problem/8815
+8819,CNOI Knowledge,D,The 2nd Universal Cup Semifinals · The 2nd Universal Cup Finals (Warm up),Interactive,https://qoj.ac/problem/8819
+9538,Closest Derangement,D,Chengdu Regional 2024,,https://qoj.ac/problem/9538
+9695,Trash Problem,D,,,https://qoj.ac/problem/9695
+9812,Binary Search,D,NWERC 2024,,https://qoj.ac/problem/9812
+10101,Longest Increasing Subsequence,D,The 2nd Universal Cup Finals,,https://qoj.ac/problem/10101
+10108,Divide the String,D,The 2nd Universal Cup Finals,,https://qoj.ac/problem/10108
+10110,Not Another Constructive Problem,D,The 2nd Universal Cup Finals,,https://qoj.ac/problem/10110
+11107,Iridescent Universe,D,CCPC Final 2024,,https://qoj.ac/problem/11107
+11110,Witnessing the Miracle,D,CCPC Final 2024,,https://qoj.ac/problem/11110
+11116,Yearning for Yonder,D,CCPC Final 2024,Interactive,https://qoj.ac/problem/11116
+11521,Rikka with Maximum Subsegment Sum,D,,,https://qoj.ac/problem/11521
+12005,Count Modulo 2,D,Moscow Pre-Finals Workshop 2020 Day 2,,https://qoj.ac/problem/12005
+14020,Master of Cards,D,The 3rd Universal Cup Semifinals,,https://qoj.ac/problem/14020
+14021,Shortcut on Tree,D,The 3rd Universal Cup Semifinals,,https://qoj.ac/problem/14021
+18206,Guess the Permutation,D,The 3rd Universal Cup Finals,Interactive,https://qoj.ac/problem/18206
+18207,Defense Line,D,The 3rd Universal Cup Finals,,https://qoj.ac/problem/18207
 63,Meetings,C,JOISC 2019 Day 1,Interactive,https://qoj.ac/problem/63
 80,TRAX,C,Moscow Pre-Finals Workshop 2016 Day 3,,https://qoj.ac/problem/80
 1432,Kilk,C,Petrozavodsk Winter 2020 Day 7 · Gennady Korotkevich Contest,,https://qoj.ac/problem/1432

@@ -3,7 +3,7 @@
 Weekly practice picks from the QOJ **Premier List** (https://qoj.ac/problems?premier_list=C).
 Same idea as the CSES site in the repo root, light QOJ-style UI (Bootstrap 5).
 
-Enabled lists: **C (Easy I), C2 (Easy II), B (Medium I), B2 (Medium II)**. A (Hard) and D (Beginners) are scraped/configurable but disabled.
+Enabled lists: **D (Beginners), C (Easy I)**. C2, B, B2 and A are scraped/configurable but disabled.
 
 ## Commands
 
@@ -38,7 +38,7 @@ node qoj/tests/e2e/run.mjs        # headless Chrome over CDP, no installs
 | `problems.csv` | data | `id,name,list,source,tags,url` (all scraped lists, A included) |
 | `problems.json` | generated | same as CSV (compact JSON array, `tags` as list), plus any past pick from `weeks_data.json` missing from the CSV |
 | `processed.csv` | data | append-only pick log `id,name,list,url` (written after `weeks_data.json`; a mismatch between the two only warns) |
-| `weeks_data.json` | data | `{ "YYYY-MM-DD": { "C": [problem…], "C2": […], "B": […], "B2": […] } }` |
+| `weeks_data.json` | data | `{ "YYYY-MM-DD": { "D": [problem…], "C": […] } }` |
 | `index.html` | generated | redirect to latest week |
 | `all.html`, `rank.html`, `weeks/<date>.html` | generated shells | JS renders content from `window.QOJ_PAGE` |
 | `leaderboard.html`, `solved.html`, `profile.html` | hand-written static | |
@@ -59,12 +59,12 @@ node qoj/tests/e2e/run.mjs        # headless Chrome over CDP, no installs
 ### PREMIER_LISTS (premier.py) — display order easy → hard
 | key | label | count/week | enabled |
 |---|---|---|---|
-| C | Easy I | 2 | yes |
-| C2 | Easy II | 2 | yes |
-| B | Medium I | 2 | yes |
-| B2 | Medium II | 1 | yes |
+| D | Beginners | 3 | yes |
+| C | Easy I | 4 | yes |
+| C2 | Easy II | 0 | no |
+| B | Medium I | 0 | no |
+| B2 | Medium II | 0 | no |
 | A | Hard | 0 | no |
-| D | Beginners | 0 | no |
 
 Exposed to JS as `window.QOJ_LISTS` in `assets/config.js`: `[{key, label, count, enabled}, …]` in this order.
 
@@ -103,7 +103,7 @@ Every page (generated or static) has this structure:
 ```
 - `{BASE}` = `""` for `qoj/*.html`, `"../"` for `qoj/weeks/*.html`.
 - `QOJ_PAGE` per page:
-  - week: `{ "type": "week", "date": "2026-10-25", "problems": { "C": [...], "C2": [...], "B": [...], "B2": [...] } }` → `assets/week.js`
+  - week: `{ "type": "week", "date": "2026-10-25", "problems": { "D": [...], "C": [...] } }` → `assets/week.js`
   - all: `{ "type": "all", "weeks": ["2026-10-25", …] }` (newest first) → `assets/all.js`
   - rank: `{ "type": "rank", "weeks": <weeks_data.json> }` → `assets/rank.js`
   - leaderboard / solved / profile: `{ "type": "<name>" }` (they fetch `{BASE}problems.json`)

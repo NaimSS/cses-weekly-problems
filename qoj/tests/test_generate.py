@@ -15,7 +15,7 @@ sys.path.insert(0, str(QOJ_DIR))
 import generate  # noqa: E402
 import premier  # noqa: E402
 
-PER_LIST = {"C": 2, "C2": 2, "B": 2, "B2": 1}
+PER_LIST = {"D": 3, "C": 4}
 
 
 def make_problems(n=20):
@@ -71,10 +71,10 @@ class PickTests(TmpCase):
             self.assertTrue(all(p["list"] == k for p in ps))
 
     def test_pool_too_small(self):
-        few = [p for p in make_problems() if p["list"] != "B2"]
+        few = [p for p in make_problems() if p["list"] != "C"]
         with self.assertRaises(ValueError) as cm:
             premier.pick_week(few, random.Random(1))
-        self.assertIn("B2", str(cm.exception))
+        self.assertIn("List C", str(cm.exception))
 
     def test_deterministic_with_seed(self):
         a = premier.pick_week(make_problems(), random.Random(7))
@@ -133,10 +133,10 @@ class PickTests(TmpCase):
     def test_low_pool_emits_actions_warning(self):
         premier.save_problems_csv(self.dir / "problems.csv", make_problems(5))
         out = self.run_quiet()
-        self.assertRegex(out, r"(?m)^::warning::list C has only 3 unpicked")
+        self.assertRegex(out, r"(?m)^::warning::list C has only 1 unpicked")
 
     def test_pool_exhausted_writes_nothing(self):
-        premier.save_problems_csv(self.dir / "problems.csv", [p for p in make_problems() if p["list"] != "B2"])
+        premier.save_problems_csv(self.dir / "problems.csv", [p for p in make_problems() if p["list"] != "C"])
         with self.assertRaises(SystemExit), contextlib.redirect_stdout(io.StringIO()) as buf:
             self.run_gen()
         self.assertIn("::error::", buf.getvalue())

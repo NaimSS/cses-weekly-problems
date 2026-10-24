@@ -32,7 +32,7 @@ test('displayName prefers qoj_handle, then username, then Anonymous', () => {
 });
 
 test('lists falls back to defaults and filters disabled', () => {
-  assert.deepStrictEqual([...load().lists().map(l => l.key)], ['C', 'C2', 'B', 'B2']);
+  assert.deepStrictEqual([...load().lists().map(l => l.key)], ['D', 'C']);
   const Q = load({ QOJ_LISTS: [
     { key: 'C', label: 'Easy I', count: 2, enabled: true },
     { key: 'A', label: 'Hard', count: 0, enabled: false },

@@ -49,9 +49,9 @@ for (const d of WEEK_DATES) {
 }
 const weeksData = JSON.parse(readFileSync(join(site, 'weeks_data.json'), 'utf8'));
 const problems = JSON.parse(readFileSync(join(site, 'problems.json'), 'utf8'));
-const LISTS = ['C', 'C2', 'B', 'B2'];
-const LIST_COUNTS = { C: 2, C2: 2, B: 2, B2: 1 };
-const LIST_SIZES = { C: 99, C2: 50, B: 98, B2: 76 };
+const LISTS = ['D', 'C'];
+const LIST_COUNTS = { D: 3, C: 4 };
+const LIST_SIZES = { D: 58, C: 99 };
 const weekIds = (d) => LISTS.flatMap((k) => weeksData[d][k].map((p) => p.id));
 const enabledProblems = problems.filter((p) => LISTS.includes(p.list));
 const XSS = '<img src=x onerror=window.__xss=1>';
@@ -229,14 +229,14 @@ try {
   await onPage('week: rows/titles/links, checkboxes disabled when logged out', `weeks/${W}.html`, { db: OUT(), wait: READY.week }, async (p) => {
     assert.equal(await p.eval(`document.querySelectorAll('#pane-problems table.problem-table tbody tr[data-id]').length`), 7);
     const per = await p.eval(`[...document.querySelectorAll('#pane-problems table.problem-table')].map(t => t.querySelectorAll('tbody tr[data-id]').length)`);
-    assert.deepEqual(per, [2, 2, 2, 1]);
+    assert.deepEqual(per, [3, 4]);
     const links = await p.eval(`[...document.querySelectorAll('table.problem-table tbody tr[data-id]')].map(tr => [tr.dataset.id, tr.querySelector('a').href])`);
     assert.deepEqual(links.map((l) => l[0]), wIds);
     for (const [id, href] of links) assert.equal(href, `https://qoj.ac/problem/${id}`);
     assert.equal(await p.eval(`[...document.querySelectorAll('input.solve-check')].every(c => c.disabled)`), true);
     assert.equal(await p.eval(`document.querySelectorAll('input.solve-check').length`), 7);
     const headings = await p.eval(`[...document.querySelectorAll('#pane-problems h4')].map(h => h.innerText)`);
-    assert.deepEqual(headings, ['Easy I', 'Easy II', 'Medium I', 'Medium II']);
+    assert.deepEqual(headings, ['Beginners', 'Easy I']);
   });
   await onPage('week: logged-in pre-checked, toggle writes upsert qoj:<id>', `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), wait: `document.querySelector('input.solve-check:checked')` }, async (p) => {
     const checked = await p.eval(`[...document.querySelectorAll('input.solve-check:checked')].map(c => c.dataset.id)`);
@@ -270,7 +270,7 @@ try {
     assert.deepEqual(rows[0].slice(0, 3), ['1', XSS, '7 / 7']);
     assert.deepEqual(rows[1].slice(0, 3), ['2', 'AliceQ', '3 / 7']);
     assert.deepEqual(rows[2].slice(0, 3), ['3', '<svg onload=window.__xss=1>', '1 / 7']);
-    assert.deepEqual(rows[1].slice(3), ['2 / 2', '0 / 2', '0 / 2', '1 / 1']); // wIds[0],[1] in C; wIds[6] is B2
+    assert.deepEqual(rows[1].slice(3), ['2 / 3', '1 / 4']); // wIds[0],[1] in D; wIds[6] is C
     assert.equal(await p.eval(`document.querySelectorAll('table.week-grid tbody tr').length`), 3);
     assert.equal(await p.eval(`window.__xss`), undefined);
   });
@@ -304,23 +304,23 @@ try {
   const grand = enabledProblems.length;
   await onPage('leaderboard: ordering, per-list counts, qoj-only, >1000 rows paginate', 'leaderboard.html', { db: makeDb({ session: null, bulk: true }), wait: `document.querySelector('table.rank-table tbody tr')` }, async (p) => {
     const rows = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => [...tr.children].map(td => td.innerText.replace(/^[🥇🥈🥉]\\s*/u,"").replace(/\\s+/g,' ').trim()))`);
-    assert.equal(grand, 323);
+    assert.equal(grand, 157);
     const bulk = rows.filter((r) => /^bulk/.test(r[1]));
     assert.equal(bulk.length, 4);
-    for (const r of bulk) assert.equal(r[6], `323 / 323`);
+    for (const r of bulk) assert.equal(r[4], `157 / 157`);
     assert.deepEqual(bulk.map((r) => r[0]), ['1', '1', '1', '1']); // tied rank
     const head = await p.eval(`[...document.querySelectorAll('table.rank-table thead th')].map(th => th.innerText.trim())`);
-    assert.deepEqual(head, ['#', 'User', 'Easy I', 'Easy II', 'Medium I', 'Medium II', 'Total']);
-    assert.deepEqual(bulk[0].slice(2, 6), ['99 / 99', '50 / 50', '98 / 98', '76 / 76']);
+    assert.deepEqual(head, ['#', 'User', 'Beginners', 'Easy I', 'Total']);
+    assert.deepEqual(bulk[0].slice(2, 4), ['58 / 58', '99 / 99']);
     const alice = rows.find((r) => r[1] === 'AliceQ'), u2 = rows.find((r) => r[1] === XSS), carol = rows.find((r) => r[1].startsWith('<svg'));
     const cnt = (ids) => LISTS.map((k) => ids.filter((i) => problems.find((p2) => p2.id === i && p2.list === k)).length);
     const w1 = weekIds(WEEK_DATES[0]), w2 = weekIds(WEEK_DATES[1]);
     const expU1 = cnt([w1[0], w1[1], w1[6], w2[0]]), expU2 = cnt([...w1, w2[3], w2[4]]);
-    assert.deepEqual(alice.slice(2, 6).map((s) => +s.split(' / ')[0]), expU1);
-    assert.equal(alice[6], `4 / ${grand}`);
-    assert.deepEqual(u2.slice(2, 6).map((s) => +s.split(' / ')[0]), expU2);
-    assert.equal(u2[6], `9 / ${grand}`);
-    assert.equal(carol[6], `1 / ${grand}`, 'bare numeric / non-qoj rows must be ignored');
+    assert.deepEqual(alice.slice(2, 4).map((s) => +s.split(' / ')[0]), expU1);
+    assert.equal(alice[4], `4 / ${grand}`);
+    assert.deepEqual(u2.slice(2, 4).map((s) => +s.split(' / ')[0]), expU2);
+    assert.equal(u2[4], `9 / ${grand}`);
+    assert.equal(carol[4], `1 / ${grand}`, 'bare numeric / non-qoj rows must be ignored');
     assert.ok(rows.indexOf(u2) < rows.indexOf(alice) && rows.indexOf(alice) < rows.indexOf(carol));
     assert.equal(await p.eval(`window.__xss`), undefined);
   });
@@ -357,7 +357,7 @@ try {
   });
   await onPage('solved: logged-out is read-only', 'solved.html', { db: OUT(), wait: READY.solved }, async (p) => {
     assert.equal(await p.eval(`[...document.querySelectorAll('input.solve-check')].every(c => c.disabled)`), true);
-    assert.equal(await p.text('#solved-count'), 'Solved 0 / 99');
+    assert.equal(await p.text('#solved-count'), 'Solved 0 / 58');
     assert.ok(await p.eval(`!!document.querySelector('#signin-hint')`));
   });
 
@@ -385,7 +385,7 @@ try {
   await onPage('profile: import preview + confirm (only new ids, never done=false)', 'profile.html', { db: makeDb({ session: 'u1' }), wait: `document.querySelector('#import-file')` }, async (p) => {
     const w1 = weekIds(WEEK_DATES[0]);
     const already = [w1[0], w1[1]];                 // u1 already has these
-    const fresh = [w1[2], w1[3], w1[4]];             // C/B/B2 etc: new
+    const fresh = [w1[2], w1[3], w1[4]];             // D/C: new
     const outside = '999999';                        // not in problems.json: skipped, never written
     const accepted = [...already, ...fresh, outside];
     const tried = [w1[5], '777777'];                 // Tried problems must NOT be imported
@@ -407,8 +407,7 @@ try {
     const asObj = Object.fromEntries(prev);
     assert.equal(asObj['Handle in page'], 'AliceQ');
     assert.equal(asObj['Accepted problems found'], String(accepted.length));
-    assert.equal(asObj['Easy I'], String(cntList('C'))); assert.equal(asObj['Easy II'], String(cntList('C2')));
-    assert.equal(asObj['Medium I'], String(cntList('B'))); assert.equal(asObj['Medium II'], String(cntList('B2')));
+    assert.equal(asObj['Beginners'], String(cntList('D'))); assert.equal(asObj['Easy I'], String(cntList('C')));
     assert.equal(asObj['Skipped (not in premier lists)'], '1');
     assert.equal(asObj['Already marked'], '2'); assert.equal(asObj['New to import'], String(fresh.length));
     assert.equal((await p.writes()).length, 0, 'preview must not write');
