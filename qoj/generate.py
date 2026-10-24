@@ -33,8 +33,7 @@ SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "sb_publishable_Df8xVwyl
 
 # Public URL of the qoj/ directory; link previews (WhatsApp etc.) need absolute URLs.
 SITE_URL = "https://naimss.github.io/cses-weekly-problems/qoj/"
-OG_DESCRIPTION = ("Treino semanal de programação competitiva da UNICAMP: problemas da "
-                  "QOJ Premier List (C, C2, B, B2). Resolva, marque seu progresso e suba no ranking!")
+OG_DESCRIPTION = "Treino semanal de problemas da QOJ Premier List"
 
 
 # ── rendering ─────────────────────────────────────────────────────────────────
