@@ -238,7 +238,7 @@ class PageTests(TmpCase):
         pos = [html.index(f'{s}"') for s in order]
         self.assertEqual(pos, sorted(pos))
         self.assertLess(html.index("window.QOJ_PAGE"), pos[0])
-        self.assertIn("seed 42", html)
+        self.assertNotIn("seed", html)
 
     def test_top_level_shells(self):
         self.run_gen(date="2026-10-25")

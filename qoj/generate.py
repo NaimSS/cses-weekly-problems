@@ -51,7 +51,7 @@ def preconnect_links() -> str:
     return "".join(f'  <link rel="preconnect" href="{escape(o)}" crossorigin>\n' for o in origins)
 
 
-def build_shell(title: str, active: str, base: str, page: dict, script: str, seed: int = SEED) -> str:
+def build_shell(title: str, active: str, base: str, page: dict, script: str) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,7 +67,7 @@ def build_shell(title: str, active: str, base: str, page: dict, script: str, see
     <div id="site-header" data-active="{active}"></div>
     <main id="page"><p class="text-muted">Loading…</p></main>
     <footer class="site-footer">
-      Problems from <a href="https://qoj.ac/problems?premier_list=C" target="_blank">QOJ Premier List</a> · seed {seed} · <a href="https://github.com/NaimSS/cses-weekly-problems" target="_blank">source</a>
+      Problems from <a href="https://qoj.ac/problems?premier_list=C" target="_blank">QOJ Premier List</a> · <a href="https://github.com/NaimSS/cses-weekly-problems" target="_blank">source</a>
     </footer>
   </div>
   <script>window.QOJ_BASE = {js_json(base)}; window.QOJ_PAGE = {js_json(page)};</script>
@@ -81,19 +81,19 @@ def build_shell(title: str, active: str, base: str, page: dict, script: str, see
 """
 
 
-def build_week(week_iso: str, problems: dict, seed: int = SEED) -> str:
+def build_week(week_iso: str, problems: dict) -> str:
     page = {"type": "week", "date": week_iso, "problems": problems}
-    return build_shell(f"QOJ Premier Weekly · {week_iso}", "weekly", "../", page, "week", seed)
+    return build_shell(f"QOJ Premier Weekly · {week_iso}", "weekly", "../", page, "week")
 
 
-def build_all(weeks: list[str], seed: int = SEED) -> str:
+def build_all(weeks: list[str]) -> str:
     page = {"type": "all", "weeks": sorted(weeks, reverse=True)}
-    return build_shell("QOJ Premier Weekly · All weeks", "all", "", page, "all", seed)
+    return build_shell("QOJ Premier Weekly · All weeks", "all", "", page, "all")
 
 
-def build_rank(weeks_data: dict, seed: int = SEED) -> str:
+def build_rank(weeks_data: dict) -> str:
     page = {"type": "rank", "weeks": weeks_data}
-    return build_shell("QOJ Premier Weekly · Rankings", "rank", "", page, "rank", seed)
+    return build_shell("QOJ Premier Weekly · Rankings", "rank", "", page, "rank")
 
 
 def build_redirect(latest: str) -> str:
@@ -130,7 +130,7 @@ def merge_picked(problems: list[dict], weeks_data: dict) -> list[dict]:
     return problems + extra
 
 
-def write_site(out: Path, weeks_data: dict, problems: list[dict], seed: int = SEED) -> None:
+def write_site(out: Path, weeks_data: dict, problems: list[dict]) -> None:
     """Write every generated file under `out` (the qoj/ directory)."""
     problems = merge_picked(problems, weeks_data)
     (out / "weeks").mkdir(parents=True, exist_ok=True)
@@ -138,9 +138,9 @@ def write_site(out: Path, weeks_data: dict, problems: list[dict], seed: int = SE
     (out / "problems.json").write_text(json.dumps(problems, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
     (out / "assets" / "config.js").write_text(build_config_js(), encoding="utf-8")
     for week_iso, wd in weeks_data.items():
-        (out / "weeks" / f"{week_iso}.html").write_text(build_week(week_iso, wd, seed), encoding="utf-8")
-    (out / "all.html").write_text(build_all(list(weeks_data), seed), encoding="utf-8")
-    (out / "rank.html").write_text(build_rank(weeks_data, seed), encoding="utf-8")
+        (out / "weeks" / f"{week_iso}.html").write_text(build_week(week_iso, wd), encoding="utf-8")
+    (out / "all.html").write_text(build_all(list(weeks_data)), encoding="utf-8")
+    (out / "rank.html").write_text(build_rank(weeks_data), encoding="utf-8")
     if weeks_data:
         (out / "index.html").write_text(build_redirect(max(weeks_data)), encoding="utf-8")
 
@@ -191,7 +191,7 @@ def run(args) -> None:
         else:
             pick_and_save(args, week_iso, problems, weeks_data, processed_path, weeks_path)
 
-    write_site(out, weeks_data, problems, args.seed)
+    write_site(out, weeks_data, problems)
     print(f"Wrote {len(weeks_data)} week page(s) + all/rank/problems.json/config.js → {out}")
 
 
