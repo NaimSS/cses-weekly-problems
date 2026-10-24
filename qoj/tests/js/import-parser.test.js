@@ -67,3 +67,34 @@ test('real QOJ markup: Accepted and Tried in the same list-group-item, saved-fro
   assert.deepStrictEqual(r.solvedIds, ['7747', '12']);
   assert.strictEqual(r.handle, 'NaimSS');
 });
+
+test('linear time on pathological input (unclosed tags, long attributes)', () => {
+  const cases = {
+    'unclosed headings': '<h1 '.repeat(32000),
+    'unclosed heading + far close': '<h2 '.repeat(32000) + '>x</h2>',
+    'unclosed meta': '<meta '.repeat(32000),
+    'unclosed link': '<link '.repeat(32000) + '>',
+    'unclosed href': '<h4>Accepted problems</h4><a href="' + '/problem/1'.repeat(32000),
+    'many headings': '<h3>Tried</h3>'.repeat(32000),
+  };
+  for (const [name, html] of Object.entries(cases)) {
+    const t = Date.now();
+    parseQojProfile(html);
+    const ms = Date.now() - t;
+    assert.ok(ms < 200, `${name}: ${ms}ms`);
+  }
+});
+
+test('heading scan: unclosed lower heading does not hide a later Accepted block', () => {
+  const html = page(`<h1 class="x">broken <h4>Accepted problems</h4><a href="/problem/42">42</a>`);
+  assert.deepStrictEqual(parseQojProfile(html).solvedIds, ['42']);
+  // a heading at another level does not close it
+  assert.deepStrictEqual(parseQojProfile(page(`<h4>Accepted problems</h3><a href="/problem/1">1</a></h4><a href="/problem/2">2</a>`)).solvedIds, ['2']);
+  // case-insensitive closing tag, last /problem/<n> in a href wins
+  assert.deepStrictEqual(parseQojProfile(page(`<H4>Accepted problems</H4 ><a href="/problem/1/problem/9">x</a>`)).solvedIds, ['9']);
+});
+
+test('handle: og:url with content before property', () => {
+  assert.strictEqual(parseQojProfile(page('', '<meta content="https://qoj.ac/user/profile/dave" property="og:url">')).handle, 'dave');
+  assert.strictEqual(parseQojProfile(page('', '<link href="https://qoj.ac/user/profile/eve%21" rel="canonical">')).handle, 'eve!');
+});

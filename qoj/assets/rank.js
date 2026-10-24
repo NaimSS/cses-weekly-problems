@@ -26,7 +26,7 @@
       '<div class="rank-scroll"><table class="table table-bordered table-hover rank-table"><thead><tr><th>#</th><th class="user-cell">User</th>';
     dates.forEach(function (d) {
       var ps = weekProblems(d);
-      if (expanded.has(d)) {
+      if (expanded.has(d) && ps.length) {
         h += ps.map(function (p, i) {
           return '<th' + (i === 0 ? ' class="week-head" data-week="' + esc(d) + '"' : '') + ' title="' + esc(p.name) + '">' +
             (i === 0 ? esc(d) + '<br>' : '') + '#' + esc(p.id) + '</th>';
@@ -38,7 +38,7 @@
       h += '<tr' + (r.uid === me ? ' class="me-row"' : '') + '><td>' + r.rank + '</td><td class="user-cell">' + esc(r.name) + '</td>';
       dates.forEach(function (d) {
         var ps = weekProblems(d);
-        if (expanded.has(d)) {
+        if (expanded.has(d) && ps.length) {
           h += ps.map(function (p) {
             return r.set.has(String(p.id)) ? '<td class="cell-yes">✓</td>' : '<td class="cell-no">✗</td>';
           }).join('');
@@ -49,7 +49,12 @@
       });
       h += '<td><strong>' + r.total + '</strong></td></tr>';
     });
-    if (!model.rows.length) h += '<tr><td colspan="' + (dates.length + 3) + '" class="text-muted">No progress recorded yet.</td></tr>';
+    if (!model.rows.length) {
+      var cols = 3;
+      dates.forEach(function (d) { var n = weekProblems(d).length; cols += expanded.has(d) && n ? n : 1; });
+      h += '<tr><td colspan="' + cols + '" class="text-muted">' +
+        (Q.hasBackend() ? 'No progress recorded yet.' : 'Progress tracking not configured.') + '</td></tr>';
+    }
     root.innerHTML = h + '</tbody></table></div>';
   }
 

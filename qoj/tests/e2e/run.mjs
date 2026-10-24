@@ -34,6 +34,13 @@ for (const f of ['weeks_data.json', 'processed.csv']) rmSync(join(site, f), { fo
 rmSync(join(site, 'weeks'), { recursive: true, force: true });
 writeFileSync(join(site, 'processed.csv'), 'id,name,list,url\n');
 writeFileSync(join(site, 'weeks_data.json'), '{}');
+// long source badges on every problem (mobile overflow checks); nothing asserts on source text
+const LONG_SOURCE = 'The 3rd Universal Cup Stage 27: Some-Very-Long-Contest-Name-Without-Any-Spaces-2026 · Day 1';
+execFileSync(join(REPO, '.venv/bin/python'), ['-I', '-c', `import csv,sys
+p=sys.argv[1]; rows=list(csv.DictReader(open(p,newline='',encoding='utf-8')))
+for r in rows: r['source']=sys.argv[2]
+w=csv.DictWriter(open(p,'w',newline='',encoding='utf-8'),fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)`,
+  join(site, 'problems.csv'), LONG_SOURCE], { stdio: 'pipe' });
 const WEEK_DATES = ['2026-10-18', '2026-10-25'];
 for (const d of WEEK_DATES) {
   execFileSync(join(REPO, '.venv/bin/python'), [join(REPO, 'qoj/generate.py'), '--date', d,
@@ -52,7 +59,8 @@ const XSS = '<img src=x onerror=window.__xss=1>';
 /* ---------- fake data ---------- */
 const NOW = '2026-10-20T00:00:00Z';
 const prog = (u, id, done = true) => ({ user_id: u, problem_id: 'qoj:' + id, done, updated_at: NOW });
-function makeDb({ session = 'u1', bulk = false, missingHandleColumn = false } = {}) {
+const LONG_HANDLE = 'AliceQ' + 'x'.repeat(34); // 40 chars, the max allowed
+function makeDb({ session = 'u1', bulk = false, missingHandleColumn = false, longHandle = false, ...extra } = {}) {
   const w1 = weekIds(WEEK_DATES[0]), w2 = weekIds(WEEK_DATES[1]);
   const progress = [
     // u1: 3 of week1, 1 of week2
@@ -72,9 +80,10 @@ function makeDb({ session = 'u1', bulk = false, missingHandleColumn = false } = 
   ];
   if (bulk) ['bulk1', 'bulk2', 'bulk3', 'bulk4'].forEach((u) => profiles.push({ user_id: u, username: u, avatar_url: null, qoj_handle: null }));
   if (missingHandleColumn) profiles.forEach((p) => delete p.qoj_handle);
+  if (longHandle) profiles[0].qoj_handle = LONG_HANDLE;
   return {
     session: session ? { user: { id: session, user_metadata: { user_name: profiles.find((p) => p.user_id === session)?.username } } } : null,
-    progress, profiles, missingHandleColumn,
+    progress, profiles, missingHandleColumn, ...extra,
   };
 }
 
@@ -91,7 +100,7 @@ const chrome = await launchChrome();
 const srv = await startServer(site);
 const ORIGIN = `http://127.0.0.1:${srv.port}/`;
 
-async function openPage(path, { db = null, width = 1100, height = 900, wait = null, hash = '' } = {}) {
+async function openPage(path, { db = null, width = 1100, height = 900, wait = null, hash = '', preScript = null } = {}) {
   const t = await newTarget(chrome.port);
   const { send, on } = t;
   const errors = [];
@@ -116,6 +125,7 @@ async function openPage(path, { db = null, width = 1100, height = 900, wait = nu
   await send('Fetch.enable', { patterns: [{ urlPattern: '*supabase-js*' }, { urlPattern: '*bootstrap*' }] });
   await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 500 });
   if (db) await send('Page.addScriptToEvaluateOnNewDocument', { source: `window.__FAKE_DB__ = ${JSON.stringify(db)};` });
+  if (preScript) await send('Page.addScriptToEvaluateOnNewDocument', { source: preScript });
   page.eval = async (expr) => {
     const r = await send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true });
     if (r.exceptionDetails) throw new Error('eval failed: ' + (r.exceptionDetails.exception?.description || r.exceptionDetails.text) + '\n' + expr);
@@ -376,7 +386,7 @@ try {
     const w1 = weekIds(WEEK_DATES[0]);
     const already = [w1[0], w1[1]];                 // u1 already has these
     const fresh = [w1[2], w1[3], w1[4]];             // C/B/B2 etc: new
-    const outside = '999999';                        // non-premier id, still accepted
+    const outside = '999999';                        // not in problems.json: skipped, never written
     const accepted = [...already, ...fresh, outside];
     const tried = [w1[5], '777777'];                 // Tried problems must NOT be imported
     const html = `<!-- saved from url=(0035)https://qoj.ac/user/profile/AliceQ -->
@@ -399,13 +409,14 @@ try {
     assert.equal(asObj['Accepted problems found'], String(accepted.length));
     assert.equal(asObj['Easy I'], String(cntList('C'))); assert.equal(asObj['Easy II'], String(cntList('C2')));
     assert.equal(asObj['Medium I'], String(cntList('B'))); assert.equal(asObj['Medium II'], String(cntList('B2')));
-    assert.equal(asObj['Already marked'], '2'); assert.equal(asObj['New to import'], String(fresh.length + 1));
+    assert.equal(asObj['Skipped (not in premier lists)'], '1');
+    assert.equal(asObj['Already marked'], '2'); assert.equal(asObj['New to import'], String(fresh.length));
     assert.equal((await p.writes()).length, 0, 'preview must not write');
     await p.click('#import-confirm');
     await p.waitFor(`/Imported/.test(document.querySelector('#import-msg').innerText)`);
     const w = await p.writes();
     assert.equal(w.length, 1);
-    assert.deepEqual(w[0].rows.map((r) => r.problem_id).sort(), [...fresh, outside].map((i) => 'qoj:' + i).sort());
+    assert.deepEqual(w[0].rows.map((r) => r.problem_id).sort(), fresh.map((i) => 'qoj:' + i).sort());
     assert.ok(w[0].rows.every((r) => r.done === true));
   });
 
@@ -422,14 +433,120 @@ try {
 
   /* ===== 8. mobile ===== */
   for (const [path, , kind] of ROUTES) {
-    await onPage(`mobile 375px: no horizontal page scroll on ${path}`, path, { db: makeDb({ session: 'u1', bulk: path === 'leaderboard.html' }), width: 375, height: 800, wait: READY[kind] }, async (p) => {
-      if (kind === 'week') { await p.eval(`document.querySelector('[data-tab="rankings"]').click()`); await p.waitFor(`document.querySelector('table.week-board')`); }
-      if (kind === 'rank') { await p.eval(`document.querySelector('th[data-week]').click()`); }
-      await sleep(100);
-      const m = await p.eval(`({sw: document.documentElement.scrollWidth, iw: window.innerWidth})`);
-      assert.ok(m.sw <= m.iw, `scrollWidth ${m.sw} > innerWidth ${m.iw}` + (BOOTSTRAP_CSS ? '' : ' (bootstrap offline)'));
-    });
+    for (const width of [375, 390]) {
+      await onPage(`mobile ${width}px: no horizontal page scroll on ${path} (40-char handle, long sources)`, path, { db: makeDb({ session: 'u1', bulk: path === 'leaderboard.html', longHandle: true }), width, height: 800, wait: READY[kind] }, async (p) => {
+        // with mobile emulation Chrome widens the layout viewport (innerWidth/clientWidth) to fit the content,
+        // so compare against the emulated device width, not window.innerWidth
+        const measure = async (what) => {
+          await sleep(100);
+          const m = await p.eval(`({sw: document.documentElement.scrollWidth, bw: document.body.scrollWidth})`);
+          assert.ok(m.sw <= width && m.bw <= width, `${what}: scrollWidth ${m.sw}/${m.bw} > ${width}` + (BOOTSTRAP_CSS ? '' : ' (bootstrap offline)'));
+        };
+        await measure('initial');
+        if (kind === 'solved' || kind === 'week') {
+          const box = await p.eval(`(() => { const r = document.querySelector('input.solve-check').getBoundingClientRect(); return [r.width, r.height]; })()`);
+          if (BOOTSTRAP_CSS) assert.ok(box[0] >= 22 && box[1] >= 22, 'checkbox tap target ' + box);
+        }
+        if (kind === 'week') {
+          await p.eval(`document.querySelector('[data-tab="rankings"]').click()`); await p.waitFor(`document.querySelector('table.week-board')`);
+          await measure('rankings tab');
+        }
+        if (kind === 'rank') { await p.eval(`document.querySelector('th[data-week]').click()`); await measure('expanded week'); }
+        if (kind === 'rank' || kind === 'leaderboard' || kind === 'week') {
+          // user column is sticky inside the horizontal scroller
+          assert.equal(await p.eval(`getComputedStyle(document.querySelector('.rank-scroll .rank-table td.user-cell')).position`), 'sticky');
+        }
+        const lo = await p.eval(`(() => { const r = document.querySelector('#logout-btn').getBoundingClientRect(); return [r.width, r.height]; })()`);
+        assert.ok(lo[0] >= 60 && lo[1] >= 30, 'logout tap target ' + lo);
+      });
+    }
   }
+
+  /* ===== 9. Supabase failure modes ===== */
+  await onPage('outage: leaderboard shows error (not an empty board)', 'leaderboard.html', { db: makeDb({ session: 'u1', fail: ['progress'] }), wait: `document.querySelector('#page .text-danger')` }, async (p) => {
+    assert.match(await p.text('#page'), /Could not load leaderboard/);
+    assert.doesNotMatch(await p.text('#page'), /No progress recorded/);
+  });
+  await onPage('outage: profiles error also surfaces on leaderboard', 'leaderboard.html', { db: makeDb({ session: null, fail: ['profiles'] }), wait: `document.querySelector('#page .text-danger')` }, async (p) => {
+    assert.match(await p.text('#page'), /Could not load leaderboard/);
+  });
+  await onPage('outage: rank page shows error', 'rank.html', { db: makeDb({ session: 'u1', fail: ['progress'] }), wait: `document.querySelector('#page .text-danger')` }, async (p) => {
+    assert.match(await p.text('#page'), /Could not load rankings/);
+  });
+  await onPage('outage: week page shows progress error + rankings error', `weeks/${W}.html`, { db: makeDb({ session: 'u1', fail: ['progress'] }), wait: `document.querySelector('#progress-error')` }, async (p) => {
+    assert.match(await p.text('#progress-error'), /Could not load your progress/);
+    await p.eval(`document.querySelector('[data-tab="rankings"]').click()`);
+    await p.waitFor(`/Could not load rankings/.test(document.querySelector('#pane-rankings').innerText)`);
+  });
+  await onPage('outage: solved page shows progress error', 'solved.html', { db: makeDb({ session: 'u1', fail: ['progress'] }), wait: `document.querySelector('#progress-error')` }, async () => {});
+  await onPage('outage: profile import shows error instead of "Already marked: 0"', 'profile.html', { db: makeDb({ session: 'u1', fail: ['progress'] }), wait: `document.querySelector('#import-file')` }, async (p) => {
+    const file = join(tmp, 'outage-fixture.html');
+    writeFileSync(file, `<h4>Accepted problems</h4><p><a href="/problem/${weekIds(W)[0]}">x</a></p>`);
+    const { root } = await p.send('DOM.getDocument');
+    const { nodeId } = await p.send('DOM.querySelector', { nodeId: root.nodeId, selector: '#import-file' });
+    await p.send('DOM.setFileInputFiles', { files: [file], nodeId });
+    await p.waitFor(`document.querySelector('#import-preview .text-danger')`, 'import error');
+    assert.match(await p.text('#import-preview'), /Could not load your current progress/);
+    assert.equal(await p.eval(`document.querySelector('#import-confirm').classList.contains('d-none')`), true);
+  });
+  await onPage('profile: save handle with no matching profile row reports an error', 'profile.html', { db: makeDb({ session: 'u9' }), wait: `document.querySelector('#qoj-handle-input')` }, async (p) => {
+    await p.eval(`document.querySelector('#qoj-handle-input').value = 'Ghost'; document.querySelector('#qoj-handle-save').click()`);
+    await p.waitFor(`/Could not save/.test(document.querySelector('#handle-msg').innerText)`);
+  });
+  await onPage('hang: profiles query never answers, header + week still render', `weeks/${W}.html`, { db: makeDb({ session: 'u1', hang: ['profiles'] }), wait: READY.week }, async (p) => {
+    assert.match(await p.text('#auth-area'), /alice/); // GitHub name until the profile arrives
+    assert.equal(await p.eval(`document.querySelectorAll('input.solve-check:checked').length`), 3);
+  });
+  await onPage('no backend: leaderboard says tracking not configured', 'leaderboard.html', { db: { noBackend: true }, wait: `document.querySelector('table.rank-table')` }, async (p) => {
+    assert.match(await p.text('table.rank-table'), /Progress tracking not configured/);
+    assert.match(await p.text('#auth-area'), /Offline mode/);
+  });
+  await onPage('no backend: rank says tracking not configured', 'rank.html', { db: { noBackend: true }, wait: `document.querySelector('table.rank-table')` }, async (p) => {
+    assert.match(await p.text('table.rank-table'), /Progress tracking not configured/);
+  });
+
+  /* ===== 10. auth + rendering races ===== */
+  await onPage('logout notifies pages exactly once', 'solved.html', { db: makeDb({ session: 'u1' }), wait: READY.solved }, async (p) => {
+    await p.eval(`window.__authCalls = 0; QOJ.onAuth(() => window.__authCalls++)`);
+    await p.click('#logout-btn');
+    await p.waitFor(`/Login with GitHub/.test(document.querySelector('#auth-area').innerText)`);
+    await sleep(150);
+    assert.equal(await p.eval('window.__authCalls'), 1);
+    assert.ok(await p.eval(`!!document.querySelector('#signin-hint')`));
+  });
+  await onPage('logout error still resets the UI', 'solved.html', { db: makeDb({ session: 'u1', signOutError: true }), wait: READY.solved }, async (p) => {
+    await p.eval(`window.__authCalls = 0; QOJ.onAuth(() => window.__authCalls++)`);
+    await p.click('#logout-btn');
+    await p.waitFor(`/Login with GitHub/.test(document.querySelector('#auth-area').innerText)`);
+    await sleep(100);
+    assert.equal(await p.eval('window.__authCalls'), 1);
+  });
+  await onPage('week: rapid tab switching drops stale rankings', `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), wait: READY.week }, async (p) => {
+    await p.eval(`document.querySelector('[data-tab="rankings"]').click(); document.querySelector('[data-tab="problems"]').click()`);
+    await sleep(200);
+    assert.equal(await p.eval(`document.querySelector('#pane-rankings').innerText.trim()`), 'Loading rankings…');
+  });
+  await onPage('checkbox re-enables and reverts when setDone throws', `weeks/${W}.html`, { db: makeDb({ session: 'u1', throwOnUpsert: true }), wait: READY.week }, async (p) => {
+    await p.eval(`window.__alerts = []; window.alert = (m) => window.__alerts.push(m)`);
+    const id = weekIds(W)[2];
+    await p.click(`input.solve-check[data-id="${id}"]`);
+    await p.waitFor(`!document.querySelector('input.solve-check[data-id="${id}"]').disabled`);
+    assert.equal(await p.eval(`document.querySelector('input.solve-check[data-id="${id}"]').checked`), false);
+    assert.match((await p.eval('window.__alerts'))[0], /Could not save: fake network failure/);
+  });
+  await onPage('rank: expanding a week with no enabled-list problems keeps it collapsible', 'rank.html', {
+    db: makeDb({ session: 'u1' }), wait: `document.querySelector('table.rank-table tbody tr')`,
+    preScript: `Object.defineProperty(window, 'QOJ_PAGE', { configurable: true, get() { return this.__qp; },
+      set(v) { if (v && v.weeks) v.weeks['2026-10-11'] = { A: [{ id: '1', name: 'Hard one', list: 'A' }] }; this.__qp = v; } });`,
+  }, async (p) => {
+    const ncols = () => p.eval(`document.querySelectorAll('table.rank-table thead th').length`);
+    assert.equal(await ncols(), 6);
+    await p.eval(`document.querySelector('th[data-week="2026-10-11"]').click()`);
+    assert.equal(await ncols(), 6);
+    assert.ok(await p.eval(`!!document.querySelector('th[data-week="2026-10-11"]')`));
+    const cells = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => tr.children.length)`);
+    assert.ok(cells.every((n) => n === 6), 'row widths ' + cells);
+  });
 } finally {
   await chrome.close();
   srv.close();

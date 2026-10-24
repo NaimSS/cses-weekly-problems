@@ -194,7 +194,75 @@ COMMON_CSS = """
     footer a { color: var(--muted); text-decoration: underline; }
 """
 
-AUTH_JS = """
+PODIUM_CSS = """
+    /* ── podium ── */
+    .rank-table tbody tr.podium-1 td { background-color: var(--bg); background-image: linear-gradient(rgba(250,204,21,.12), rgba(250,204,21,.12)); }
+    .rank-table tbody tr.podium-2 td { background-color: var(--bg); background-image: linear-gradient(rgba(203,213,225,.10), rgba(203,213,225,.10)); }
+    .rank-table tbody tr.podium-3 td { background-color: var(--bg); background-image: linear-gradient(rgba(205,127,50,.12), rgba(205,127,50,.12)); }
+    .rank-table tbody tr.podium-1 td:first-child { box-shadow: inset 3px 0 0 #facc15; }
+    .rank-table tbody tr.podium-2 td:first-child { box-shadow: inset 3px 0 0 #cbd5e1; }
+    .rank-table tbody tr.podium-3 td:first-child { box-shadow: inset 3px 0 0 #cd7f32; }
+    .medal { margin-right: .35rem; font-size: 1rem; line-height: 1; vertical-align: middle; }
+"""
+
+PARTICLE_CSS = """
+    /* ── done particle burst ── */
+    .done-particle {
+      position: fixed;
+      left: 0; top: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      will-change: transform, opacity;
+      animation: done-burst .7s cubic-bezier(.2,.7,.3,1) forwards;
+    }
+    @keyframes done-burst {
+      0%   { opacity: 1; transform: translate(var(--x0), var(--y0)) scale(1); }
+      100% { opacity: 0; transform: translate(calc(var(--x0) + var(--dx)), calc(var(--y0) + var(--dy))) scale(.3); }
+    }
+    @media (prefers-reduced-motion: reduce) { .done-particle { display: none; } }
+"""
+
+SAFE_JS = """
+    // Escape untrusted values (Supabase profiles, problem names) before innerHTML.
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"'`]/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;'
+      })[c]);
+    }
+
+    // Competition ranking (ties share a rank). Returns [{rank, medal}] aligned with `counts`
+    // (counts must be sorted descending). Zero-solved users never get a medal.
+    function podiumInfo(counts) {
+      return counts.map((c, i) => {
+        const rank = counts.findIndex(x => x === c) + 1;
+        const medal = c > 0 && rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : '';
+        return { rank, medal, cls: medal ? ' podium-' + rank : '' };
+      });
+    }
+
+    // Only allow https: avatar URLs; returns '' for anything else.
+    function safeImgUrl(u) {
+      try { return new URL(String(u)).protocol === 'https:' ? String(u) : ''; }
+      catch { return ''; }
+    }
+
+    // Supabase caps responses (default 1000 rows); page through with .range().
+    async function fetchAllRows(makeQuery, pageSize = 1000) {
+      const rows = [];
+      for (let from = 0; ; from += pageSize) {
+        const { data, error } = await makeQuery().range(from, from + pageSize - 1);
+        if (error || !data) break;
+        rows.push(...data);
+        if (data.length < pageSize) break;
+      }
+      return rows;
+    }
+"""
+
+AUTH_JS = SAFE_JS + """
     async function signIn() {
       await sb.auth.signInWithOAuth({
         provider: 'github',
@@ -215,10 +283,10 @@ AUTH_JS = """
       if (!USE_SUPABASE) { area.innerHTML = ''; return; }
       if (user) {
         const name   = user.user_metadata?.user_name || user.email;
-        const avatar = user.user_metadata?.avatar_url;
+        const avatar = safeImgUrl(user.user_metadata?.avatar_url);
         area.innerHTML = `
-          ${avatar ? `<img src="${avatar}" width="22" height="22" alt="">` : ''}
-          <span>${name}</span>
+          ${avatar ? `<img src="${escapeHtml(avatar)}" width="22" height="22" alt="">` : ''}
+          <span>${escapeHtml(name)}</span>
           <button class="signout-link" onclick="signOut()">Sign out</button>`;
       } else {
         area.innerHTML = `
@@ -297,7 +365,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
         "hard":   [{"id": p["id"], "name": p["name"]} for p in hard],
         "medium": [{"id": p["id"], "name": p["name"]} for p in medium],
         "easy":   [{"id": p["id"], "name": p["name"]} for p in easy],
-    }, ensure_ascii=False)
+    }, ensure_ascii=False).replace("</", "<\\/")  # keep "</script>" out of inline JS
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -456,7 +524,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
       max-width: 860px;
       margin: 0 auto;
     }}
-    .rank-leaderboard {{ margin-bottom: 2.5rem; }}
+    .rank-leaderboard {{ margin-bottom: 2.5rem; overflow-x: auto; }}
     .rank-grid-title {{
       font-size: 1rem;
       font-weight: 600;
@@ -514,6 +582,8 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
       margin-right: .4rem;
     }}
     .solved-frac {{ color: var(--muted); font-size: .8rem; }}
+{PODIUM_CSS}
+{PARTICLE_CSS}
 
     .grid-wrap {{ overflow-x: auto; }}
     .diff-label {{
@@ -666,13 +736,11 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
         ...WEEK_PROBLEMS.easy,
       ].map(p => p.id);
 
-      const [progressRes, profilesRes] = await Promise.all([
-        sb.from('progress').select('user_id, problem_id').in('problem_id', allIds).eq('done', true),
-        sb.from('profiles').select('user_id, username, avatar_url'),
+      const [progress, profiles] = await Promise.all([
+        fetchAllRows(() => sb.from('progress').select('user_id, problem_id').in('problem_id', allIds).eq('done', true)
+          .order('user_id').order('problem_id')),
+        fetchAllRows(() => sb.from('profiles').select('user_id, username, avatar_url').order('user_id')),
       ]);
-
-      const progress = progressRes.data || [];
-      const profiles = profilesRes.data || [];
 
       const userMap = new Map();
       for (const p of profiles) {{
@@ -691,6 +759,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
       }}
 
       const users = [...userMap.entries()].sort((a, b) => b[1].solved.size - a[1].solved.size);
+      const podium = podiumInfo(users.map(([, u]) => u.solved.size));
       const total = allIds.length;
 
       // ── Leaderboard table ──
@@ -706,10 +775,12 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
         const hSolved = WEEK_PROBLEMS.hard.filter(p => u.solved.has(p.id)).length;
         const mSolved = WEEK_PROBLEMS.medium.filter(p => u.solved.has(p.id)).length;
         const eSolved = WEEK_PROBLEMS.easy.filter(p => u.solved.has(p.id)).length;
-        const av = u.avatar ? `<img class="rank-avatar" src="${{u.avatar}}" width="20" height="20" alt="">` : '';
-        lb += `<tr>
-          <td><span class="rank-num">${{i + 1}}</span></td>
-          <td>${{av}}${{u.username}}</td>
+        const avUrl = safeImgUrl(u.avatar);
+        const av = avUrl ? `<img class="rank-avatar" src="${{escapeHtml(avUrl)}}" width="20" height="20" alt="">` : '';
+        const pd = podium[i];
+        lb += `<tr class="${{pd.cls.trim()}}">
+          <td><span class="rank-num">${{pd.rank}}</span></td>
+          <td>${{pd.medal ? `<span class="medal" aria-hidden="true">${{pd.medal}}</span>` : ''}}${{av}}${{escapeHtml(u.username)}}</td>
           <td><strong>${{u.solved.size}}</strong> <span class="solved-frac">/ ${{total}}</span></td>
           <td>${{hSolved}} <span class="solved-frac">/ ${{WEEK_PROBLEMS.hard.length}}</span></td>
           <td>${{mSolved}} <span class="solved-frac">/ ${{WEEK_PROBLEMS.medium.length}}</span></td>
@@ -727,8 +798,9 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
 
       let gridHead = `<tr><th>Problem</th>`;
       for (const [, u] of users) {{
-        const av = u.avatar ? `<img class="rank-avatar" src="${{u.avatar}}" width="18" height="18" alt="">` : '';
-        gridHead += `<th>${{av}}${{u.username}}</th>`;
+        const avUrl = safeImgUrl(u.avatar);
+        const av = avUrl ? `<img class="rank-avatar" src="${{escapeHtml(avUrl)}}" width="18" height="18" alt="">` : '';
+        gridHead += `<th>${{av}}${{escapeHtml(u.username)}}</th>`;
       }}
       gridHead += `</tr>`;
 
@@ -769,10 +841,12 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
     }}
 
     async function loadCloud() {{
+      const ids = [...document.querySelectorAll('.card[data-id]')].map(c => c.dataset.id);
       const {{ data }} = await sb
         .from('progress')
         .select('problem_id, done')
-        .eq('user_id', currentUser.id);
+        .eq('user_id', currentUser.id)
+        .in('problem_id', ids);
       if (!data) return;
       document.querySelectorAll('.card[data-id]').forEach(card => {{
         const row = data.find(r => r.problem_id === card.dataset.id);
@@ -780,11 +854,38 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
       }});
     }}
 
+    function burstParticles(el) {{
+      try {{
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const r = el.getBoundingClientRect();
+        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        const colors = ['#22c55e', '#6366f1', '#f59e0b', '#22c55e', '#e8eaf0'];
+        const n = 14;
+        for (let i = 0; i < n; i++) {{
+          const a = (i / n) * 2 * Math.PI + Math.random() * 0.4;
+          const d = 26 + Math.random() * 22;
+          const p = document.createElement('span');
+          p.className = 'done-particle';
+          p.setAttribute('aria-hidden', 'true');
+          p.style.setProperty('--x0', (cx - 3) + 'px');
+          p.style.setProperty('--y0', (cy - 3) + 'px');
+          p.style.setProperty('--dx', (Math.cos(a) * d).toFixed(1) + 'px');
+          p.style.setProperty('--dy', (Math.sin(a) * d).toFixed(1) + 'px');
+          p.style.background = colors[i % colors.length];
+          p.style.animationDuration = (600 + Math.random() * 200) + 'ms';
+          p.addEventListener('animationend', () => p.remove());
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 1200);
+        }}
+      }} catch (e) {{}}
+    }}
+
     async function toggleDone(btn) {{
       const card = btn.closest('.card');
       const id   = card.dataset.id;
       const done = !card.classList.contains('done');
       card.classList.toggle('done', done);
+      if (done) burstParticles(btn);
 
       if (currentUser && sb) {{
         await sb.from('progress').upsert({{
@@ -808,7 +909,7 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
 def build_rank_html(weeks_data: dict) -> str:
     sb_url = SUPABASE_URL
     sb_key = SUPABASE_ANON_KEY
-    weeks_js = json.dumps(weeks_data, ensure_ascii=False)
+    weeks_js = json.dumps(weeks_data, ensure_ascii=False).replace("</", "<\\/")
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -867,6 +968,7 @@ def build_rank_html(weeks_data: dict) -> str:
     .rank-table tbody tr:hover td:first-child {{
       background: var(--surface);
     }}
+{PODIUM_CSS}
 
     .rank-avatar {{
       border-radius: 50%;
@@ -986,13 +1088,11 @@ def build_rank_html(weeks_data: dict) -> str:
         allIds.push(...wd.hard.map(p => p.id), ...wd.medium.map(p => p.id), ...wd.easy.map(p => p.id));
       }}
 
-      const [progressRes, profilesRes] = await Promise.all([
-        sb.from('progress').select('user_id, problem_id').in('problem_id', allIds).eq('done', true),
-        sb.from('profiles').select('user_id, username, avatar_url'),
+      const [progress, profiles] = await Promise.all([
+        fetchAllRows(() => sb.from('progress').select('user_id, problem_id').in('problem_id', allIds).eq('done', true)
+          .order('user_id').order('problem_id')),
+        fetchAllRows(() => sb.from('profiles').select('user_id, username, avatar_url').order('user_id')),
       ]);
-
-      const progress = progressRes.data || [];
-      const profiles = profilesRes.data || [];
 
       const userMap = new Map();
       for (const p of profiles) {{
@@ -1035,15 +1135,18 @@ def build_rank_html(weeks_data: dict) -> str:
               + `<a class="week-link" href="weeks/${{w}}.html" onclick="event.stopPropagation()">${{label}}</a>`
               + `<span class="expand-icon">▶</span></th>`;
         for (const p of weekProbs[w]) {{
-          head += `<th class="week-prob prob-${{p.tier}}" data-week="${{w}}" style="display:none" title="${{p.name}}">${{p.lbl}}</th>`;
+          head += `<th class="week-prob prob-${{p.tier}}" data-week="${{w}}" style="display:none" title="${{escapeHtml(p.name)}}">${{p.lbl}}</th>`;
         }}
       }}
       head += `<th class="cell-total">Total</th></tr>`;
 
+      const podium = podiumInfo(users.map(([, u]) => u.solved.size));
       let body = '';
-      for (const [, u] of users) {{
-        const av = u.avatar ? `<img class="rank-avatar" src="${{u.avatar}}" width="20" height="20" alt="">` : '';
-        body += `<tr><td>${{av}}${{u.username}}</td>`;
+      users.forEach(([, u], ui) => {{
+        const pd = podium[ui];
+        const avUrl = safeImgUrl(u.avatar);
+        const av = avUrl ? `<img class="rank-avatar" src="${{escapeHtml(avUrl)}}" width="20" height="20" alt="">` : '';
+        body += `<tr class="${{pd.cls.trim()}}"><td>${{pd.medal ? `<span class="medal" aria-hidden="true">${{pd.medal}}</span>` : ''}}${{av}}${{escapeHtml(u.username)}}</td>`;
         let total = 0;
         for (const w of weeks) {{
           const wps = weekSets[w];
@@ -1060,7 +1163,7 @@ def build_rank_html(weeks_data: dict) -> str:
           }}
         }}
         body += `<td class="cell-total">${{total}}</td></tr>`;
-      }}
+      }});
 
       container.innerHTML = `
         <div class="rank-section">
@@ -1303,7 +1406,8 @@ def main():
         print("Use --rebuild-only to regenerate HTML without re-picking.")
         raise SystemExit(1)
 
-    rng    = random.Random(args.seed)
+    # Seed per week: a fixed seed on a slowly shrinking pool picks near-adjacent problems.
+    rng    = random.Random(f"{args.seed}:{today_iso}")
     picked = pick_all_tiers(available, rng)
     hard, medium, easy = picked["hard"], picked["medium"], picked["easy"]
 

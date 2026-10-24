@@ -4,11 +4,18 @@
   var Q = window.QOJ, esc = Q.escapeHtml;
   var root = document.getElementById('page');
 
+  var seq = 0;
+
   async function main() {
+    var my = ++seq;
     root.innerHTML = '<p class="text-muted">Loading…</p>';
     var data;
     try { data = await Promise.all([Q.loadProblems(), Q.fetchProgress(), Q.fetchProfiles()]); }
-    catch (e) { root.innerHTML = '<p class="text-danger">Could not load leaderboard.</p>'; return; }
+    catch (e) {
+      if (my === seq) root.innerHTML = '<p class="text-danger">Could not load leaderboard.</p>';
+      return;
+    }
+    if (my !== seq) return;
     var lists = Q.lists(), idsByList = {};
     lists.forEach(function (l) { idsByList[l.key] = new Set(); });
     data[0].forEach(function (p) { if (idsByList[p.list]) idsByList[p.list].add(String(p.id)); });
@@ -26,7 +33,7 @@
       if (total > 0) rows.push({ uid: uid, name: Q.nameOf(pmap, uid), per: per, total: total });
     });
     Q.assignRanks(rows, function (r) { return r.total; });
-    var h = '<h3 class="mb-3">Leaderboard</h3><table class="table table-bordered table-hover table-striped rank-table"><thead><tr><th>#</th><th class="user-cell">User</th>' +
+    var h = '<h3 class="mb-3">Leaderboard</h3><div class="rank-scroll"><table class="table table-bordered table-hover table-striped rank-table"><thead><tr><th>#</th><th class="user-cell">User</th>' +
       lists.map(function (l) { return '<th>' + esc(l.label) + '</th>'; }).join('') + '<th>Total</th></tr></thead><tbody>';
     rows.forEach(function (r) {
       h += '<tr' + (r.uid === me ? ' class="me-row"' : '') + '><td>' + r.rank + '</td><td class="user-cell">' + esc(r.name) + '</td>' +
@@ -35,8 +42,11 @@
           return '<td>' + n + ' / ' + tot + '<div class="progress thin"><div class="progress-bar bg-success" style="width:' + pct + '%"></div></div></td>';
         }).join('') + '<td><strong>' + r.total + ' / ' + grand + '</strong></td></tr>';
     });
-    if (!rows.length) h += '<tr><td colspan="' + (lists.length + 3) + '" class="text-muted">No progress recorded yet.</td></tr>';
-    root.innerHTML = h + '</tbody></table>';
+    if (!rows.length) {
+      h += '<tr><td colspan="' + (lists.length + 3) + '" class="text-muted">' +
+        (Q.hasBackend() ? 'No progress recorded yet.' : 'Progress tracking not configured.') + '</td></tr>';
+    }
+    root.innerHTML = h + '</tbody></table></div>';
   }
 
   Q.ready.then(function () { main(); Q.onAuth(main); });

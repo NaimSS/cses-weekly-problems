@@ -27,3 +27,26 @@ table.rank-table .cell-no { color: #adb5bd; }
 /* QOJ links are not underlined */
 .problem-table a, .rank-table a, #auth-area a { text-decoration: none; }
 .problem-table a:hover, .rank-table a:hover, #auth-area a:hover { text-decoration: underline; }
+
+/* wrapping / overflow: tables scroll inside .rank-scroll, long names and badges wrap */
+table.rank-table td.user-cell, table.rank-table th.user-cell { white-space: normal; word-break: break-word; max-width: 12rem; min-width: 6rem; }
+table.problem-table .badge { white-space: normal; text-align: left; word-break: break-word; }
+table.problem-table td { overflow-wrap: anywhere; }
+.rank-scroll .rank-table .user-cell { position: sticky; left: 0; z-index: 1; background-color: var(--bs-body-bg, #fff); }
+
+/* tap targets */
+table.problem-table .form-check-input.solve-check { width: 1.5rem; height: 1.5rem; margin: 0; cursor: pointer; vertical-align: middle; }
+#auth-area { min-width: 0; display: flex; align-items: center; justify-content: flex-end; }
+#auth-area .user-name { min-width: 0; max-width: 16rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#auth-area #logout-btn { display: inline-block; padding: .5rem .75rem; margin: -.5rem -.75rem -.5rem 0; }
+.site-top { gap: .75rem; }
+.site-title { flex-shrink: 0; }
+
+@media (max-width: 576px) {
+  .site-title { font-size: 1.6rem; }
+  #auth-area .user-name { max-width: 9rem; }
+  .site-nav .nav { flex-wrap: nowrap; overflow-x: auto; }
+  .site-nav .nav-link { white-space: nowrap; padding: .5rem .5rem; }
+  .list-tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; }
+  .list-tabs .nav-link { white-space: nowrap; }
+}

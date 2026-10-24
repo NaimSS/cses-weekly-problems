@@ -28,6 +28,7 @@
     var can = Q.isLoggedIn();
     var h = '<h3 class="mb-3">My problems</h3>';
     if (!can) h += '<div class="alert alert-light border" id="signin-hint">Sign in with GitHub (top right) to track your solved problems.</div>';
+    else if (mineErr) h += '<div class="alert alert-danger" id="progress-error">Could not load your progress.</div>';
     h += '<ul class="nav nav-tabs list-tabs mb-3">' + lists.map(function (l) {
       return '<li class="nav-item"><a class="nav-link' + (l.key === activeList ? ' active' : '') + '" href="#" data-list="' + esc(l.key) + '">' + esc(l.label) + '</a></li>';
     }).join('') + '</ul>' +
@@ -41,8 +42,12 @@
     applyFilter();
   }
 
+  var loadSeq = 0, mineErr = false;
   async function load() {
-    try { mine = await Q.fetchMyProgress(); } catch (e) { mine = new Set(); }
+    var seq = ++loadSeq, m, err = false;
+    try { m = await Q.fetchMyProgress(); } catch (e) { m = new Set(); err = true; }
+    if (seq !== loadSeq) return;
+    mine = m; mineErr = err;
     render();
   }
 

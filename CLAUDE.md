@@ -66,6 +66,8 @@ Progress is stored in Supabase (optional — pages degrade gracefully without it
 - `profiles(user_id, username, avatar_url)` — auto-populated on GitHub OAuth sign-in via trigger
 - Both tables have **public SELECT** so the leaderboard works without auth
 - Credentials: `SUPABASE_URL`, `SUPABASE_ANON_KEY` env vars
+- Writes are locked down: users can upsert/delete only their own `progress` rows (`problem_id` must match `^(qoj:)?[0-9]{1,7}$`) and can only `UPDATE` their own `profiles.qoj_handle` (no insert/delete, `username`/`avatar_url` come from the SECURITY DEFINER trigger)
+- Existing DB: run `supabase_hardening.sql` once (idempotent) to reach the same state as a fresh `supabase_schema.sql` install
 
 ## Design System
 

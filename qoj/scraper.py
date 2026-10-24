@@ -22,6 +22,7 @@ class _ListParser(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.problems: list[dict] = []
+        self.dropped = 0                # rows skipped for a missing id or name
         self.list_key: str | None = None
         self._in_thead = False
         self._row: dict | None = None
@@ -83,17 +84,23 @@ class _ListParser(HTMLParser):
                     row["url"] = QOJ_BASE + row["url"]
                 row["source"] = " · ".join(row["source"])
                 self.problems.append(row)
+            else:
+                self.dropped += 1
 
     def handle_data(self, data):
         if self._row is not None:
             self._buf.append(data)
 
 
-def parse_html(html: str, list_key: str | None = None) -> tuple[str, list[dict]]:
-    """Return (list_key, problems). The key comes from the page, else `list_key`."""
+def parse_html(html: str, list_key: str | None = None,
+               stats: dict | None = None) -> tuple[str, list[dict]]:
+    """Return (list_key, problems). The key comes from the page, else `list_key`.
+    If `stats` is given, stats["dropped"] is increased by the rows skipped (no id/name)."""
     p = _ListParser()
     p.feed(html)
     p.close()
+    if stats is not None:
+        stats["dropped"] = stats.get("dropped", 0) + p.dropped
     key = p.list_key or list_key
     if not key:
         raise ValueError("cannot determine the premier list of this page "
@@ -117,16 +124,23 @@ def dedupe(problems: list[dict]) -> tuple[list[dict], int]:
 
 def sort_problems(problems: list[dict]) -> list[dict]:
     order = {k: i for i, k in enumerate(LIST_KEYS)}
-    return sorted(problems, key=lambda p: (order.get(p["list"], 99), int(p["id"])))
+    # Numeric ids first in numeric order, then any non-numeric ids as strings.
+    def key(p):
+        pid = p["id"]
+        return (order.get(p["list"], 99), 0, int(pid), "") if pid.isdigit() else \
+               (order.get(p["list"], 99), 1, 0, pid)
+    return sorted(problems, key=key)
 
 
-def scrape(files: list[Path], list_key: str | None = None) -> tuple[list[dict], dict, int]:
-    """Parse files -> (sorted deduped problems, raw per-list counts, dupes removed)."""
+def scrape(files: list[Path], list_key: str | None = None,
+           stats: dict | None = None) -> tuple[list[dict], dict, int]:
+    """Parse files -> (sorted deduped problems, raw per-list counts, dupes removed).
+    If `stats` is given, stats["dropped"] counts rows skipped for a missing id/name."""
     allp: list[dict] = []
     raw: dict[str, int] = {}
     for f in files:
         html = Path(f).read_text(encoding="utf-8", errors="replace")
-        key, probs = parse_html(html, list_key)
+        key, probs = parse_html(html, list_key, stats)
         raw[key] = raw.get(key, 0) + len(probs)
         allp.extend(probs)
     kept, removed = dedupe(allp)
@@ -141,8 +155,9 @@ def main():
     ap.add_argument("--output", "-o", default=str(PROBLEMS_CSV))
     args = ap.parse_args()
 
+    stats = {"dropped": 0}
     try:
-        problems, raw, removed = scrape([Path(f) for f in args.files], args.list_key)
+        problems, raw, removed = scrape([Path(f) for f in args.files], args.list_key, stats)
     except (ValueError, OSError) as e:
         print(f"ERROR: {e}", file=sys.stderr)
         raise SystemExit(1)
@@ -152,6 +167,8 @@ def main():
         if k in raw:
             kept = sum(1 for p in problems if p["list"] == k)
             print(f"{k:>3}: {raw[k]} parsed, {kept} kept")
+    if stats["dropped"]:
+        print(f"Dropped {stats['dropped']} row(s) with a missing id or name")
     print(f"Removed {removed} cross-list duplicates; {len(problems)} problems → {args.output}")
 
 

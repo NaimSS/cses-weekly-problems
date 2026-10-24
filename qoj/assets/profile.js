@@ -5,6 +5,7 @@
   var root = document.getElementById('page');
   var HANDLE_RE = /^[A-Za-z0-9_.-]{1,40}$/;
   var pending = null; // { newIds: [] }
+  var fileSeq = 0;
 
   function msg(el, kind, text) {
     el.className = 'mt-2 small text-' + kind;
@@ -12,6 +13,7 @@
   }
 
   function render() {
+    fileSeq++; pending = null;
     if (!Q.hasBackend()) {
       root.innerHTML = '<h3 class="mb-3">Profile</h3><p class="text-muted">Progress tracking is not configured for this site.</p>';
       return;
@@ -52,25 +54,36 @@
     var f = ev.target.files && ev.target.files[0];
     var prev = document.getElementById('import-preview'), btn = document.getElementById('import-confirm');
     var out = document.getElementById('import-msg');
+    var seq = ++fileSeq;
     btn.classList.add('d-none'); out.textContent = ''; pending = null;
     if (!f) { prev.innerHTML = ''; return; }
     prev.innerHTML = '<span class="text-muted">Reading…</span>';
-    var parsed, problems, mine;
-    try {
-      parsed = window.QOJImport.parseQojProfile(await f.text());
-      problems = await Q.loadProblems();
-      mine = await Q.fetchMyProgress();
-    } catch (e) { prev.innerHTML = '<span class="text-danger">Could not read the file.</span>'; return; }
+    var parsed, problems, mine, fail = null;
+    try { parsed = window.QOJImport.parseQojProfile(await f.text()); }
+    catch (e) { fail = 'Could not read the file.'; }
+    if (!fail) {
+      try { problems = await Q.loadProblems(); }
+      catch (e) { fail = 'Could not load the problem list (problems.json). Try again later.'; }
+    }
+    if (!fail) {
+      try { mine = await Q.fetchMyProgress(); }
+      catch (e) { fail = 'Could not load your current progress: ' + (e.message || e); }
+    }
+    if (seq !== fileSeq) return;
+    if (fail) { prev.innerHTML = '<span class="text-danger">' + esc(fail) + '</span>'; return; }
+    var known = new Set(problems.map(function (p) { return String(p.id); }));
     var ids = parsed.solvedIds, idSet = new Set(ids);
-    var newIds = ids.filter(function (id) { return !mine.has(id); });
+    var inPremier = ids.filter(function (id) { return known.has(id); });
+    var newIds = inPremier.filter(function (id) { return !mine.has(id); });
     var h = '<table class="table table-sm table-bordered w-auto"><tbody>' +
       '<tr><td>Handle in page</td><td>' + (parsed.handle ? esc(parsed.handle) : '<span class="text-muted">not found</span>') + '</td></tr>' +
-      '<tr><td>Accepted problems found</td><td>' + ids.length + '</td></tr>';
+      '<tr><td>Accepted problems found</td><td>' + ids.length + '</td></tr>' +
+      '<tr><td>Skipped (not in premier lists)</td><td>' + (ids.length - inPremier.length) + '</td></tr>';
     Q.lists().forEach(function (l) {
       var inList = problems.filter(function (p) { return p.list === l.key && idSet.has(String(p.id)); }).length;
       h += '<tr><td>' + esc(l.label) + '</td><td>' + inList + '</td></tr>';
     });
-    h += '<tr><td>Already marked</td><td>' + (ids.length - newIds.length) + '</td></tr>' +
+    h += '<tr><td>Already marked</td><td>' + (inPremier.length - newIds.length) + '</td></tr>' +
       '<tr><td>New to import</td><td>' + newIds.length + '</td></tr></tbody></table>';
     var saved = ((Q.getProfile() || {}).qoj_handle || '').toLowerCase();
     if (parsed.handle && saved && parsed.handle.toLowerCase() !== saved) {

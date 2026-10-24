@@ -13,7 +13,11 @@ Enabled lists: **C (Easy I), C2 (Easy II), B (Medium I), B2 (Medium II)**. A (Ha
 .venv/bin/python qoj/scraper.py ~/Downloads/*list*.html
 
 # 2. Pick a new week (appends to qoj/processed.csv — never re-run for an existing week)
-.venv/bin/python qoj/generate.py [--date YYYY-MM-DD]
+#    The RNG is seeded per week with "<seed>:<date>", so a date always gets the same picks.
+#    --skip-existing: if the week already exists, print a notice, rebuild, exit 0 (the
+#    scheduled workflow uses this; without it an existing week exits 1).
+#    Low pools print a GitHub Actions `::warning::` line; an exhausted list exits 1 and writes nothing.
+.venv/bin/python qoj/generate.py [--date YYYY-MM-DD] [--skip-existing]
 
 # 3. Rebuild HTML/JSON only
 .venv/bin/python qoj/generate.py --rebuild-only
@@ -32,8 +36,8 @@ node qoj/tests/e2e/run.mjs        # headless Chrome over CDP, no installs
 | `scraper.py` | python | saved QOJ list HTML → `problems.csv` |
 | `generate.py` | python | picks a week, writes data + generated page shells + `assets/config.js` |
 | `problems.csv` | data | `id,name,list,source,tags,url` (all scraped lists, A included) |
-| `problems.json` | generated | same as CSV, JSON array, `tags` as list |
-| `processed.csv` | data | append-only pick log `id,name,list,url` |
+| `problems.json` | generated | same as CSV (compact JSON array, `tags` as list), plus any past pick from `weeks_data.json` missing from the CSV |
+| `processed.csv` | data | append-only pick log `id,name,list,url` (written after `weeks_data.json`; a mismatch between the two only warns) |
 | `weeks_data.json` | data | `{ "YYYY-MM-DD": { "C": [problem…], "C2": […], "B": […], "B2": […] } }` |
 | `index.html` | generated | redirect to latest week |
 | `all.html`, `rank.html`, `weeks/<date>.html` | generated shells | JS renders content from `window.QOJ_PAGE` |
@@ -67,6 +71,7 @@ Exposed to JS as `window.QOJ_LISTS` in `assets/config.js`: `[{key, label, count,
 ### Supabase
 - `progress(user_id, problem_id, done, updated_at)` — QOJ rows use `problem_id = "qoj:<id>"` (CSES uses bare numbers; must not collide).
 - `profiles(user_id, username, avatar_url, qoj_handle)` — display name = `qoj_handle || username || 'Anonymous'`. Pages must still work if `qoj_handle` column does not exist yet (retry select without it).
+  - Writes: RLS policy "Users update own profile" is UPDATE-only, and `authenticated` only has the column grant `update (qoj_handle)`, so a user can change only their own `qoj_handle` (no insert/delete, no `username`/`avatar_url`). A check constraint enforces `qoj_handle is null or ~ '^[A-Za-z0-9_.-]{1,40}$'` (same as `HANDLE_RE` in `assets/profile.js`). Applied by `supabase_hardening.sql` at the repo root.
 - Only these supabase-js calls are used (the e2e fake implements exactly these):
   - `supabase.createClient(url, key)`
   - `auth.getSession()`, `auth.onAuthStateChange(cb)`, `auth.signInWithOAuth({provider:'github', options:{redirectTo}})`, `auth.signOut()`

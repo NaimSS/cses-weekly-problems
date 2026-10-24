@@ -80,6 +80,18 @@ class DedupeAndCsvTests(unittest.TestCase):
         # display order: C before B, numeric id within list
         self.assertEqual([(p["list"], p["id"]) for p in probs], [("C", "2"), ("B", "1"), ("B", "10")])
 
+    def test_non_numeric_ids_sort(self):
+        probs = [{"id": i, "list": "C"} for i in ("10", "abc", "2", "1a")] + [{"id": "5", "list": "B"}]
+        self.assertEqual([p["id"] for p in scraper.sort_problems(probs)], ["2", "10", "1a", "abc", "5"])
+
+    def test_dropped_rows_counted(self):
+        html = page("C", [row(1, "A"), row(2, "")])
+        (self.dir / "d.html").write_text(html, encoding="utf-8")
+        stats = {"dropped": 0}
+        probs, _, _ = scraper.scrape([self.dir / "d.html"], stats=stats)
+        self.assertEqual([p["id"] for p in probs], ["1"])
+        self.assertEqual(stats["dropped"], 1)
+
     def test_csv_round_trip(self):
         probs, _, _ = scraper.scrape([self.dir / "c.html", self.dir / "b.html"])
         out = self.dir / "problems.csv"
