@@ -35,7 +35,8 @@
     });
     h += '<th>Total</th></tr></thead><tbody>';
     model.rows.forEach(function (r) {
-      h += '<tr' + (r.uid === me ? ' class="me-row"' : '') + '><td>' + r.rank + '</td><td class="user-cell">' + esc(r.name) + '</td>';
+      var rr = Q.rankRow(r, me);
+      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + esc(r.name) + '</td>';
       dates.forEach(function (d) {
         var ps = weekProblems(d);
         if (expanded.has(d) && ps.length) {
@@ -61,7 +62,9 @@
   async function load() {
     root.innerHTML = '<p class="text-muted">Loading…</p>';
     var data;
-    try { data = await Promise.all([Q.fetchProgress(), Q.fetchProfiles()]); }
+    var ids = [];
+    dates.forEach(function (d) { weekProblems(d).forEach(function (p) { ids.push(String(p.id)); }); });
+    try { data = await Promise.all([Q.fetchProgress(ids), Q.fetchProfiles()]); }
     catch (e) { root.innerHTML = '<p class="text-danger">Could not load rankings.</p>'; return; }
     var byUser = Q.groupByUser(data[0]), pmap = Q.profileMap(data[1]);
     var ids = new Set();

@@ -1,0 +1,20 @@
+/* QOJ effects: particle burst + podium row tints */
+.fx-particle { position: fixed; z-index: 2000; pointer-events: none; border-radius: 50%; opacity: 0; animation: fx-burst 700ms ease-out forwards; }
+@keyframes fx-burst {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--fx-dx, 0), var(--fx-dy, 0)) scale(.4); }
+}
+@media (prefers-reduced-motion: reduce) { .fx-particle { display: none; } }
+
+.podium-medal { display: inline-block; margin-right: .3rem; }
+
+tr.podium-gold > * { background-color: rgba(255, 193, 7, .18); }
+tr.podium-silver > * { background-color: rgba(173, 181, 189, .22); }
+tr.podium-bronze > * { background-color: rgba(205, 127, 50, .16); }
+tr.podium-gold > :first-child { box-shadow: inset 3px 0 0 #e0a800; }
+tr.podium-silver > :first-child { box-shadow: inset 3px 0 0 #adb5bd; }
+tr.podium-bronze > :first-child { box-shadow: inset 3px 0 0 #cd7f32; }
+/* sticky cells must stay opaque: layer the tint over the body background */
+tr.podium-gold > .user-cell { background-image: linear-gradient(rgba(255, 193, 7, .18), rgba(255, 193, 7, .18)); background-color: var(--bs-body-bg, #fff); }
+tr.podium-silver > .user-cell { background-image: linear-gradient(rgba(173, 181, 189, .22), rgba(173, 181, 189, .22)); background-color: var(--bs-body-bg, #fff); }
+tr.podium-bronze > .user-cell { background-image: linear-gradient(rgba(205, 127, 50, .16), rgba(205, 127, 50, .16)); background-color: var(--bs-body-bg, #fff); }

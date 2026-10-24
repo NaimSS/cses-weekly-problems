@@ -3,6 +3,7 @@
   'use strict';
   var Q = window.QOJ, esc = Q.escapeHtml;
   var root = document.getElementById('page');
+  Q.loadProblems().catch(function () { /* surfaced below */ }); // start before auth resolves
   var problems = [], mine = new Set(), activeList = null, filter = 'all';
 
   function listProblems(key) { return problems.filter(function (p) { return p.list === key; }); }

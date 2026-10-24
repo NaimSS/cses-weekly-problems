@@ -276,7 +276,7 @@ class PageTests(TmpCase):
         self.run_gen(rebuild_only=True)
         for f in ("weeks/2026-10-25.html", "rank.html"):
             html = (self.dir / f).read_text(encoding="utf-8")
-            self.assertEqual(html.count("</script>"), 5)  # the 5 real tags only
+            self.assertEqual(html.count("</script>"), 6)  # the 6 real tags only
             self.assertNotIn("alert(1)</script>", html)
         page = extract_page((self.dir / "weeks" / "2026-10-25.html").read_text(encoding="utf-8"))
         self.assertEqual(page["problems"]["C"][0]["name"], evil)

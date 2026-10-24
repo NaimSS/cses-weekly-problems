@@ -4,16 +4,23 @@
   var Q = window.QOJ, page = window.QOJ_PAGE || {}, esc = Q.escapeHtml;
   var root = document.getElementById('page');
   var mine = new Set(), mineErr = false;
-  var activeTab = 'problems';
+  var activeTab = 'problems', isReady = false;
   var rankSeq = 0, refreshSeq = 0;
 
   function weekLists() {
     return Q.lists().map(function (l) { return { l: l, ps: (page.problems || {})[l.key] || [] }; });
   }
 
+  function weekIds() {
+    var ids = [];
+    weekLists().forEach(function (x) { x.ps.forEach(function (p) { ids.push(String(p.id)); }); });
+    return ids;
+  }
+
   function problemsHtml() {
     var can = Q.isLoggedIn(), h = '';
-    if (!can) h += '<p class="text-muted" id="signin-hint">Sign in to track your progress.</p>';
+    if (!isReady) { /* static tables first; auth state not known yet */ }
+    else if (!can) h += '<p class="text-muted" id="signin-hint">Sign in to track your progress.</p>';
     else if (mineErr) h += '<p class="text-danger" id="progress-error">Could not load your progress.</p>';
     weekLists().forEach(function (x) {
       h += '<h4 class="section-label">' + esc(x.l.label) + '</h4>' +
@@ -28,7 +35,7 @@
     pane.innerHTML = '<p class="text-muted">Loading rankings…</p>';
     var data;
     try {
-      data = await Promise.all([Q.fetchProgress(), Q.fetchProfiles()]);
+      data = await Promise.all([Q.fetchProgress(weekIds()), Q.fetchProfiles()]);
     } catch (e) {
       if (seq === rankSeq) pane.innerHTML = '<p class="text-danger">Could not load rankings.</p>';
       return;
@@ -51,7 +58,8 @@
       '<th>#</th><th class="user-cell">User</th><th>Solved</th>' +
       wl.map(function (x) { return '<th>' + esc(x.l.label) + '</th>'; }).join('') + '</tr></thead><tbody>';
     rows.forEach(function (r) {
-      h += '<tr' + (r.uid === me ? ' class="me-row"' : '') + '><td>' + r.rank + '</td><td class="user-cell">' + esc(r.name) +
+      var rr = Q.rankRow(r, me);
+      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + esc(r.name) +
         '</td><td>' + r.total + ' / ' + all.length + '</td>' +
         r.per.map(function (n, i) { return '<td>' + n + ' / ' + wl[i].ps.length + '</td>'; }).join('') + '</tr>';
     });
@@ -60,7 +68,8 @@
         return '<th title="' + esc(p.name) + '"><a href="' + esc(p.url || ('https://qoj.ac/problem/' + p.id)) + '" target="_blank" rel="noopener">#' + esc(p.id) + '</a></th>';
       }).join('') + '</tr></thead><tbody>';
     rows.forEach(function (r) {
-      h += '<tr><td class="user-cell">' + esc(r.name) + '</td>' + all.map(function (p) {
+      var rr = Q.rankRow(r, me);
+      h += '<tr' + rr.attr + '><td class="user-cell">' + rr.medal + esc(r.name) + '</td>' + all.map(function (p) {
         return r.set.has(String(p.id)) ? '<td class="cell-yes">✓</td>' : '<td class="cell-no">✗</td>';
       }).join('') + '</tr>';
     });
@@ -102,9 +111,14 @@
     show(activeTab);
   }
 
-  Q.ready.then(function () {
-    build();
-    refresh();
-    Q.onAuth(refresh);
-  });
+  function start() {
+    build(); // static problem tables render without waiting for auth
+    Q.ready.then(function () {
+      isReady = true;
+      show(activeTab);
+      refresh();
+      Q.onAuth(refresh);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

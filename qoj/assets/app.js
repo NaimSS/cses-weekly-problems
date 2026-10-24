@@ -56,14 +56,18 @@
     }
   } catch (e) { state.sb = null; }
 
+  /* Pages until the server says we have everything (exact count) or returns an empty page, so a
+     server-side max-rows below our page size cannot silently truncate. make(from, to) must use a stable order. */
   async function paged(make) {
-    var out = [], size = 1000;
-    for (var from = 0; ; from += size) {
-      var r = await make(from, from + size - 1);
+    var out = [], size = 1000, total = null;
+    for (;;) {
+      var r = await make(out.length, out.length + size - 1);
       if (r.error) return { data: out, error: r.error };
       var rows = r.data || [];
+      if (typeof r.count === 'number') total = r.count;
+      if (!rows.length) break;
       out = out.concat(rows);
-      if (rows.length < size) break;
+      if (total !== null && out.length >= total) break;
     }
     return { data: out, error: null };
   }
@@ -77,7 +81,7 @@
     var err = null;
     for (var i = 0; i < colsList.length; i++) {
       var r = await paged(function (a, b) {
-        var q = state.sb.from('profiles').select(colsList[i]);
+        var q = state.sb.from('profiles').select(colsList[i], { count: 'exact' });
         if (uid) q = q.eq('user_id', uid);
         return q.order('user_id', { ascending: true }).range(a, b);
       });
@@ -86,25 +90,57 @@
     }
     throw sbError(err);
   }
-  function fetchProfiles() { return selectProfiles(null); }
+  /* Per-page-load memo (promises), so re-opening a tab does not refetch; dropped on failure and after writes. */
+  var profilesMemo = null, progressMemo = new Map(), minePre = null;
+  function fetchProfiles() {
+    if (!profilesMemo) {
+      profilesMemo = selectProfiles(null);
+      profilesMemo.catch(function () { profilesMemo = null; });
+    }
+    return profilesMemo;
+  }
+  function invalidate() { progressMemo.clear(); }
 
-  async function fetchProgress() {
-    if (!state.sb) return [];
+  async function progressChunk(ids) {
     var r = await paged(function (a, b) {
-      return state.sb.from('progress').select('user_id, problem_id')
-        .eq('done', true).like('problem_id', 'qoj:%')
-        .order('user_id', { ascending: true }).order('problem_id', { ascending: true }).range(a, b);
+      var q = state.sb.from('progress').select('user_id, problem_id', { count: 'exact' }).eq('done', true);
+      q = ids ? q.in('problem_id', ids) : q.like('problem_id', 'qoj:%');
+      return q.order('user_id', { ascending: true }).order('problem_id', { ascending: true }).range(a, b);
     });
     if (r.error) throw sbError(r.error);
     return r.data.map(function (x) { return { user_id: x.user_id, id: unpid(x.problem_id) }; });
   }
+  /* ids (bare problem ids) restricts the query; long lists are chunked to keep URLs short and run in parallel. */
+  function fetchProgress(ids) {
+    if (!state.sb) return Promise.resolve([]);
+    var list = ids ? Array.from(new Set(Array.from(ids, String))).sort() : null;
+    var key = list ? list.join(',') : '*';
+    var hit = progressMemo.get(key);
+    if (hit) return hit;
+    var p;
+    if (!list) p = progressChunk(null);
+    else if (!list.length) p = Promise.resolve([]);
+    else {
+      var jobs = [];
+      for (var i = 0; i < list.length; i += 300) jobs.push(progressChunk(list.slice(i, i + 300).map(pid)));
+      p = Promise.all(jobs).then(function (parts) { return [].concat.apply([], parts); });
+    }
+    progressMemo.set(key, p);
+    p.catch(function () { if (progressMemo.get(key) === p) progressMemo.delete(key); });
+    return p;
+  }
 
-  async function fetchMyProgress() {
+  /* QOJ.ready starts one fetch early (in parallel with the profile); the first caller consumes it. */
+  function fetchMyProgress() {
+    if (minePre) { var p = minePre; minePre = null; return p; }
+    return selectMine();
+  }
+  async function selectMine() {
     var set = new Set();
     if (!state.sb || !state.user) return set;
     var uid = state.user.id;
     var r = await paged(function (a, b) {
-      return state.sb.from('progress').select('problem_id')
+      return state.sb.from('progress').select('problem_id', { count: 'exact' })
         .eq('user_id', uid).eq('done', true).like('problem_id', 'qoj:%')
         .order('problem_id', { ascending: true }).range(a, b);
     });
@@ -117,6 +153,8 @@
     if (!state.sb || !state.user) return { error: new Error('Not signed in') };
     var uid = state.user.id, now = new Date().toISOString();
     ids = Array.isArray(ids) ? ids : [ids];
+    invalidate();
+    minePre = null;
     for (var i = 0; i < ids.length; i += 500) {
       var rows = ids.slice(i, i + 500).map(function (id) {
         return { user_id: uid, problem_id: pid(id), done: !!done, updated_at: now };
@@ -124,6 +162,7 @@
       var r = await state.sb.from('progress').upsert(rows, { onConflict: 'user_id,problem_id' });
       if (r && r.error) return { error: r.error };
     }
+    invalidate();
     return { error: null };
   }
 
@@ -134,6 +173,7 @@
     var err = r.error || null;
     if (!err && !(r.data && r.data.length)) err = new Error('Your profile row was not found (sign out and in again).');
     if (!err) {
+      profilesMemo = null;
       state.profile = Object.assign({}, state.profile || { user_id: state.user.id }, { qoj_handle: h || null });
       renderHeader();
     }
@@ -209,6 +249,18 @@
     return rows;
   }
 
+  /* Row class + medal markup for a ranked row ({rank,total}); me = current user id. */
+  function rankRow(r, me) {
+    var pod = W.QOJFX && W.QOJFX.podium ? W.QOJFX.podium(r.rank, r.total) : null;
+    var cls = [];
+    if (me && r.uid === me) cls.push('me-row');
+    if (pod) cls.push(pod.cls);
+    return {
+      attr: cls.length ? ' class="' + cls.join(' ') + '"' : '',
+      medal: pod ? '<span class="podium-medal" aria-hidden="true">' + pod.medal + '</span>' : ''
+    };
+  }
+
   /* ---------- problem table ---------- */
   function problemUrl(p) { return p.url || ('https://qoj.ac/problem/' + p.id); }
   function problemTitleHtml(p) {
@@ -255,6 +307,7 @@
         if (W.alert) W.alert('Could not save: ' + (r.error.message || r.error));
         return;
       }
+      if (done && W.QOJFX && W.QOJFX.burst) { try { W.QOJFX.burst(el); } catch (e) { /* cosmetic */ } }
       if (onChange) onChange(id, done);
     });
   }
@@ -300,6 +353,7 @@
   /* Resolves to TIMEOUT if p has not settled after ms (so a hung Supabase call cannot block the page). */
   var TIMEOUT = {};
   var READY_TIMEOUT_MS = 3000;
+  var NEEDS_MINE = { week: true, solved: true };
   function withTimeout(p, ms) {
     return Promise.race([p, new Promise(function (res) { setTimeout(function () { res(TIMEOUT); }, ms); })]);
   }
@@ -323,6 +377,10 @@
       } catch (e) { state.user = null; }
       if (state.user) {
         var uid = state.user.id;
+        if (NEEDS_MINE[(W.QOJ_PAGE || {}).type]) {
+          minePre = selectMine();
+          minePre.catch(function () { /* surfaced to the first fetchMyProgress caller */ });
+        }
         var lp = loadMyProfile().then(function () { return true; }, function () { state.profile = null; return true; });
         if ((await withTimeout(lp, READY_TIMEOUT_MS)) === TIMEOUT) {
           // profile arrived late: refresh the header and let pages re-render with it
@@ -346,7 +404,7 @@
     getProfile: function () { return state.profile; },
     isLoggedIn: function () { return !!state.user; },
     hasBackend: function () { return !!state.sb; },
-    profileMap: profileMap, groupByUser: groupByUser, nameOf: nameOf, assignRanks: assignRanks,
+    rankRow: rankRow, profileMap: profileMap, groupByUser: groupByUser, nameOf: nameOf, assignRanks: assignRanks,
     problemTitleHtml: problemTitleHtml, problemTableHtml: problemTableHtml, bindChecks: bindChecks
   });
 })();
