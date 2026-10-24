@@ -92,7 +92,7 @@ def build_shell(title: str, active: str, base: str, page: dict, script: str,
     <div id="site-header" data-active="{active}"></div>
     <main id="page"><p class="text-muted">Loading…</p></main>
     <footer class="site-footer">
-      Problems from <a href="https://qoj.ac/problems?premier_list=C" target="_blank">QOJ Premier List</a> · <a href="https://github.com/NaimSS/cses-weekly-problems" target="_blank">source</a>
+      Problems from <a href="https://qoj.ac/problems?premier_list=C" target="_blank">QOJ Premier List</a> · Not affiliated with QOJ · <a href="https://github.com/NaimSS/cses-weekly-problems" target="_blank">source</a>
     </footer>
   </div>
   <script>window.QOJ_BASE = {js_json(base)}; window.QOJ_PAGE = {js_json(page)};</script>
