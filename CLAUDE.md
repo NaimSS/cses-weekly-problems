@@ -85,7 +85,7 @@ Workflow: `.github/workflows/weekly.yml`
 
 ## QOJ Premier Weekly (`qoj/`)
 
-Second site under `qoj/` (see `qoj/README.md` for the full contract): weekly picks from the QOJ Premier Lists (C 2 / C2 2 / B 2 / B2 1 per week).
+Second site under `qoj/` (see `qoj/README.md` for the full contract): weekly picks from the QOJ Premier Lists (D 3 / C 4 per week).
 
 | File | Purpose |
 |------|---------|
