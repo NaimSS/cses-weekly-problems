@@ -77,7 +77,7 @@ Exposed to JS as `window.QOJ_LISTS` in `assets/config.js`: `[{key, label, count,
   - `auth.getSession()`, `auth.onAuthStateChange(cb)`, `auth.signInWithOAuth({provider:'github', options:{redirectTo}})`, `auth.signOut()`
   - `from(t).select(cols)` chained with any of `.eq(col,v)`, `.like(col,pattern)`, `.in(col,arr)`, `.range(a,b)`, `.order(col,{ascending})`, then awaited → `{data, error}`
   - `from(t).upsert(rows, {onConflict})` awaited → `{error}`
-  - `from(t).update(obj).eq(col, v)` awaited → `{error}`
+  - `from(t).update(obj).eq(col, v).select(cols)` awaited → `{data, error}` (empty `data` = no row matched)
 - Reads of progress paginate with `.range()` in 1000-row pages.
 
 ### Page shells

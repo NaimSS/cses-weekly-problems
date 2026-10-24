@@ -5,12 +5,19 @@
   var root = document.getElementById('page');
 
   var seq = 0;
+  Q.loadProblems().catch(function () { /* surfaced in main() */ }); // start before auth resolves
 
   async function main() {
     var my = ++seq;
     root.innerHTML = '<p class="text-muted">Loading…</p>';
     var data;
-    try { data = await Promise.all([Q.loadProblems(), Q.fetchProgress(), Q.fetchProfiles()]); }
+    try {
+      var profilesP = Q.fetchProfiles(); // in flight while problems.json loads
+      var probs = await Q.loadProblems();
+      var enabled = new Set(Q.lists().map(function (l) { return l.key; }));
+      var ids = probs.filter(function (p) { return enabled.has(p.list); }).map(function (p) { return String(p.id); });
+      data = [probs].concat(await Promise.all([Q.fetchProgress(ids), profilesP]));
+    }
     catch (e) {
       if (my === seq) root.innerHTML = '<p class="text-danger">Could not load leaderboard.</p>';
       return;
@@ -36,7 +43,8 @@
     var h = '<h3 class="mb-3">Leaderboard</h3><div class="rank-scroll"><table class="table table-bordered table-hover table-striped rank-table"><thead><tr><th>#</th><th class="user-cell">User</th>' +
       lists.map(function (l) { return '<th>' + esc(l.label) + '</th>'; }).join('') + '<th>Total</th></tr></thead><tbody>';
     rows.forEach(function (r) {
-      h += '<tr' + (r.uid === me ? ' class="me-row"' : '') + '><td>' + r.rank + '</td><td class="user-cell">' + esc(r.name) + '</td>' +
+      var rr = Q.rankRow(r, me);
+      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + esc(r.name) + '</td>' +
         r.per.map(function (n, i) {
           var tot = idsByList[lists[i].key].size, pct = tot ? Math.round(100 * n / tot) : 0;
           return '<td>' + n + ' / ' + tot + '<div class="progress thin"><div class="progress-bar bg-success" style="width:' + pct + '%"></div></div></td>';

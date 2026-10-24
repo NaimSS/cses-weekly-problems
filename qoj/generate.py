@@ -60,6 +60,7 @@ def build_shell(title: str, active: str, base: str, page: dict, script: str, see
   <title>{escape(title)}</title>
 {preconnect_links()}  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="{base}assets/qoj.css">
+  <link rel="stylesheet" href="{base}assets/fx.css">
 </head>
 <body>
   <div class="container">
@@ -72,6 +73,7 @@ def build_shell(title: str, active: str, base: str, page: dict, script: str, see
   <script>window.QOJ_BASE = {js_json(base)}; window.QOJ_PAGE = {js_json(page)};</script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   <script src="{base}assets/config.js"></script>
+  <script src="{base}assets/fx.js"></script>
   <script src="{base}assets/app.js"></script>
   <script src="{base}assets/{script}.js"></script>
 </body>

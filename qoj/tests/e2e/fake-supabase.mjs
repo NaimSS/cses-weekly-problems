@@ -11,19 +11,20 @@ export const FAKE_SUPABASE = `(function () {
   var CAP = 1000; // PostgREST max rows per request
   function db() { return W.__FAKE_DB__; }
   function Q(table, op) { this.table = table; this.op = op; this.f = []; this.ord = []; this.rng = null; this.cols = '*'; }
-  Q.prototype.select = function (c) { this.cols = c; return this; };
+  Q.prototype.select = function (c, o) { this.cols = c; this.wantCount = !!(o && o.count); return this; };
   Q.prototype.eq = function (c, v) { this.f.push(function (r) { return r[c] === v; }); this.eqs = (this.eqs || []).concat([[c, v]]); return this; };
   Q.prototype.like = function (c, p) {
     var re = new RegExp('^' + p.replace(/[.*+?^$(){}|[\\]\\\\]/g, '\\\\$&').replace(/%/g, '.*') + '$');
     this.f.push(function (r) { return re.test(String(r[c])); }); return this;
   };
-  Q.prototype.in = function (c, a) { this.f.push(function (r) { return a.indexOf(r[c]) >= 0; }); return this; };
+  Q.prototype.in = function (c, a) { this.inLen = a.length; this.f.push(function (r) { return a.indexOf(r[c]) >= 0; }); return this; };
   Q.prototype.range = function (a, b) { this.rng = [a, b]; return this; };
   Q.prototype.order = function (c, o) { this.ord.push([c, !o || o.ascending !== false]); return this; };
   Q.prototype.then = function (ok, bad) { return Promise.resolve().then(this.run.bind(this)).then(ok, bad); };
   Q.prototype.run = function () {
     var self = this, d = db();
     if (self.op === 'select') {
+      (W.__FAKE_READS__ = W.__FAKE_READS__ || []).push({ table: self.table, inLen: self.inLen || 0, cols: self.cols });
       if ((d.hang || []).indexOf(self.table) >= 0) return new Promise(function () {});
       if ((d.fail || []).indexOf(self.table) >= 0) return { data: null, error: { message: 'fake outage on ' + self.table } };
       var cols = self.cols === '*' ? null : self.cols.split(',').map(function (s) { return s.trim(); });
@@ -33,12 +34,13 @@ export const FAKE_SUPABASE = `(function () {
       self.ord.slice().reverse().forEach(function (o) {
         rows.sort(function (a, b) { return (a[o[0]] < b[o[0]] ? -1 : a[o[0]] > b[o[0]] ? 1 : 0) * (o[1] ? 1 : -1); });
       });
+      var matched = rows.length;
       var a = self.rng ? self.rng[0] : 0, b = self.rng ? Math.min(self.rng[1], a + CAP - 1) : CAP - 1;
       rows = rows.slice(a, b + 1).map(function (r) {
         if (!cols) return Object.assign({}, r);
         var o = {}; cols.forEach(function (c) { o[c] = r[c]; }); return o;
       });
-      return { data: rows, error: null };
+      return self.wantCount ? { data: rows, count: matched, error: null } : { data: rows, error: null };
     }
     if (self.op === 'update') {
       W.__FAKE_WRITES__.push({ op: 'update', table: self.table, values: self.vals, eq: self.eqs });
@@ -79,7 +81,7 @@ export const FAKE_SUPABASE = `(function () {
     },
     from: function (t) {
       return {
-        select: function (c) { return new Q(t, 'select').select(c); },
+        select: function (c, o) { return new Q(t, 'select').select(c, o); },
         upsert: function (rows, opts) { var q = new Q(t, 'upsert'); q.rowsIn = rows; q.opts = opts; return q; },
         update: function (v) { var q = new Q(t, 'update'); q.vals = v; return q; }
       };

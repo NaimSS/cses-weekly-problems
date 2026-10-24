@@ -264,7 +264,7 @@ try {
   await onPage('week: Rankings tab counts and display names', `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), wait: READY.week }, async (p) => {
     await p.eval(`document.querySelector('[data-tab="rankings"]').click()`);
     await p.waitFor(`document.querySelector('table.week-board')`);
-    const rows = await p.eval(`[...document.querySelectorAll('table.week-board tbody tr')].map(tr => [...tr.children].map(td => td.innerText.trim()))`);
+    const rows = await p.eval(`[...document.querySelectorAll('table.week-board tbody tr')].map(tr => [...tr.children].map(td => td.innerText.replace(/^[🥇🥈🥉]\\s*/u,"").trim()))`);
     // u2 = 7/7, u1 = 3/7, u3 = 1/7 (bare numeric row ignored)
     assert.equal(rows.length, 3);
     assert.deepEqual(rows[0].slice(0, 3), ['1', XSS, '7 / 7']);
@@ -285,7 +285,7 @@ try {
   await onPage('rank: matrix with both weeks, per-cell counts, expand, total', 'rank.html', { db: makeDb({ session: 'u1' }), wait: `document.querySelector('table.rank-table tbody tr')` }, async (p) => {
     const head = await p.eval(`[...document.querySelectorAll('table.rank-table thead th')].map(th => th.innerText.trim())`);
     assert.deepEqual(head, ['#', 'User', WEEK_DATES[1], WEEK_DATES[0], 'Total']);
-    const rows = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => [...tr.children].map(td => td.innerText.trim()))`);
+    const rows = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => [...tr.children].map(td => td.innerText.replace(/^[🥇🥈🥉]\\s*/u,"").trim()))`);
     // u2: wk2 2/7, wk1 7/7 total 9 ; u1: wk2 1/7, wk1 3/7 total 4 ; u3: 0/7, 1/7 total 1
     assert.deepEqual(rows.map((r) => r.slice(2)), [['2/7', '7/7', '9'], ['1/7', '3/7', '4'], ['0/7', '1/7', '1']]);
     assert.deepEqual(rows.map((r) => r[1]), [XSS, 'AliceQ', '<svg onload=window.__xss=1>']);
@@ -293,7 +293,7 @@ try {
     const head2 = await p.eval(`[...document.querySelectorAll('table.rank-table thead th')].map(th => th.innerText.replace(/\\s+/g,' ').trim())`);
     assert.equal(head2.length, 2 + 1 + 7 + 1);
     for (const id of wIds) assert.ok(head2.some((h) => h.endsWith('#' + id)), 'missing column #' + id);
-    const u1 = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')[1].children].map(td => td.innerText.trim())`);
+    const u1 = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')[1].children].map(td => td.innerText.replace(/^[🥇🥈🥉]\\s*/u,"").trim())`);
     assert.equal(u1.slice(3, 10).join(''), wIds.map((id) => [wIds[0], wIds[1], wIds[6]].includes(id) ? '✓' : '✗').join(''));
     await p.eval(`document.querySelector('th[data-week="${W}"]').click()`);
     assert.equal(await p.eval(`document.querySelectorAll('table.rank-table thead th').length`), 5);
@@ -303,7 +303,7 @@ try {
   /* ===== 4. leaderboard ===== */
   const grand = enabledProblems.length;
   await onPage('leaderboard: ordering, per-list counts, qoj-only, >1000 rows paginate', 'leaderboard.html', { db: makeDb({ session: null, bulk: true }), wait: `document.querySelector('table.rank-table tbody tr')` }, async (p) => {
-    const rows = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => [...tr.children].map(td => td.innerText.replace(/\\s+/g,' ').trim()))`);
+    const rows = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => [...tr.children].map(td => td.innerText.replace(/^[🥇🥈🥉]\\s*/u,"").replace(/\\s+/g,' ').trim()))`);
     assert.equal(grand, 323);
     const bulk = rows.filter((r) => /^bulk/.test(r[1]));
     assert.equal(bulk.length, 4);
@@ -547,6 +547,67 @@ try {
     const cells = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => tr.children.length)`);
     assert.ok(cells.every((n) => n === 6), 'row widths ' + cells);
   });
+
+  /* ===== 11. effects: burst, podium, paging/filters, no overflow ===== */
+  const FX_SHOTS = process.env.QOJ_FX_SHOTS || join(SCREENS, 'qoj-fx');
+  mkdirSync(FX_SHOTS, { recursive: true });
+  const shot = async (p, name) => {
+    const r = await p.send('Page.captureScreenshot', { format: 'png' });
+    writeFileSync(join(FX_SHOTS, name), Buffer.from(r.data, 'base64'));
+  };
+  const noOverflow = (p) => p.eval(`document.documentElement.scrollWidth <= window.innerWidth`);
+  await onPage('fx: ticking a box bursts particles that clean up; unticking does not', `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), wait: READY.week + ` && !document.querySelector('input.solve-check').disabled` }, async (p) => {
+    const id = weekIds(W)[2];
+    await p.click(`input.solve-check[data-id="${id}"]`);
+    await p.waitFor(`document.querySelectorAll('.fx-particle').length >= 12`, 'particles');
+    const n = await p.eval(`document.querySelectorAll('.fx-particle').length`);
+    assert.ok(n >= 12 && n <= 16, 'particles ' + n);
+    assert.equal(await p.eval(`getComputedStyle(document.querySelector('.fx-particle')).pointerEvents`), 'none');
+    await shot(p, 'burst-mid.png');
+    await p.waitFor(`document.querySelectorAll('.fx-particle').length === 0`, 'cleanup', 3000);
+    await p.waitFor(`!document.querySelector('input.solve-check[data-id="${id}"]').disabled`);
+    await p.click(`input.solve-check[data-id="${id}"]`);
+    await sleep(300);
+    assert.equal(await p.eval(`document.querySelectorAll('.fx-particle').length`), 0);
+  });
+  await onPage('fx: reduced motion spawns no particles', `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), wait: READY.week + ` && !document.querySelector('input.solve-check').disabled` }, async (p) => {
+    await p.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+    await p.click(`input.solve-check[data-id="${weekIds(W)[2]}"]`);
+    await sleep(300);
+    assert.equal(await p.eval(`document.querySelectorAll('.fx-particle').length`), 0);
+  });
+  for (const width of [375, 1440]) {
+    await onPage(`fx: week rankings podium + filtered progress query + memo (${width}px)`, `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), width, wait: READY.week }, async (p) => {
+      await p.click('[data-tab="rankings"]');
+      await p.waitFor(`document.querySelector('table.week-board tbody tr')`);
+      const cls = await p.eval(`[...document.querySelectorAll('table.week-board tbody tr')].map(tr => tr.className.replace(/me-row/,'').trim())`);
+      assert.equal(cls[0], 'podium-gold');
+      assert.ok(cls.slice(1).every((c) => c === 'podium-silver' || c === 'podium-bronze' || c === ''), 'classes ' + cls);
+      assert.match(await p.eval(`document.querySelector('table.week-board tbody tr .podium-medal').innerText`), /\u{1F947}/u);
+      assert.ok(await noOverflow(p), 'horizontal overflow');
+      await p.click('[data-tab="problems"]'); await p.click('[data-tab="rankings"]');
+      await p.waitFor(`document.querySelector('table.week-board tbody tr')`);
+      const reads = await p.eval(`window.__FAKE_READS__.filter(r => r.table === 'progress' && /user_id/.test(r.cols))`);
+      assert.equal(reads.length, 1, 'rankings progress memoised: ' + JSON.stringify(reads));
+      assert.equal(reads[0].inLen, weekIds(W).length, 'progress query filtered by this week ids');
+      await shot(p, `week-rankings-${width}.png`);
+    });
+    await onPage(`fx: rank.html podium + filter + no overflow (${width}px)`, 'rank.html', { db: makeDb({ session: 'u1' }), width, wait: `document.querySelector('table.rank-table tbody tr')` }, async (p) => {
+      const cls = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => tr.className.replace(/me-row/,'').trim())`);
+      assert.deepEqual(cls, ['podium-gold', 'podium-silver', 'podium-bronze']);
+      const reads = await p.eval(`window.__FAKE_READS__.filter(r => r.table === 'progress')`);
+      assert.ok(reads.length && reads.every((r) => r.inLen > 0), 'rank progress filtered by picked ids');
+      assert.ok(await noOverflow(p), 'horizontal overflow');
+      await shot(p, `rank-${width}.png`);
+    });
+    await onPage(`fx: leaderboard tie shares gold + no overflow (${width}px)`, 'leaderboard.html', { db: makeDb({ session: 'u1', bulk: true }), width, wait: `document.querySelector('table.rank-table tbody tr')` }, async (p) => {
+      const cls = await p.eval(`[...document.querySelectorAll('table.rank-table tbody tr')].map(tr => tr.className.replace(/me-row/,'').trim())`);
+      assert.deepEqual(cls.slice(0, 4), ['podium-gold', 'podium-gold', 'podium-gold', 'podium-gold']);
+      assert.ok(!cls.slice(4).includes('podium-gold'));
+      assert.ok(await noOverflow(p), 'horizontal overflow');
+      await shot(p, `leaderboard-${width}.png`);
+    });
+  }
 } finally {
   await chrome.close();
   srv.close();
