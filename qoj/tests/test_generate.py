@@ -202,6 +202,13 @@ class PageTests(TmpCase):
         self.assertIn('content="0; url=weeks/2026-10-25.html"', html)
         self.assertIn('location.replace("weeks/2026-10-25.html")', html)
 
+    def test_og_tags_absolute(self):
+        html = generate.build_week("2026-10-25", {})
+        self.assertIn(f'property="og:url" content="{generate.SITE_URL}weeks/2026-10-25.html"', html)
+        self.assertIn(f'property="og:image" content="{generate.SITE_URL}assets/og-image.png"', html)
+        self.assertIn("Semana de 25/10/2026", html)
+        self.assertTrue((generate.premier.QOJ_DIR / "assets" / "og-image.png").exists())
+
     def test_preconnect_links(self):
         self.run_quiet()
         html = (self.dir / "all.html").read_text(encoding="utf-8")
