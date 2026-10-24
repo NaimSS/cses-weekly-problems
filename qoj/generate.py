@@ -31,6 +31,10 @@ if _env_file.exists():
 SUPABASE_URL      = os.environ.get("SUPABASE_URL", "https://ugwnwhnuadolypyvrnsq.supabase.co")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6")
 
+# Public URL of the qoj/ directory; link previews (WhatsApp etc.) need absolute URLs.
+SITE_URL = "https://naimss.github.io/cses-weekly-problems/qoj/"
+OG_DESCRIPTION = "Treino semanal de problemas da QOJ Premier List"
+
 
 # ── rendering ─────────────────────────────────────────────────────────────────
 
@@ -51,14 +55,35 @@ def preconnect_links() -> str:
     return "".join(f'  <link rel="preconnect" href="{escape(o)}" crossorigin>\n' for o in origins)
 
 
-def build_shell(title: str, active: str, base: str, page: dict, script: str) -> str:
+def og_tags(title: str, path: str, description: str = OG_DESCRIPTION) -> str:
+    """Open Graph / Twitter meta tags so shared links get a preview card."""
+    tags = [
+        ("property", "og:type", "website"),
+        ("property", "og:site_name", "QOJ Premier Weekly · UNICAMP"),
+        ("property", "og:locale", "pt_BR"),
+        ("property", "og:title", title),
+        ("property", "og:description", description),
+        ("property", "og:url", SITE_URL + path),
+        ("property", "og:image", SITE_URL + "assets/og-image.png"),
+        ("property", "og:image:type", "image/png"),
+        ("property", "og:image:width", "1200"),
+        ("property", "og:image:height", "630"),
+        ("property", "og:image:alt", "UNICAMP × QOJ Premier Weekly"),
+        ("name", "twitter:card", "summary_large_image"),
+        ("name", "description", description),
+    ]
+    return "".join(f'  <meta {attr}="{name}" content="{escape(value)}">\n' for attr, name, value in tags)
+
+
+def build_shell(title: str, active: str, base: str, page: dict, script: str,
+                path: str, og_title: str) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{escape(title)}</title>
-{preconnect_links()}  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+{og_tags(og_title, path)}{preconnect_links()}  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="{base}assets/qoj.css">
   <link rel="stylesheet" href="{base}assets/fx.css">
 </head>
@@ -83,17 +108,21 @@ def build_shell(title: str, active: str, base: str, page: dict, script: str) -> 
 
 def build_week(week_iso: str, problems: dict) -> str:
     page = {"type": "week", "date": week_iso, "problems": problems}
-    return build_shell(f"QOJ Premier Weekly · {week_iso}", "weekly", "../", page, "week")
+    d = date.fromisoformat(week_iso)
+    return build_shell(f"QOJ Premier Weekly · {week_iso}", "weekly", "../", page, "week",
+                       f"weeks/{week_iso}.html", f"QOJ Premier Weekly · Semana de {d:%d/%m/%Y}")
 
 
 def build_all(weeks: list[str]) -> str:
     page = {"type": "all", "weeks": sorted(weeks, reverse=True)}
-    return build_shell("QOJ Premier Weekly · All weeks", "all", "", page, "all")
+    return build_shell("QOJ Premier Weekly · All weeks", "all", "", page, "all",
+                       "all.html", "QOJ Premier Weekly · Todas as semanas")
 
 
 def build_rank(weeks_data: dict) -> str:
     page = {"type": "rank", "weeks": weeks_data}
-    return build_shell("QOJ Premier Weekly · Rankings", "rank", "", page, "rank")
+    return build_shell("QOJ Premier Weekly · Rankings", "rank", "", page, "rank",
+                       "rank.html", "QOJ Premier Weekly · Ranking")
 
 
 def build_redirect(latest: str) -> str:
@@ -105,7 +134,7 @@ def build_redirect(latest: str) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="refresh" content="0; url={escape(target)}" />
   <title>QOJ Premier Weekly</title>
-</head>
+{og_tags("QOJ Premier Weekly · UNICAMP", "")}</head>
 <body>
   <script>location.replace({js_json(target)});</script>
 </body>
