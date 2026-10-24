@@ -68,9 +68,13 @@
     return { data: out, error: null };
   }
 
+  function sbError(e) { return e instanceof Error ? e : new Error((e && e.message) || String(e)); }
+
+  /* Throws on Supabase errors; retries without qoj_handle if that column does not exist yet. */
   async function selectProfiles(uid) {
     if (!state.sb) return [];
     var colsList = ['user_id, username, avatar_url, qoj_handle', 'user_id, username, avatar_url'];
+    var err = null;
     for (var i = 0; i < colsList.length; i++) {
       var r = await paged(function (a, b) {
         var q = state.sb.from('profiles').select(colsList[i]);
@@ -78,8 +82,9 @@
         return q.order('user_id', { ascending: true }).range(a, b);
       });
       if (!r.error) return r.data;
+      err = r.error;
     }
-    return [];
+    throw sbError(err);
   }
   function fetchProfiles() { return selectProfiles(null); }
 
@@ -90,6 +95,7 @@
         .eq('done', true).like('problem_id', 'qoj:%')
         .order('user_id', { ascending: true }).order('problem_id', { ascending: true }).range(a, b);
     });
+    if (r.error) throw sbError(r.error);
     return r.data.map(function (x) { return { user_id: x.user_id, id: unpid(x.problem_id) }; });
   }
 
@@ -102,6 +108,7 @@
         .eq('user_id', uid).eq('done', true).like('problem_id', 'qoj:%')
         .order('problem_id', { ascending: true }).range(a, b);
     });
+    if (r.error) throw sbError(r.error);
     r.data.forEach(function (x) { set.add(unpid(x.problem_id)); });
     return set;
   }
@@ -123,12 +130,14 @@
   async function saveHandle(handle) {
     if (!state.sb || !state.user) return { error: new Error('Not signed in') };
     var h = handle ? String(handle).trim() : null;
-    var r = await state.sb.from('profiles').update({ qoj_handle: h || null }).eq('user_id', state.user.id);
-    if (!r.error) {
+    var r = await state.sb.from('profiles').update({ qoj_handle: h || null }).eq('user_id', state.user.id).select('user_id');
+    var err = r.error || null;
+    if (!err && !(r.data && r.data.length)) err = new Error('Your profile row was not found (sign out and in again).');
+    if (!err) {
       state.profile = Object.assign({}, state.profile || { user_id: state.user.id }, { qoj_handle: h || null });
       renderHeader();
     }
-    return { error: r.error || null };
+    return { error: err };
   }
 
   async function signIn() {
@@ -136,20 +145,25 @@
     var url = W.location ? W.location.href.split('#')[0] : undefined;
     await state.sb.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: url } });
   }
+  /* onAuthStateChange(SIGNED_OUT) notifies pages; reset directly only if signOut itself failed. */
   async function signOut() {
     if (!state.sb) return;
-    await state.sb.auth.signOut();
-    state.user = null; state.profile = null;
-    renderHeader();
-    authCbs.forEach(function (cb) { cb(null); });
+    var r;
+    try { r = await state.sb.auth.signOut(); } catch (e) { r = { error: e }; }
+    if (r && r.error && state.user) {
+      state.user = null; state.profile = null;
+      renderHeader();
+      authCbs.forEach(function (cb) { cb(null); });
+    }
   }
   function onAuth(cb) { authCbs.push(cb); }
 
   async function loadMyProfile() {
     state.profile = null;
     if (state.user) {
-      var rows = await selectProfiles(state.user.id);
-      state.profile = rows[0] || null;
+      var uid = state.user.id;
+      var rows = await selectProfiles(uid);
+      if (state.user && state.user.id === uid) state.profile = rows[0] || null;
     }
   }
 
@@ -213,7 +227,7 @@
   function problemTableHtml(problems, opts) {
     opts = opts || {};
     var checked = opts.checked || new Set();
-    var h = '<table class="table table-bordered table-hover table-striped problem-table"><thead><tr>' +
+    var h = '<div class="rank-scroll"><table class="table table-bordered table-hover table-striped problem-table"><thead><tr>' +
       '<th class="col-id">ID</th><th>Title</th><th class="col-check">Done</th></tr></thead><tbody>';
     problems.forEach(function (p) {
       var id = escapeHtml(p.id);
@@ -223,7 +237,7 @@
         (opts.canEdit ? '' : ' disabled title="Sign in to track"') + '></td></tr>';
     });
     if (!problems.length) h += '<tr><td colspan="3" class="text-center text-muted">No problems.</td></tr>';
-    return h + '</tbody></table>';
+    return h + '</tbody></table></div>';
   }
   /* Delegated change handler: persists via setDone, reverts on failure, then onChange(id, done). */
   function bindChecks(root, onChange) {
@@ -232,8 +246,10 @@
       if (!el || !el.classList || !el.classList.contains('solve-check')) return;
       var id = el.getAttribute('data-id'), done = el.checked;
       el.disabled = true;
-      var r = await setDone([id], done);
-      el.disabled = false;
+      var r;
+      try { r = await setDone([id], done); }
+      catch (e) { r = { error: e }; }
+      finally { el.disabled = false; }
       if (r.error) {
         el.checked = !done;
         if (W.alert) W.alert('Could not save: ' + (r.error.message || r.error));
@@ -281,24 +297,42 @@
     });
   }
 
+  /* Resolves to TIMEOUT if p has not settled after ms (so a hung Supabase call cannot block the page). */
+  var TIMEOUT = {};
+  var READY_TIMEOUT_MS = 3000;
+  function withTimeout(p, ms) {
+    return Promise.race([p, new Promise(function (res) { setTimeout(function () { res(TIMEOUT); }, ms); })]);
+  }
+
   QOJ.ready = (async function () {
     await domReady();
     if (state.sb) {
       try {
-        var r = await state.sb.auth.getSession();
-        state.user = (r && r.data && r.data.session && r.data.session.user) || null;
+        var r = await withTimeout(state.sb.auth.getSession(), READY_TIMEOUT_MS);
+        if (r !== TIMEOUT) state.user = (r && r.data && r.data.session && r.data.session.user) || null;
         state.sb.auth.onAuthStateChange(function (ev, session) {
           var u = (session && session.user) || null;
           if ((u && u.id) === (state.user && state.user.id)) return;
           state.user = u;
           setTimeout(async function () {
-            await loadMyProfile();
+            try { await loadMyProfile(); } catch (e) { state.profile = null; }
             renderHeader();
             authCbs.forEach(function (cb) { cb(u); });
           }, 0);
         });
       } catch (e) { state.user = null; }
-      try { await loadMyProfile(); } catch (e) { state.profile = null; }
+      if (state.user) {
+        var uid = state.user.id;
+        var lp = loadMyProfile().then(function () { return true; }, function () { state.profile = null; return true; });
+        if ((await withTimeout(lp, READY_TIMEOUT_MS)) === TIMEOUT) {
+          // profile arrived late: refresh the header and let pages re-render with it
+          lp.then(function () {
+            if (!state.user || state.user.id !== uid) return;
+            renderHeader();
+            authCbs.forEach(function (cb) { cb(state.user); });
+          });
+        }
+      }
     }
     renderHeader();
   })();

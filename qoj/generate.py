@@ -12,6 +12,7 @@ import random
 from datetime import date
 from html import escape
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import premier
 from premier import PREMIER_LISTS
@@ -40,6 +41,16 @@ def js_json(obj) -> str:
              .replace("\u2028", "\\u2028").replace("\u2029", "\\u2029"))
 
 
+def preconnect_links() -> str:
+    """<link rel=preconnect> for the CDN and (if configured) the Supabase origin."""
+    origins = []
+    u = urlsplit(SUPABASE_URL or "")
+    if u.scheme in ("http", "https") and u.netloc:
+        origins.append(f"{u.scheme}://{u.netloc}")
+    origins.append("https://cdn.jsdelivr.net")
+    return "".join(f'  <link rel="preconnect" href="{escape(o)}" crossorigin>\n' for o in origins)
+
+
 def build_shell(title: str, active: str, base: str, page: dict, script: str, seed: int = SEED) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -47,7 +58,7 @@ def build_shell(title: str, active: str, base: str, page: dict, script: str, see
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{escape(title)}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+{preconnect_links()}  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="{base}assets/qoj.css">
 </head>
 <body>
@@ -89,11 +100,12 @@ def build_redirect(latest: str) -> str:
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url={target}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url={escape(target)}" />
   <title>QOJ Premier Weekly</title>
 </head>
 <body>
-  <script>location.replace("{target}");</script>
+  <script>location.replace({js_json(target)});</script>
 </body>
 </html>"""
 
@@ -103,11 +115,25 @@ def build_config_js() -> str:
             + ";\nwindow.QOJ_LISTS = " + js_json(PREMIER_LISTS) + ";\n")
 
 
+def merge_picked(problems: list[dict], weeks_data: dict) -> list[dict]:
+    """problems + every picked problem missing from it, so past picks survive a re-scrape."""
+    seen = {p["id"] for p in problems}
+    extra = []
+    for week_iso in sorted(weeks_data):
+        for ps in weeks_data[week_iso].values():
+            for p in ps:
+                if p["id"] not in seen:
+                    seen.add(p["id"])
+                    extra.append(p)
+    return problems + extra
+
+
 def write_site(out: Path, weeks_data: dict, problems: list[dict], seed: int = SEED) -> None:
     """Write every generated file under `out` (the qoj/ directory)."""
+    problems = merge_picked(problems, weeks_data)
     (out / "weeks").mkdir(parents=True, exist_ok=True)
     (out / "assets").mkdir(parents=True, exist_ok=True)
-    (out / "problems.json").write_text(json.dumps(problems, indent=2, ensure_ascii=False), encoding="utf-8")
+    (out / "problems.json").write_text(json.dumps(problems, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
     (out / "assets" / "config.js").write_text(build_config_js(), encoding="utf-8")
     for week_iso, wd in weeks_data.items():
         (out / "weeks" / f"{week_iso}.html").write_text(build_week(week_iso, wd, seed), encoding="utf-8")
@@ -119,6 +145,26 @@ def write_site(out: Path, weeks_data: dict, problems: list[dict], seed: int = SE
 
 # ── main ──────────────────────────────────────────────────────────────────────
 
+def iso_date(s: str) -> str:
+    """argparse type: a real YYYY-MM-DD date, normalised (also blocks path/HTML injection)."""
+    try:
+        return date.fromisoformat(s).isoformat()
+    except (TypeError, ValueError):
+        raise argparse.ArgumentTypeError(f"invalid date {s!r}, expected YYYY-MM-DD") from None
+
+
+def check_consistency(processed_path: Path, weeks_data: dict) -> bool:
+    """Warn (don't fail) if processed.csv and weeks_data.json disagree on picked ids."""
+    logged = premier.load_processed_ids(processed_path)
+    picked = premier.week_ids(weeks_data)
+    if logged == picked:
+        return True
+    only_log, only_weeks = sorted(logged - picked), sorted(picked - logged)
+    print(f"::warning::{processed_path.name} and weeks_data.json disagree: "
+          f"only in processed: {only_log or '-'}; only in weeks_data: {only_weeks or '-'}")
+    return False
+
+
 def run(args) -> None:
     out            = Path(args.output_dir)
     problems_path  = Path(args.problems)
@@ -129,29 +175,39 @@ def run(args) -> None:
     if not problems_path.exists():
         raise SystemExit(f"ERROR: {problems_path} not found. Run qoj/scraper.py first.")
     problems = premier.load_problems(problems_path)
+    check_consistency(processed_path, weeks_data)
 
     if not args.rebuild_only:
-        week_iso = args.date
+        week_iso = iso_date(args.date)
         # Guard: refuse to re-pick for an already-published week
-        if week_iso in weeks_data:
+        if week_iso in weeks_data and getattr(args, "skip_existing", False):
+            print(f"Week {week_iso} already exists in {weeks_path.name}; skipping pick (--skip-existing).")
+        elif week_iso in weeks_data:
             print(f"ERROR: Week {week_iso} already exists in {weeks_path.name}.")
             print("Use --rebuild-only to regenerate HTML without re-picking.")
             raise SystemExit(1)
-
-        processed_ids = premier.load_processed_ids(processed_path)
-        available = [p for p in problems if p["id"] not in processed_ids]
-        try:
-            picked = premier.pick_week(available, random.Random(args.seed))
-        except ValueError as e:
-            raise SystemExit(f"ERROR: {e}")
-
-        premier.save_processed(processed_path, [p for ps in picked.values() for p in ps])
-        weeks_data[week_iso] = picked
-        premier.save_weeks_data(weeks_data, weeks_path)
-        print(f"Picked {sum(len(v) for v in picked.values())} problems for {week_iso}")
+        else:
+            pick_and_save(args, week_iso, problems, weeks_data, processed_path, weeks_path)
 
     write_site(out, weeks_data, problems, args.seed)
     print(f"Wrote {len(weeks_data)} week page(s) + all/rank/problems.json/config.js → {out}")
+
+
+def pick_and_save(args, week_iso, problems, weeks_data, processed_path, weeks_path) -> None:
+    processed_ids = premier.load_processed_ids(processed_path)
+    available = [p for p in problems if p["id"] not in processed_ids]
+    # Seed per week: deterministic for a given date, but different every week.
+    try:
+        picked = premier.pick_week(available, random.Random(f"{args.seed}:{week_iso}"))
+    except ValueError as e:
+        print(f"::error::{e}")
+        raise SystemExit(f"ERROR: {e}")
+
+    # weeks_data.json is the source of truth: write it (atomically) first, then the log.
+    weeks_data[week_iso] = picked
+    premier.save_weeks_data(weeks_data, weeks_path)
+    premier.save_processed(processed_path, [p for ps in picked.values() for p in ps])
+    print(f"Picked {sum(len(v) for v in picked.values())} problems for {week_iso}")
 
 
 def main():
@@ -161,11 +217,14 @@ def main():
     ap.add_argument("--weeks-data", default=str(premier.WEEKS_DATA_JSON))
     ap.add_argument("--output-dir", default=str(premier.QOJ_DIR),
                     help="directory the generated pages/JSON are written to")
-    ap.add_argument("--date", "-d", default=str(date.today()),
+    ap.add_argument("--date", "-d", type=iso_date, default=str(date.today()),
                     help="ISO date for the week page (default: today)")
     ap.add_argument("--seed", "-s", type=int, default=SEED)
     ap.add_argument("--rebuild-only", action="store_true",
                     help="Regenerate pages from weeks_data.json without picking new problems")
+    ap.add_argument("--skip-existing", action="store_true",
+                    help="If the week already exists, print a notice and just rebuild (exit 0) "
+                         "instead of failing; used by the scheduled workflow")
     run(ap.parse_args())
 
 

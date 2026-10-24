@@ -3,8 +3,9 @@
   'use strict';
   var Q = window.QOJ, page = window.QOJ_PAGE || {}, esc = Q.escapeHtml;
   var root = document.getElementById('page');
-  var mine = new Set();
+  var mine = new Set(), mineErr = false;
   var activeTab = 'problems';
+  var rankSeq = 0, refreshSeq = 0;
 
   function weekLists() {
     return Q.lists().map(function (l) { return { l: l, ps: (page.problems || {})[l.key] || [] }; });
@@ -13,6 +14,7 @@
   function problemsHtml() {
     var can = Q.isLoggedIn(), h = '';
     if (!can) h += '<p class="text-muted" id="signin-hint">Sign in to track your progress.</p>';
+    else if (mineErr) h += '<p class="text-danger" id="progress-error">Could not load your progress.</p>';
     weekLists().forEach(function (x) {
       h += '<h4 class="section-label">' + esc(x.l.label) + '</h4>' +
         Q.problemTableHtml(x.ps, { checked: mine, canEdit: can });
@@ -21,11 +23,17 @@
   }
 
   async function renderRankings(pane) {
+    var seq = ++rankSeq;
+    if (!Q.hasBackend()) { pane.innerHTML = '<p class="text-muted">Progress tracking not configured.</p>'; return; }
     pane.innerHTML = '<p class="text-muted">Loading rankings…</p>';
     var data;
     try {
       data = await Promise.all([Q.fetchProgress(), Q.fetchProfiles()]);
-    } catch (e) { pane.innerHTML = '<p class="text-danger">Could not load rankings.</p>'; return; }
+    } catch (e) {
+      if (seq === rankSeq) pane.innerHTML = '<p class="text-danger">Could not load rankings.</p>';
+      return;
+    }
+    if (seq !== rankSeq) return;
     var byUser = Q.groupByUser(data[0]), pmap = Q.profileMap(data[1]);
     var wl = weekLists(), me = Q.getUser() && Q.getUser().id;
     var all = [];
@@ -39,7 +47,7 @@
     Q.assignRanks(rows, function (r) { return r.total; });
     if (!rows.length) { pane.innerHTML = '<p class="text-muted">Nobody has solved a problem this week yet.</p>'; return; }
 
-    var h = '<h4 class="section-label">Leaderboard</h4><table class="table table-bordered table-hover table-striped rank-table week-board"><thead><tr>' +
+    var h = '<h4 class="section-label">Leaderboard</h4><div class="rank-scroll"><table class="table table-bordered table-hover table-striped rank-table week-board"><thead><tr>' +
       '<th>#</th><th class="user-cell">User</th><th>Solved</th>' +
       wl.map(function (x) { return '<th>' + esc(x.l.label) + '</th>'; }).join('') + '</tr></thead><tbody>';
     rows.forEach(function (r) {
@@ -47,7 +55,7 @@
         '</td><td>' + r.total + ' / ' + all.length + '</td>' +
         r.per.map(function (n, i) { return '<td>' + n + ' / ' + wl[i].ps.length + '</td>'; }).join('') + '</tr>';
     });
-    h += '</tbody></table><h4 class="section-label">Problems</h4><div class="rank-scroll"><table class="table table-bordered table-hover rank-table week-grid"><thead><tr><th class="user-cell">User</th>' +
+    h += '</tbody></table></div><h4 class="section-label">Problems</h4><div class="rank-scroll"><table class="table table-bordered table-hover rank-table week-grid"><thead><tr><th class="user-cell">User</th>' +
       all.map(function (p) {
         return '<th title="' + esc(p.name) + '"><a href="' + esc(p.url || ('https://qoj.ac/problem/' + p.id)) + '" target="_blank" rel="noopener">#' + esc(p.id) + '</a></th>';
       }).join('') + '</tr></thead><tbody>';
@@ -83,11 +91,14 @@
     var pp = root.querySelector('#pane-problems'), pr = root.querySelector('#pane-rankings');
     pp.style.display = tab === 'problems' ? '' : 'none';
     pr.style.display = tab === 'rankings' ? '' : 'none';
-    if (tab === 'problems') pp.innerHTML = problemsHtml(); else renderRankings(pr);
+    if (tab === 'problems') { rankSeq++; pp.innerHTML = problemsHtml(); } else renderRankings(pr);
   }
 
   async function refresh() {
-    try { mine = await Q.fetchMyProgress(); } catch (e) { mine = new Set(); }
+    var seq = ++refreshSeq, m, err = false;
+    try { m = await Q.fetchMyProgress(); } catch (e) { m = new Set(); err = true; }
+    if (seq !== refreshSeq) return;
+    mine = m; mineErr = err;
     show(activeTab);
   }
 

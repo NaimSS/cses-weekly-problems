@@ -2,11 +2,11 @@ name: QOJ Weekly Picks
 
 on:
   schedule:
-    - cron: '0 6 * * 0'   # every Sunday at 06:00 UTC
+    - cron: '15 6 * * 0'  # every Sunday at 06:15 UTC (offset from weekly.yml)
   workflow_dispatch:        # allow manual runs
 
 concurrency:
-  group: qoj-weekly-picks
+  group: weekly-picks-push   # shared by weekly.yml and qoj-weekly.yml so their pushes don't race
   cancel-in-progress: false  # let the first run finish; don't drop scheduled work
 
 permissions:
@@ -26,7 +26,8 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: python qoj/generate.py
+        # Scheduled runs skip (exit 0) if the week already exists; manual runs still fail loudly.
+        run: python qoj/generate.py ${{ github.event_name == 'schedule' && '--skip-existing' || '' }}
 
       - name: Commit & push
         run: |
@@ -34,4 +35,14 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add qoj/
           git diff --cached --quiet || git commit -m "chore: qoj weekly picks $(date -u +%Y-%m-%d)"
-          git push
+          # Both Sunday workflows push to the same branch: rebase onto whatever landed first, retry.
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME"; then
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            echo "push attempt $i failed; retrying in $((i * 5))s"
+            sleep $((i * 5))
+          done
+          echo "::error::could not push after 5 attempts"
+          exit 1

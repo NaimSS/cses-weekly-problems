@@ -5,8 +5,10 @@ Imported by scraper.py and generate.py.
 
 import csv
 import json
+import os
 import random
 import sys
+import tempfile
 from pathlib import Path
 
 QOJ_DIR = Path(__file__).resolve().parent
@@ -74,8 +76,21 @@ def load_weeks_data(path: Path = WEEKS_DATA_JSON) -> dict:
 
 
 def save_weeks_data(data: dict, path: Path = WEEKS_DATA_JSON) -> None:
-    with path.open("w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    """Write weeks_data.json atomically (temp file in the same dir + os.replace)."""
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.chmod(tmp, 0o644)  # mkstemp creates 0600
+        os.replace(tmp, path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+
+def week_ids(weeks_data: dict) -> set[str]:
+    """Every problem id picked in any week."""
+    return {p["id"] for wd in weeks_data.values() for ps in wd.values() for p in ps}
 
 
 def save_processed(path: Path, problems: list[dict]) -> None:
@@ -103,6 +118,7 @@ def pick_week(available: list[dict], rng: random.Random,
             raise ValueError(f"List {lst['key']} ({lst['label']}): {e}") from None
         left = len(pool) - lst["count"]
         if left < MIN_WEEKS_LEFT * lst["count"]:
-            print(f"WARNING: list {lst['key']} has only {left} unpicked problems left "
+            # GitHub Actions annotation; still readable as a plain log line locally.
+            print(f"::warning::list {lst['key']} has only {left} unpicked problems left "
                   f"after this week (< {MIN_WEEKS_LEFT} weeks of picks).")
     return result

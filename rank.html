@@ -182,6 +182,16 @@
       background: var(--surface);
     }
 
+    /* ── podium ── */
+    .rank-table tbody tr.podium-1 td { background-color: var(--bg); background-image: linear-gradient(rgba(250,204,21,.12), rgba(250,204,21,.12)); }
+    .rank-table tbody tr.podium-2 td { background-color: var(--bg); background-image: linear-gradient(rgba(203,213,225,.10), rgba(203,213,225,.10)); }
+    .rank-table tbody tr.podium-3 td { background-color: var(--bg); background-image: linear-gradient(rgba(205,127,50,.12), rgba(205,127,50,.12)); }
+    .rank-table tbody tr.podium-1 td:first-child { box-shadow: inset 3px 0 0 #facc15; }
+    .rank-table tbody tr.podium-2 td:first-child { box-shadow: inset 3px 0 0 #cbd5e1; }
+    .rank-table tbody tr.podium-3 td:first-child { box-shadow: inset 3px 0 0 #cd7f32; }
+    .medal { margin-right: .35rem; font-size: 1rem; line-height: 1; vertical-align: middle; }
+
+
     .rank-avatar {
       border-radius: 50%;
       vertical-align: middle;
@@ -300,13 +310,11 @@
         allIds.push(...wd.hard.map(p => p.id), ...wd.medium.map(p => p.id), ...wd.easy.map(p => p.id));
       }
 
-      const [progressRes, profilesRes] = await Promise.all([
-        sb.from('progress').select('user_id, problem_id').in('problem_id', allIds).eq('done', true),
-        sb.from('profiles').select('user_id, username, avatar_url'),
+      const [progress, profiles] = await Promise.all([
+        fetchAllRows(() => sb.from('progress').select('user_id, problem_id').in('problem_id', allIds).eq('done', true)
+          .order('user_id').order('problem_id')),
+        fetchAllRows(() => sb.from('profiles').select('user_id, username, avatar_url').order('user_id')),
       ]);
-
-      const progress = progressRes.data || [];
-      const profiles = profilesRes.data || [];
 
       const userMap = new Map();
       for (const p of profiles) {
@@ -349,15 +357,18 @@
               + `<a class="week-link" href="weeks/${w}.html" onclick="event.stopPropagation()">${label}</a>`
               + `<span class="expand-icon">▶</span></th>`;
         for (const p of weekProbs[w]) {
-          head += `<th class="week-prob prob-${p.tier}" data-week="${w}" style="display:none" title="${p.name}">${p.lbl}</th>`;
+          head += `<th class="week-prob prob-${p.tier}" data-week="${w}" style="display:none" title="${escapeHtml(p.name)}">${p.lbl}</th>`;
         }
       }
       head += `<th class="cell-total">Total</th></tr>`;
 
+      const podium = podiumInfo(users.map(([, u]) => u.solved.size));
       let body = '';
-      for (const [, u] of users) {
-        const av = u.avatar ? `<img class="rank-avatar" src="${u.avatar}" width="20" height="20" alt="">` : '';
-        body += `<tr><td>${av}${u.username}</td>`;
+      users.forEach(([, u], ui) => {
+        const pd = podium[ui];
+        const avUrl = safeImgUrl(u.avatar);
+        const av = avUrl ? `<img class="rank-avatar" src="${escapeHtml(avUrl)}" width="20" height="20" alt="">` : '';
+        body += `<tr class="${pd.cls.trim()}"><td>${pd.medal ? `<span class="medal" aria-hidden="true">${pd.medal}</span>` : ''}${av}${escapeHtml(u.username)}</td>`;
         let total = 0;
         for (const w of weeks) {
           const wps = weekSets[w];
@@ -374,7 +385,7 @@
           }
         }
         body += `<td class="cell-total">${total}</td></tr>`;
-      }
+      });
 
       container.innerHTML = `
         <div class="rank-section">
@@ -400,6 +411,41 @@
 
     // ── Auth ──────────────────────────────────────────────────────────────────
 
+    // Escape untrusted values (Supabase profiles, problem names) before innerHTML.
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"'`]/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;'
+      })[c]);
+    }
+
+    // Competition ranking (ties share a rank). Returns [{rank, medal}] aligned with `counts`
+    // (counts must be sorted descending). Zero-solved users never get a medal.
+    function podiumInfo(counts) {
+      return counts.map((c, i) => {
+        const rank = counts.findIndex(x => x === c) + 1;
+        const medal = c > 0 && rank <= 3 ? ['🥇', '🥈', '🥉'][rank - 1] : '';
+        return { rank, medal, cls: medal ? ' podium-' + rank : '' };
+      });
+    }
+
+    // Only allow https: avatar URLs; returns '' for anything else.
+    function safeImgUrl(u) {
+      try { return new URL(String(u)).protocol === 'https:' ? String(u) : ''; }
+      catch { return ''; }
+    }
+
+    // Supabase caps responses (default 1000 rows); page through with .range().
+    async function fetchAllRows(makeQuery, pageSize = 1000) {
+      const rows = [];
+      for (let from = 0; ; from += pageSize) {
+        const { data, error } = await makeQuery().range(from, from + pageSize - 1);
+        if (error || !data) break;
+        rows.push(...data);
+        if (data.length < pageSize) break;
+      }
+      return rows;
+    }
+
     async function signIn() {
       await sb.auth.signInWithOAuth({
         provider: 'github',
@@ -420,10 +466,10 @@
       if (!USE_SUPABASE) { area.innerHTML = ''; return; }
       if (user) {
         const name   = user.user_metadata?.user_name || user.email;
-        const avatar = user.user_metadata?.avatar_url;
+        const avatar = safeImgUrl(user.user_metadata?.avatar_url);
         area.innerHTML = `
-          ${avatar ? `<img src="${avatar}" width="22" height="22" alt="">` : ''}
-          <span>${name}</span>
+          ${avatar ? `<img src="${escapeHtml(avatar)}" width="22" height="22" alt="">` : ''}
+          <span>${escapeHtml(name)}</span>
           <button class="signout-link" onclick="signOut()">Sign out</button>`;
       } else {
         area.innerHTML = `
