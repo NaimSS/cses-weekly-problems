@@ -9,8 +9,8 @@
   var problemsPromise = null;
 
   var DEFAULT_LISTS = [
-    { key: 'D', label: 'Beginners', count: 3, enabled: true },
-    { key: 'C', label: 'Easy I', count: 4, enabled: true }
+    { key: 'D', label: 'Beginners', count: 4, enabled: true },
+    { key: 'C', label: 'Easy I', count: 3, enabled: true }
   ];
   var NAV = [
     ['weekly', 'index.html', 'Weekly'],

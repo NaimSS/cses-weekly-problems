@@ -50,7 +50,7 @@ for (const d of WEEK_DATES) {
 const weeksData = JSON.parse(readFileSync(join(site, 'weeks_data.json'), 'utf8'));
 const problems = JSON.parse(readFileSync(join(site, 'problems.json'), 'utf8'));
 const LISTS = ['D', 'C'];
-const LIST_COUNTS = { D: 3, C: 4 };
+const LIST_COUNTS = { D: 4, C: 3 };
 const LIST_SIZES = { D: 58, C: 99 };
 const weekIds = (d) => LISTS.flatMap((k) => weeksData[d][k].map((p) => p.id));
 const enabledProblems = problems.filter((p) => LISTS.includes(p.list));
@@ -229,7 +229,7 @@ try {
   await onPage('week: rows/titles/links, checkboxes disabled when logged out', `weeks/${W}.html`, { db: OUT(), wait: READY.week }, async (p) => {
     assert.equal(await p.eval(`document.querySelectorAll('#pane-problems table.problem-table tbody tr[data-id]').length`), 7);
     const per = await p.eval(`[...document.querySelectorAll('#pane-problems table.problem-table')].map(t => t.querySelectorAll('tbody tr[data-id]').length)`);
-    assert.deepEqual(per, [3, 4]);
+    assert.deepEqual(per, [4, 3]);
     const links = await p.eval(`[...document.querySelectorAll('table.problem-table tbody tr[data-id]')].map(tr => [tr.dataset.id, tr.querySelector('a').href])`);
     assert.deepEqual(links.map((l) => l[0]), wIds);
     for (const [id, href] of links) assert.equal(href, `https://qoj.ac/problem/${id}`);
@@ -270,7 +270,7 @@ try {
     assert.deepEqual(rows[0].slice(0, 3), ['1', XSS, '7 / 7']);
     assert.deepEqual(rows[1].slice(0, 3), ['2', 'AliceQ', '3 / 7']);
     assert.deepEqual(rows[2].slice(0, 3), ['3', '<svg onload=window.__xss=1>', '1 / 7']);
-    assert.deepEqual(rows[1].slice(3), ['2 / 3', '1 / 4']); // wIds[0],[1] in D; wIds[6] is C
+    assert.deepEqual(rows[1].slice(3), ['2 / 4', '1 / 3']); // wIds[0],[1] in D; wIds[6] is C
     assert.equal(await p.eval(`document.querySelectorAll('table.week-grid tbody tr').length`), 3);
     assert.equal(await p.eval(`window.__xss`), undefined);
   });

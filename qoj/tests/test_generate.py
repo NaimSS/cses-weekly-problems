@@ -15,7 +15,7 @@ sys.path.insert(0, str(QOJ_DIR))
 import generate  # noqa: E402
 import premier  # noqa: E402
 
-PER_LIST = {"D": 3, "C": 4}
+PER_LIST = {"D": 4, "C": 3}
 
 
 def make_problems(n=20):
@@ -133,7 +133,7 @@ class PickTests(TmpCase):
     def test_low_pool_emits_actions_warning(self):
         premier.save_problems_csv(self.dir / "problems.csv", make_problems(5))
         out = self.run_quiet()
-        self.assertRegex(out, r"(?m)^::warning::list C has only 1 unpicked")
+        self.assertRegex(out, r"(?m)^::warning::list C has only 2 unpicked")
 
     def test_pool_exhausted_writes_nothing(self):
         premier.save_problems_csv(self.dir / "problems.csv", [p for p in make_problems() if p["list"] != "C"])

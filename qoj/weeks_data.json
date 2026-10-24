@@ -26,6 +26,16 @@
           "Interactive"
         ],
         "url": "https://qoj.ac/problem/4926"
+      },
+      {
+        "id": "11116",
+        "name": "Yearning for Yonder",
+        "list": "D",
+        "source": "CCPC Final 2024",
+        "tags": [
+          "Interactive"
+        ],
+        "url": "https://qoj.ac/problem/11116"
       }
     ],
     "C": [
@@ -52,14 +62,6 @@
         "source": "Nanjing Regional 2025",
         "tags": [],
         "url": "https://qoj.ac/problem/14805"
-      },
-      {
-        "id": "10011",
-        "name": "Lottery",
-        "list": "C",
-        "source": "Petrozavodsk Summer 2024 Day 2 · 2023 KAIST ICPC Mock Competition",
-        "tags": [],
-        "url": "https://qoj.ac/problem/10011"
       }
     ]
   }

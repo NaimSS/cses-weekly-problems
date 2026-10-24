@@ -33,8 +33,8 @@ PROCESSED_FIELDS = ["id", "name", "list", "url"]
 
 # Display order, easy -> hard.
 PREMIER_LISTS = [
-    {"key": "D",  "label": "Beginners", "count": 3, "enabled": True},
-    {"key": "C",  "label": "Easy I",    "count": 4, "enabled": True},
+    {"key": "D",  "label": "Beginners", "count": 4, "enabled": True},
+    {"key": "C",  "label": "Easy I",    "count": 3, "enabled": True},
     {"key": "C2", "label": "Easy II",   "count": 0, "enabled": False},
     {"key": "B",  "label": "Medium I",  "count": 0, "enabled": False},
     {"key": "B2", "label": "Medium II", "count": 0, "enabled": False},

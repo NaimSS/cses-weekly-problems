@@ -59,8 +59,8 @@ node qoj/tests/e2e/run.mjs        # headless Chrome over CDP, no installs
 ### PREMIER_LISTS (premier.py) — display order easy → hard
 | key | label | count/week | enabled |
 |---|---|---|---|
-| D | Beginners | 3 | yes |
-| C | Easy I | 4 | yes |
+| D | Beginners | 4 | yes |
+| C | Easy I | 3 | yes |
 | C2 | Easy II | 0 | no |
 | B | Medium I | 0 | no |
 | B2 | Medium II | 0 | no |
