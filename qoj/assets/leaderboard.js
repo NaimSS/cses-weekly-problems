@@ -1,0 +1,43 @@
+/* All-time leaderboard over the enabled premier lists. */
+(function () {
+  'use strict';
+  var Q = window.QOJ, esc = Q.escapeHtml;
+  var root = document.getElementById('page');
+
+  async function main() {
+    root.innerHTML = '<p class="text-muted">Loading…</p>';
+    var data;
+    try { data = await Promise.all([Q.loadProblems(), Q.fetchProgress(), Q.fetchProfiles()]); }
+    catch (e) { root.innerHTML = '<p class="text-danger">Could not load leaderboard.</p>'; return; }
+    var lists = Q.lists(), idsByList = {};
+    lists.forEach(function (l) { idsByList[l.key] = new Set(); });
+    data[0].forEach(function (p) { if (idsByList[p.list]) idsByList[p.list].add(String(p.id)); });
+    var grand = 0;
+    lists.forEach(function (l) { grand += idsByList[l.key].size; });
+    var byUser = Q.groupByUser(data[1]), pmap = Q.profileMap(data[2]);
+    var me = Q.getUser() && Q.getUser().id, rows = [];
+    byUser.forEach(function (set, uid) {
+      var per = lists.map(function (l) {
+        var n = 0;
+        set.forEach(function (id) { if (idsByList[l.key].has(id)) n++; });
+        return n;
+      });
+      var total = per.reduce(function (a, b) { return a + b; }, 0);
+      if (total > 0) rows.push({ uid: uid, name: Q.nameOf(pmap, uid), per: per, total: total });
+    });
+    Q.assignRanks(rows, function (r) { return r.total; });
+    var h = '<h3 class="mb-3">Leaderboard</h3><table class="table table-bordered table-hover table-striped rank-table"><thead><tr><th>#</th><th class="user-cell">User</th>' +
+      lists.map(function (l) { return '<th>' + esc(l.label) + '</th>'; }).join('') + '<th>Total</th></tr></thead><tbody>';
+    rows.forEach(function (r) {
+      h += '<tr' + (r.uid === me ? ' class="me-row"' : '') + '><td>' + r.rank + '</td><td class="user-cell">' + esc(r.name) + '</td>' +
+        r.per.map(function (n, i) {
+          var tot = idsByList[lists[i].key].size, pct = tot ? Math.round(100 * n / tot) : 0;
+          return '<td>' + n + ' / ' + tot + '<div class="progress thin"><div class="progress-bar bg-success" style="width:' + pct + '%"></div></div></td>';
+        }).join('') + '<td><strong>' + r.total + ' / ' + grand + '</strong></td></tr>';
+    });
+    if (!rows.length) h += '<tr><td colspan="' + (lists.length + 3) + '" class="text-muted">No progress recorded yet.</td></tr>';
+    root.innerHTML = h + '</tbody></table>';
+  }
+
+  Q.ready.then(function () { main(); Q.onAuth(main); });
+})();

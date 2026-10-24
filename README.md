@@ -10,3 +10,5 @@ Weekly competitive-programming practice site for a group of friends. Every Sunda
 - Problems are never repeated (`processed.csv` tracks all previous picks)
 - GitHub Actions runs every Sunday at 06:00 UTC and auto-commits the new week
 - Progress is tracked per-user via Supabase; the leaderboard updates live in-browser
+
+**Also:** [QOJ Premier Weekly](qoj/README.md) — the same weekly-picks idea for the QOJ Premier Lists (`qoj/`).

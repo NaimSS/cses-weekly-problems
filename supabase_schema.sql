@@ -63,3 +63,8 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert or update on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- ── QOJ Premier Weekly ─────────────────────────────────────────────────────────
+
+-- User-chosen QOJ handle (see qoj/supabase_migration.sql)
+alter table public.profiles add column if not exists qoj_handle text;
