@@ -80,3 +80,21 @@ Dark theme CSS variables used across all pages:
 
 Runs every Sunday 06:00 UTC → picks new week → commits `weeks/` and `index.html`.
 Workflow: `.github/workflows/weekly.yml`
+
+## QOJ Premier Weekly (`qoj/`)
+
+Second site under `qoj/` (see `qoj/README.md` for the full contract): weekly picks from the QOJ Premier Lists (C 2 / C2 2 / B 2 / B2 1 per week).
+
+| File | Purpose |
+|------|---------|
+| `qoj/premier.py` | `PREMIER_LISTS` config, paths, load/pick helpers |
+| `qoj/scraper.py` | Saved QOJ list HTML (stdlib parser) → `qoj/problems.csv` |
+| `qoj/generate.py` | Picks a week + writes `problems.json`, `assets/config.js`, week/all/rank/index pages |
+| `qoj/processed.csv`, `qoj/weeks_data.json` | **Append-only** pick log / source of truth for rebuilds |
+
+```bash
+.venv/bin/python qoj/generate.py --rebuild-only   # safe; regenerates pages only
+.venv/bin/python -m unittest discover -s qoj/tests -v
+```
+
+**Critical:** never run `qoj/generate.py` without `--rebuild-only` against an existing week — it picks NEW problems and appends them to `qoj/processed.csv`. Workflow: `.github/workflows/qoj-weekly.yml`.

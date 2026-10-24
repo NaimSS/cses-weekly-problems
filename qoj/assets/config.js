@@ -1,0 +1,2 @@
+window.QOJ_CONFIG = {"supabaseUrl": "https://ugwnwhnuadolypyvrnsq.supabase.co", "supabaseKey": "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6"};
+window.QOJ_LISTS = [{"key": "C", "label": "Easy I", "count": 2, "enabled": true}, {"key": "C2", "label": "Easy II", "count": 2, "enabled": true}, {"key": "B", "label": "Medium I", "count": 2, "enabled": true}, {"key": "B2", "label": "Medium II", "count": 1, "enabled": true}, {"key": "A", "label": "Hard", "count": 0, "enabled": false}, {"key": "D", "label": "Beginners", "count": 0, "enabled": false}];

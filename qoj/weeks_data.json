@@ -1,0 +1,70 @@
+{
+  "2026-10-25": {
+    "C": [
+      {
+        "id": "10004",
+        "name": "Excellent HLD",
+        "list": "C",
+        "source": "Petrozavodsk Summer 2024 Day 2 · 2023 KAIST ICPC Mock Competition",
+        "tags": [],
+        "url": "https://qoj.ac/problem/10004"
+      },
+      {
+        "id": "3164",
+        "name": "All Kill",
+        "list": "C",
+        "source": "NAC 2020",
+        "tags": [],
+        "url": "https://qoj.ac/problem/3164"
+      }
+    ],
+    "C2": [
+      {
+        "id": "122",
+        "name": "Security Gate",
+        "list": "C2",
+        "source": "JOISC 2018 Day 3",
+        "tags": [],
+        "url": "https://qoj.ac/problem/122"
+      },
+      {
+        "id": "18881",
+        "name": "Dev, Please Add This!",
+        "list": "C2",
+        "source": "",
+        "tags": [],
+        "url": "https://qoj.ac/problem/18881"
+      }
+    ],
+    "B": [
+      {
+        "id": "6661",
+        "name": "야유회",
+        "list": "B",
+        "source": "KOI TST 2023 Day 1",
+        "tags": [
+          "Communication"
+        ],
+        "url": "https://qoj.ac/problem/6661"
+      },
+      {
+        "id": "6350",
+        "name": "MIT",
+        "list": "B",
+        "source": "Petrozavodsk Winter 2023 Day 6",
+        "tags": [],
+        "url": "https://qoj.ac/problem/6350"
+      }
+    ],
+    "B2": [
+      {
+        "id": "5142",
+        "name": "Grid Points",
+        "list": "B2",
+        "source": "Jinan Regional 2022",
+        "tags": [],
+        "url": "https://qoj.ac/problem/5142"
+      }
+    ]
+  }
+}
