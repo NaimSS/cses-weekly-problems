@@ -265,6 +265,10 @@
   /* ---------- problem table ---------- */
   function problemUrl(p) { return p.url || ('https://qoj.ac/problem/' + p.id); }
   function userUrl(uid) { return base() + 'user.html?u=' + encodeURIComponent(uid); }
+  /* Ranking-table name: opens that user's statistics page in a new tab. */
+  function userLinkHtml(uid, name) {
+    return '<a class="user-link" href="' + escapeHtml(userUrl(uid)) + '" target="_blank" rel="noopener">' + escapeHtml(name) + '</a>';
+  }
   function problemTitleHtml(p) {
     var h = '<a href="' + escapeHtml(problemUrl(p)) + '" target="_blank" rel="noopener">' + escapeHtml(p.name) + '</a>';
     if (p.source) {
@@ -407,6 +411,6 @@
     isLoggedIn: function () { return !!state.user; },
     hasBackend: function () { return !!state.sb; },
     rankRow: rankRow, profileMap: profileMap, groupByUser: groupByUser, nameOf: nameOf, assignRanks: assignRanks,
-    problemUrl: problemUrl, userUrl: userUrl, problemTitleHtml: problemTitleHtml, problemTableHtml: problemTableHtml, bindChecks: bindChecks
+    problemUrl: problemUrl, userUrl: userUrl, userLinkHtml: userLinkHtml, problemTitleHtml: problemTitleHtml, problemTableHtml: problemTableHtml, bindChecks: bindChecks
   });
 })();

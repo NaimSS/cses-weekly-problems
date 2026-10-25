@@ -44,8 +44,7 @@
       lists.map(function (l) { return '<th>' + esc(l.label) + '</th>'; }).join('') + '<th>Total</th></tr></thead><tbody>';
     rows.forEach(function (r) {
       var rr = Q.rankRow(r, me);
-      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal +
-        '<a class="user-link" href="' + esc(Q.userUrl(r.uid)) + '" target="_blank" rel="noopener">' + esc(r.name) + '</a></td>' +
+      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + Q.userLinkHtml(r.uid, r.name) + '</td>' +
         r.per.map(function (n, i) {
           var tot = idsByList[lists[i].key].size, pct = tot ? Math.round(100 * n / tot) : 0;
           return '<td>' + n + ' / ' + tot + '<div class="progress thin"><div class="progress-bar bg-success" style="width:' + pct + '%"></div></div></td>';
