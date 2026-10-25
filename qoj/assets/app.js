@@ -133,10 +133,13 @@
     if (minePre) { var p = minePre; minePre = null; return p; }
     return selectMine();
   }
-  async function selectMine() {
+  function selectMine() {
+    return state.user ? fetchUserProgress(state.user.id) : Promise.resolve(new Set());
+  }
+  /* Set of bare ids the given user marked done (any user: progress has public SELECT). */
+  async function fetchUserProgress(uid) {
     var set = new Set();
-    if (!state.sb || !state.user) return set;
-    var uid = state.user.id;
+    if (!state.sb || !uid) return set;
     var r = await paged(function (a, b) {
       return state.sb.from('progress').select('problem_id', { count: 'exact' })
         .eq('user_id', uid).eq('done', true).like('problem_id', 'qoj:%')
@@ -261,6 +264,7 @@
 
   /* ---------- problem table ---------- */
   function problemUrl(p) { return p.url || ('https://qoj.ac/problem/' + p.id); }
+  function userUrl(uid) { return base() + 'user.html?u=' + encodeURIComponent(uid); }
   function problemTitleHtml(p) {
     var h = '<a href="' + escapeHtml(problemUrl(p)) + '" target="_blank" rel="noopener">' + escapeHtml(p.name) + '</a>';
     if (p.source) {
@@ -396,13 +400,13 @@
   Object.assign(QOJ, {
     escapeHtml: escapeHtml, pid: pid, lists: lists, displayName: displayName,
     loadProblems: loadProblems, fetchProfiles: fetchProfiles, fetchProgress: fetchProgress,
-    fetchMyProgress: fetchMyProgress, setDone: setDone, saveHandle: saveHandle,
+    fetchMyProgress: fetchMyProgress, fetchUserProgress: fetchUserProgress, setDone: setDone, saveHandle: saveHandle,
     signIn: signIn, signOut: signOut, onAuth: onAuth, renderHeader: renderHeader,
     getUser: function () { return state.user; },
     getProfile: function () { return state.profile; },
     isLoggedIn: function () { return !!state.user; },
     hasBackend: function () { return !!state.sb; },
     rankRow: rankRow, profileMap: profileMap, groupByUser: groupByUser, nameOf: nameOf, assignRanks: assignRanks,
-    problemTitleHtml: problemTitleHtml, problemTableHtml: problemTableHtml, bindChecks: bindChecks
+    problemUrl: problemUrl, userUrl: userUrl, problemTitleHtml: problemTitleHtml, problemTableHtml: problemTableHtml, bindChecks: bindChecks
   });
 })();

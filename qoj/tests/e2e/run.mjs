@@ -325,6 +325,33 @@ try {
     assert.equal(await p.eval(`window.__xss`), undefined);
   });
 
+  await onPage('leaderboard: user names open user.html in a new tab', 'leaderboard.html', { db: makeDb({ session: null }), wait: `document.querySelector('table.rank-table tbody tr a.user-link')` }, async (p) => {
+    const links = await p.eval(`[...document.querySelectorAll('a.user-link')].map(a => [a.innerText.trim(), a.getAttribute('href'), a.target])`);
+    const alice = links.find((l) => l[0] === 'AliceQ');
+    assert.deepEqual(alice, ['AliceQ', 'user.html?u=u1', '_blank']);
+  });
+
+  await onPage('user: grid per list, solved cells green, titles + problem links', 'user.html', { db: makeDb({ session: null }), hash: '?u=u1', wait: `document.querySelector('.solve-grid')` }, async (p) => {
+    const w1 = weekIds(WEEK_DATES[0]), w2 = weekIds(WEEK_DATES[1]), mine = [w1[0], w1[1], w1[6], w2[0]];
+    assert.equal(await p.text('#user-name'), 'AliceQ');
+    assert.equal(await p.text('#user-solved'), `Solved tasks: 4 / ${grand}`);
+    assert.equal(await p.eval(`document.querySelectorAll('.solve-grid').length`), LISTS.length);
+    assert.equal(await p.eval(`document.querySelectorAll('.solve-cell').length`), grand);
+    const yes = await p.eval(`[...document.querySelectorAll('.solve-cell.yes')].map(a => a.dataset.id).sort()`);
+    assert.deepEqual(yes, [...mine].sort(), 'not-done rows must not show as solved');
+    const cell = await p.eval(`(a => [a.title, a.getAttribute('href'), a.target, a.innerText.trim()])(document.querySelector('.solve-cell[data-id="${mine[0]}"]'))`);
+    const prob = problems.find((x) => x.id === mine[0]);
+    assert.deepEqual(cell, [prob.name, prob.url, '_blank', '✓']);
+    mkdirSync(SCREENS, { recursive: true });
+    writeFileSync(join(SCREENS, 'user-1100.png'), Buffer.from((await p.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true })).data, 'base64'));
+  });
+
+  await onPage('user: hostile name stays inert; missing ?u shows hint', 'user.html', { db: makeDb({ session: null }), hash: '?u=u3', wait: `document.querySelector('.solve-grid')` }, async (p) => {
+    assert.equal(await p.text('#user-name'), '<svg onload=window.__xss=1>');
+    assert.equal(await p.eval(`window.__xss`), undefined);
+  });
+  await onPage('user: no ?u', 'user.html', { db: makeDb({ session: null }), wait: `document.querySelector('#page a[href="leaderboard.html"]')` }, async () => {});
+
   /* ===== 5. solved.html ===== */
   await onPage('solved: tabs, counts, filters, toggle write', 'solved.html', { db: makeDb({ session: 'u1' }), wait: READY.solved }, async (p) => {
     const tabs = await p.eval(`[...document.querySelectorAll('.list-tabs [data-list]')].map(a => a.dataset.list)`);

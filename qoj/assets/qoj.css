@@ -50,3 +50,10 @@ table.problem-table .form-check-input.solve-check { width: 1.5rem; height: 1.5re
   .list-tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; }
   .list-tabs .nav-link { white-space: nowrap; }
 }
+
+/* user statistics grid (CSES-style); 1px gap + 1px ring per cell draws single grid lines */
+.rank-table a.user-link { color: inherit; }
+.solve-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr)); gap: 1px; padding: 1px; max-width: 24rem; }
+.solve-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: #fff; box-shadow: 0 0 0 1px #343a40; color: #212529; text-decoration: none; font-size: .95rem; }
+.solve-cell.yes { background: #90ee90; }
+.solve-cell:hover { filter: brightness(.9); color: #212529; position: relative; z-index: 1; }
