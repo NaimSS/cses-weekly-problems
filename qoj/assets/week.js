@@ -59,7 +59,7 @@
       wl.map(function (x) { return '<th>' + esc(x.l.label) + '</th>'; }).join('') + '</tr></thead><tbody>';
     rows.forEach(function (r) {
       var rr = Q.rankRow(r, me);
-      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + esc(r.name) +
+      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + Q.userLinkHtml(r.uid, r.name) +
         '</td><td>' + r.total + ' / ' + all.length + '</td>' +
         r.per.map(function (n, i) { return '<td>' + n + ' / ' + wl[i].ps.length + '</td>'; }).join('') + '</tr>';
     });
@@ -69,7 +69,7 @@
       }).join('') + '</tr></thead><tbody>';
     rows.forEach(function (r) {
       var rr = Q.rankRow(r, me);
-      h += '<tr' + rr.attr + '><td class="user-cell">' + rr.medal + esc(r.name) + '</td>' + all.map(function (p) {
+      h += '<tr' + rr.attr + '><td class="user-cell">' + rr.medal + Q.userLinkHtml(r.uid, r.name) + '</td>' + all.map(function (p) {
         return r.set.has(String(p.id)) ? '<td class="cell-yes">✓</td>' : '<td class="cell-no">✗</td>';
       }).join('') + '</tr>';
     });

@@ -36,7 +36,7 @@
     h += '<th>Total</th></tr></thead><tbody>';
     model.rows.forEach(function (r) {
       var rr = Q.rankRow(r, me);
-      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + esc(r.name) + '</td>';
+      h += '<tr' + rr.attr + '><td>' + r.rank + '</td><td class="user-cell">' + rr.medal + Q.userLinkHtml(r.uid, r.name) + '</td>';
       dates.forEach(function (d) {
         var ps = weekProblems(d);
         if (expanded.has(d) && ps.length) {

@@ -547,6 +547,16 @@ try {
     await sleep(100);
     assert.equal(await p.eval('window.__authCalls'), 1);
   });
+  await onPage('rank: user names open user.html in a new tab', 'rank.html', { db: makeDb({ session: 'u1' }), wait: `document.querySelector('table.rank-table tbody tr a.user-link')` }, async (p) => {
+    const alice = await p.eval(`[...document.querySelectorAll('a.user-link')].filter(a => a.innerText.trim() === 'AliceQ').map(a => [a.getAttribute('href'), a.target])`);
+    assert.deepEqual(alice, [['user.html?u=u1', '_blank']]);
+  });
+  await onPage('week Rankings tab: user names link to ../user.html', `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), wait: READY.week }, async (p) => {
+    await p.click('[data-tab="rankings"]');
+    await p.waitFor(`document.querySelector('#pane-rankings a.user-link')`);
+    const hrefs = await p.eval(`[...document.querySelectorAll('#pane-rankings a.user-link')].filter(a => a.innerText.trim() === 'AliceQ').map(a => [a.getAttribute('href'), a.target])`);
+    assert.deepEqual(hrefs, [['../user.html?u=u1', '_blank'], ['../user.html?u=u1', '_blank']]);
+  });
   await onPage('week: rapid tab switching drops stale rankings', `weeks/${W}.html`, { db: makeDb({ session: 'u1' }), wait: READY.week }, async (p) => {
     await p.eval(`document.querySelector('[data-tab="rankings"]').click(); document.querySelector('[data-tab="problems"]').click()`);
     await sleep(200);
