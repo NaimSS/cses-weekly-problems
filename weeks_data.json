@@ -1982,5 +1982,67 @@
         "url": "https://cses.fi/problemset/task/2206"
       }
     ]
+  },
+  "2026-10-25": {
+    "hard": [
+      {
+        "id": "3138",
+        "name": "All Palindromes",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/3138"
+      },
+      {
+        "id": "2414",
+        "name": "List of Sums",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/2414"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2416",
+        "name": "Increasing Array Queries",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/2416"
+      },
+      {
+        "id": "1694",
+        "name": "Download Speed",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1694"
+      },
+      {
+        "id": "2101",
+        "name": "New Roads Queries",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2101"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1636",
+        "name": "Coin Combinations II",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1636"
+      },
+      {
+        "id": "1083",
+        "name": "Missing Number",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1083"
+      },
+      {
+        "id": "1671",
+        "name": "Shortest Routes I",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1671"
+      },
+      {
+        "id": "1629",
+        "name": "Movie Festival",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1629"
+      }
+    ]
   }
 }
