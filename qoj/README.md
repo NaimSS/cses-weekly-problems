@@ -42,6 +42,7 @@ node qoj/tests/e2e/run.mjs        # headless Chrome over CDP, no installs
 | `index.html` | generated | redirect to latest week |
 | `all.html`, `rank.html`, `weeks/<date>.html` | generated shells | JS renders content from `window.QOJ_PAGE` |
 | `leaderboard.html`, `solved.html`, `profile.html` | hand-written static | |
+| `user.html` | hand-written static | `user.html?u=<user_id>`: CSES-style grid of every enabled-list problem, solved cells green (opened in a new tab from leaderboard names) |
 | `assets/config.js` | generated | `window.QOJ_CONFIG = { supabaseUrl, supabaseKey }` |
 | `assets/qoj.css`, `assets/app.js`, `assets/<page>.js`, `assets/import-parser.js` | hand-written | UI |
 | `supabase_migration.sql` | | adds `profiles.qoj_handle` |
@@ -106,5 +107,5 @@ Every page (generated or static) has this structure:
   - week: `{ "type": "week", "date": "2026-10-25", "problems": { "D": [...], "C": [...] } }` → `assets/week.js`
   - all: `{ "type": "all", "weeks": ["2026-10-25", …] }` (newest first) → `assets/all.js`
   - rank: `{ "type": "rank", "weeks": <weeks_data.json> }` → `assets/rank.js`
-  - leaderboard / solved / profile: `{ "type": "<name>" }` (they fetch `{BASE}problems.json`)
-- Element ids/classes the e2e tests rely on: `#site-header`, `#page`, `#auth-area`, `input.solve-check[data-id="<id>"]` (checkbox per problem row, `data-id` = bare QOJ id), `table.problem-table`, `table.rank-table`, `#qoj-handle-input`, `#qoj-handle-save`, `#import-file`, `#import-preview`, `#import-confirm`, `.list-tabs [data-list="<key>"]`.
+  - leaderboard / solved / profile / user: `{ "type": "<name>" }` (they fetch `{BASE}problems.json`)
+- Element ids/classes the e2e tests rely on: `#site-header`, `#page`, `#auth-area`, `input.solve-check[data-id="<id>"]` (checkbox per problem row, `data-id` = bare QOJ id), `table.problem-table`, `table.rank-table`, `#qoj-handle-input`, `#qoj-handle-save`, `#import-file`, `#import-preview`, `#import-confirm`, `.list-tabs [data-list="<key>"]`, `a.user-link` (leaderboard name), `#user-name`, `#user-solved`, `.solve-grid`, `.solve-cell[data-id="<id>"]` (`.yes` when solved).
