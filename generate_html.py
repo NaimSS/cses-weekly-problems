@@ -6,6 +6,7 @@ Produces: weeks/YYYY-MM-DD.html, all.html, rank.html, index.html
 
 import argparse
 import csv
+import html
 import json
 import os
 import random
@@ -30,10 +31,11 @@ if _env_file.exists():
         _line = _line.strip()
         if _line and not _line.startswith("#") and "=" in _line:
             _k, _v = _line.split("=", 1)
-            os.environ.setdefault(_k.strip(), _v.strip())
+            os.environ.setdefault(_k.strip(), _v.strip().strip("'\""))
 
-SUPABASE_URL      = os.environ.get("SUPABASE_URL", "https://ugwnwhnuadolypyvrnsq.supabase.co")
-SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6")
+# `or`, not a get() default: an unset Actions secret is exported as "" and would disable Supabase.
+SUPABASE_URL      = os.environ.get("SUPABASE_URL") or "https://ugwnwhnuadolypyvrnsq.supabase.co"
+SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY") or "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6"
 
 
 # ── data loading ──────────────────────────────────────────────────────────────
@@ -335,16 +337,18 @@ SUPABASE_BOOT_JS = """
 # ── HTML generation ───────────────────────────────────────────────────────────
 
 def problem_card(p: dict, index: int) -> str:
+    # Fields come from scraped CSV data: escape before interpolating into HTML.
+    pid, url, name, section = (html.escape(str(p[k] or "")) for k in ("id", "url", "name", "section"))
     return f"""
-        <div class="card" data-id="{p['id']}">
+        <div class="card" data-id="{pid}">
           <span class="card-index">{index:02d}</span>
           <div class="card-body">
-            <a class="card-link" href="{p['url']}" target="_blank" rel="noopener">
-              <div class="card-title">{p['name']}</div>
+            <a class="card-link" href="{url}" target="_blank" rel="noopener">
+              <div class="card-title">{name}</div>
             </a>
             <div class="card-meta">
-              <span class="tag">{p['section']}</span>
-              <span class="tag">ID {p['id']}</span>
+              <span class="tag">{section}</span>
+              <span class="tag">ID {pid}</span>
             </div>
           </div>
           <button class="check-btn" onclick="toggleDone(this)" aria-label="Mark done">✓</button>
@@ -358,8 +362,8 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
     medium_cards = "\n".join(problem_card(p, i + 1) for i, p in enumerate(medium))
     easy_cards   = "\n".join(problem_card(p, i + 1) for i, p in enumerate(easy))
 
-    sb_url = SUPABASE_URL
-    sb_key = SUPABASE_ANON_KEY
+    sb_url = json.dumps(SUPABASE_URL).replace("</", "<\\/")
+    sb_key = json.dumps(SUPABASE_ANON_KEY).replace("</", "<\\/")
 
     week_problems_js = json.dumps({
         "hard":   [{"id": p["id"], "name": p["name"]} for p in hard],
@@ -633,10 +637,10 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
     <h1>Weekly <span>Practice</span> Picks</h1>
     <div class="date">{today_display}</div>
     <div class="summary">
-      <span><b>2</b> Hard</span>
-      <span><b>3</b> Medium</span>
-      <span><b>4</b> Easy</span>
-      <span><b>9</b> Total</span>
+      <span><b>{len(hard)}</b> Hard</span>
+      <span><b>{len(medium)}</b> Medium</span>
+      <span><b>{len(easy)}</b> Easy</span>
+      <span><b>{len(hard) + len(medium) + len(easy)}</b> Total</span>
     </div>
   </header>
 
@@ -695,8 +699,8 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-    const SUPABASE_URL      = "{sb_url}";
-    const SUPABASE_ANON_KEY = "{sb_key}";
+    const SUPABASE_URL      = {sb_url};
+    const SUPABASE_ANON_KEY = {sb_key};
     const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
     const sb = USE_SUPABASE
@@ -888,12 +892,17 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
       if (done) burstParticles(btn);
 
       if (currentUser && sb) {{
-        await sb.from('progress').upsert({{
+        const {{ error }} = await sb.from('progress').upsert({{
           user_id:    currentUser.id,
           problem_id: id,
           done:       done,
           updated_at: new Date().toISOString()
         }}, {{ onConflict: 'user_id,problem_id' }});
+        if (error) {{
+          // Don't show a state that wasn't saved (e.g. expired session).
+          card.classList.toggle('done', !done);
+          console.error('progress upsert failed', error);
+        }}
       }} else {{
         localStorage.setItem(localKey(id), done ? '1' : '0');
       }}
@@ -907,8 +916,8 @@ def build_html(hard: list[dict], medium: list[dict], easy: list[dict], today_iso
 
 
 def build_rank_html(weeks_data: dict) -> str:
-    sb_url = SUPABASE_URL
-    sb_key = SUPABASE_ANON_KEY
+    sb_url = json.dumps(SUPABASE_URL).replace("</", "<\\/")
+    sb_key = json.dumps(SUPABASE_ANON_KEY).replace("</", "<\\/")
     weeks_js = json.dumps(weeks_data, ensure_ascii=False).replace("</", "<\\/")
 
     return f"""<!DOCTYPE html>
@@ -1054,8 +1063,8 @@ def build_rank_html(weeks_data: dict) -> str:
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-    const SUPABASE_URL      = "{sb_url}";
-    const SUPABASE_ANON_KEY = "{sb_key}";
+    const SUPABASE_URL      = {sb_url};
+    const SUPABASE_ANON_KEY = {sb_key};
     const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 
     const sb = USE_SUPABASE
@@ -1391,16 +1400,29 @@ def main():
     processed_path = Path(args.processed)
     today_iso      = args.date
 
+    # Validate before anything is appended to processed.csv / weeks_data.json:
+    # an invalid date used to crash in build_html() *after* both were written.
+    try:
+        today_iso = date.fromisoformat(today_iso).isoformat()
+    except ValueError:
+        print(f"ERROR: --date must be an ISO date (YYYY-MM-DD), got {today_iso!r}.")
+        raise SystemExit(1)
+
     if not ranking_path.exists():
         print(f"ERROR: {ranking_path} not found. Run scraper.py first.")
         raise SystemExit(1)
 
     all_problems  = load_ranking(ranking_path)
     processed_ids = load_processed_ids(processed_path)
+
+    weeks_data = load_weeks_data()
+    # weeks_data.json is the source of truth too: never re-pick anything already published,
+    # even if processed.csv is missing or a different --processed file is passed.
+    processed_ids |= {str(p["id"]) for wd in weeks_data.values()
+                      for tier in ("hard", "medium", "easy") for p in wd.get(tier, [])}
     available     = [p for p in all_problems if p["id"] not in processed_ids]
 
     # Guard: refuse to re-pick for an already-published week
-    weeks_data = load_weeks_data()
     if today_iso in weeks_data:
         print(f"ERROR: Week {today_iso} already exists in weeks_data.json.")
         print("Use --rebuild-only to regenerate HTML without re-picking.")

@@ -26,10 +26,11 @@ if _env_file.exists():
         _line = _line.strip()
         if _line and not _line.startswith("#") and "=" in _line:
             _k, _v = _line.split("=", 1)
-            os.environ.setdefault(_k.strip(), _v.strip())
+            os.environ.setdefault(_k.strip(), _v.strip().strip("'\""))
 
-SUPABASE_URL      = os.environ.get("SUPABASE_URL", "https://ugwnwhnuadolypyvrnsq.supabase.co")
-SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6")
+# `or`, not a get() default: an unset Actions secret arrives as an empty env var.
+SUPABASE_URL      = os.environ.get("SUPABASE_URL") or "https://ugwnwhnuadolypyvrnsq.supabase.co"
+SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY") or "sb_publishable_Df8xVwylhhWVQhW3hRtR_Q_wL9KM1-6"
 
 # Public URL of the qoj/ directory; link previews (WhatsApp etc.) need absolute URLs.
 SITE_URL = "https://naimss.github.io/cses-weekly-problems/qoj/"
@@ -225,8 +226,13 @@ def run(args) -> None:
 
 
 def pick_and_save(args, week_iso, problems, weeks_data, processed_path, weeks_path) -> None:
-    processed_ids = premier.load_processed_ids(processed_path)
-    available = [p for p in problems if p["id"] not in processed_ids]
+    # Exclude both logs: they can disagree (e.g. a crash between the two writes).
+    used = premier.load_processed_ids(processed_path) | premier.week_ids(weeks_data)
+    available = []
+    for p in problems:
+        if p["id"] not in used:
+            used.add(p["id"])  # also drops duplicate ids in problems.csv
+            available.append(p)
     # Seed per week: deterministic for a given date, but different every week.
     try:
         picked = premier.pick_week(available, random.Random(f"{args.seed}:{week_iso}"))

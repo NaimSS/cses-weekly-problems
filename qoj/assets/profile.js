@@ -45,7 +45,7 @@
     var r = await Q.saveHandle(v);
     if (r.error) {
       var m = String(r.error.message || r.error);
-      if (/qoj_handle|column|schema cache/i.test(m)) m = 'The qoj_handle column does not exist yet: ask the admin to run qoj/supabase_migration.sql.';
+      if (/schema cache|column .*does not exist/i.test(m)) m = 'The qoj_handle column does not exist yet: ask the admin to run qoj/supabase_migration.sql.';
       msg(out, 'danger', 'Could not save: ' + m);
     } else msg(out, 'success', v ? 'Saved.' : 'Handle cleared.');
   }
@@ -85,8 +85,8 @@
     });
     h += '<tr><td>Already marked</td><td>' + (inPremier.length - newIds.length) + '</td></tr>' +
       '<tr><td>New to import</td><td>' + newIds.length + '</td></tr></tbody></table>';
-    var saved = ((Q.getProfile() || {}).qoj_handle || '').toLowerCase();
-    if (parsed.handle && saved && parsed.handle.toLowerCase() !== saved) {
+    var saved = (Q.getProfile() || {}).qoj_handle || '';
+    if (parsed.handle && saved && parsed.handle.toLowerCase() !== saved.toLowerCase()) {
       h += '<div class="text-warning small">Warning: this page belongs to "' + esc(parsed.handle) + '" but your saved handle is "' + esc(saved) + '".</div>';
     }
     if (!ids.length) h += '<div class="text-danger small">No accepted problems found in this file.</div>';
@@ -98,12 +98,14 @@
   async function confirmImport() {
     var out = document.getElementById('import-msg'), btn = document.getElementById('import-confirm');
     if (!pending || !pending.newIds.length) return;
+    var job = pending, r;
     btn.disabled = true;
-    var r = await Q.setDone(pending.newIds, true);
-    btn.disabled = false;
+    try { r = await Q.setDone(job.newIds, true); }
+    catch (e) { r = { error: e }; }
+    finally { btn.disabled = false; }
     if (r.error) { msg(out, 'danger', 'Import failed: ' + (r.error.message || r.error)); return; }
-    msg(out, 'success', 'Imported ' + pending.newIds.length + ' problems.');
-    pending = null;
+    msg(out, 'success', 'Imported ' + job.newIds.length + ' problems.');
+    if (pending === job) pending = null;
     btn.classList.add('d-none');
   }
 

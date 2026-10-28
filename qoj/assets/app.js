@@ -184,7 +184,10 @@
   async function signIn() {
     if (!state.sb) return;
     var url = W.location ? W.location.href.split('#')[0] : undefined;
-    await state.sb.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: url } });
+    var r;
+    try { r = await state.sb.auth.signInWithOAuth({ provider: 'github', options: { redirectTo: url } }); }
+    catch (e) { r = { error: e }; }
+    if (r && r.error && W.alert) W.alert('Could not sign in: ' + (r.error.message || r.error));
   }
   /* onAuthStateChange(SIGNED_OUT) notifies pages; reset directly only if signOut itself failed. */
   async function signOut() {
@@ -242,7 +245,8 @@
   /* sort in place by key desc then name; assign competition ranks to r.rank */
   function assignRanks(rows, keyFn) {
     rows.sort(function (a, b) {
-      return (keyFn(b) - keyFn(a)) || a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+      return (keyFn(b) - keyFn(a)) || a.name.toLowerCase().localeCompare(b.name.toLowerCase()) ||
+        (a.uid < b.uid ? -1 : a.uid > b.uid ? 1 : 0);
     });
     rows.forEach(function (r, i) {
       r.rank = (i > 0 && keyFn(rows[i - 1]) === keyFn(r)) ? rows[i - 1].rank : i + 1;
@@ -281,7 +285,7 @@
     });
     return h;
   }
-  /* opts: { checked: Set of bare ids, canEdit: bool } */
+  /* opts: { checked: Set of bare ids, canEdit: bool, disabledTitle: tooltip when !canEdit } */
   function problemTableHtml(problems, opts) {
     opts = opts || {};
     var checked = opts.checked || new Set();
@@ -292,7 +296,8 @@
       h += '<tr data-id="' + id + '"><td class="col-id">#' + id + '</td><td>' + problemTitleHtml(p) + '</td>' +
         '<td class="col-check"><input type="checkbox" class="form-check-input solve-check" data-id="' + id + '"' +
         (checked.has(String(p.id)) ? ' checked' : '') +
-        (opts.canEdit ? '' : ' disabled title="Sign in to track"') + '></td></tr>';
+        (opts.canEdit ? '' : ' disabled title="' + escapeHtml(opts.disabledTitle || 'Sign in to track') + '"') +
+        ' aria-label="' + escapeHtml('Solved #' + p.id + ' ' + (p.name || '')) + '"></td></tr>';
     });
     if (!problems.length) h += '<tr><td colspan="3" class="text-center text-muted">No problems.</td></tr>';
     return h + '</tbody></table></div>';
@@ -334,7 +339,7 @@
     if (!state.sb) auth = '<span class="text-muted">Offline mode</span>';
     else if (state.user) {
       auth = '<span class="user-name">' + escapeHtml(myName()) + '</span>' +
-        '<a href="#" id="logout-btn">Logout</a>';
+        '<a href="#" id="logout-btn" role="button">Logout</a>';
     } else auth = '<button type="button" class="btn btn-sm btn-outline-dark" id="login-btn">Login with GitHub</button>';
     var nav = NAV.map(function (n) {
       return '<li class="nav-item"><a class="nav-link' + (n[0] === active ? ' active' : '') +
@@ -370,17 +375,22 @@
       try {
         var r = await withTimeout(state.sb.auth.getSession(), READY_TIMEOUT_MS);
         if (r !== TIMEOUT) state.user = (r && r.data && r.data.session && r.data.session.user) || null;
+      } catch (e) { state.user = null; }
+      // subscribe even if getSession failed, so INITIAL_SESSION and later sign-in/out still reach the pages
+      try {
         state.sb.auth.onAuthStateChange(function (ev, session) {
           var u = (session && session.user) || null;
           if ((u && u.id) === (state.user && state.user.id)) return;
           state.user = u;
+          minePre = null; // prefetched for the previous user
           setTimeout(async function () {
             try { await loadMyProfile(); } catch (e) { state.profile = null; }
+            if (state.user !== u) return; // superseded by a later auth event, which notifies instead
             renderHeader();
             authCbs.forEach(function (cb) { cb(u); });
           }, 0);
         });
-      } catch (e) { state.user = null; }
+      } catch (e) { /* no live auth updates */ }
       if (state.user) {
         var uid = state.user.id;
         if (NEEDS_MINE[(W.QOJ_PAGE || {}).type]) {

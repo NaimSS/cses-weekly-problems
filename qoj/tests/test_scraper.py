@@ -52,6 +52,14 @@ class ParseTests(unittest.TestCase):
         self.assertEqual(probs[0]["name"], "Tom & Jerry <3>")
         self.assertEqual(probs[0]["source"], "ICPC & Co · Day 2")
 
+    def test_url_normalised(self):
+        rel = row(7, "Rel").replace("https://qoj.ac/problem/7", "/problem/7")
+        bad = row(8, "Bad").replace("https://qoj.ac/problem/8", "javascript:alert(1)")
+        evil = row(9, "Evil").replace("https://qoj.ac/problem/9", "https://qoj.ac.evil.com/x")
+        _, probs = scraper.parse_html(page("C", [rel, bad, evil]))
+        self.assertEqual([p["url"] for p in probs],
+                         [f"https://qoj.ac/problem/{i}" for i in (7, 8, 9)])
+
     def test_list_detection_and_fallback(self):
         self.assertEqual(scraper.parse_html(page("B2", [row(1, "A")]))[0], "B2")
         self.assertEqual(scraper.parse_html(page("x", [row(1, "A")], link=False), "D")[0], "D")

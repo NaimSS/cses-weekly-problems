@@ -28,7 +28,7 @@
       var ps = weekProblems(d);
       if (expanded.has(d) && ps.length) {
         h += ps.map(function (p, i) {
-          return '<th' + (i === 0 ? ' class="week-head" data-week="' + esc(d) + '"' : '') + ' title="' + esc(p.name) + '">' +
+          return '<th' + (i === 0 ? ' class="week-head"' : '') + ' data-week="' + esc(d) + '" title="' + esc(p.name) + '">' +
             (i === 0 ? esc(d) + '<br>' : '') + '#' + esc(p.id) + '</th>';
         }).join('');
       } else h += '<th class="week-head" data-week="' + esc(d) + '">' + esc(d) + '</th>';
@@ -61,14 +61,11 @@
 
   async function load() {
     root.innerHTML = '<p class="text-muted">Loading…</p>';
-    var data;
-    var ids = [];
-    dates.forEach(function (d) { weekProblems(d).forEach(function (p) { ids.push(String(p.id)); }); });
+    var data, ids = new Set();
+    dates.forEach(function (d) { weekProblems(d).forEach(function (p) { ids.add(String(p.id)); }); });
     try { data = await Promise.all([Q.fetchProgress(ids), Q.fetchProfiles()]); }
     catch (e) { root.innerHTML = '<p class="text-danger">Could not load rankings.</p>'; return; }
     var byUser = Q.groupByUser(data[0]), pmap = Q.profileMap(data[1]);
-    var ids = new Set();
-    dates.forEach(function (d) { weekProblems(d).forEach(function (p) { ids.add(String(p.id)); }); });
     var rows = [];
     byUser.forEach(function (set, uid) {
       var total = 0;

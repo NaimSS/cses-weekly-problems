@@ -87,7 +87,9 @@
       // href value first, then the last /problem/<n> in it (same result as one regex, without backtracking blowup)
       var re = /href\s*=\s*["']([^"']*)["']/gi, last = /^[\s\S]*\/problem\/(\d+)/, m, v;
       while ((m = re.exec(block))) {
-        if ((v = last.exec(m[1])) && !seen[v[1]]) { seen[v[1]] = true; ids.push(v[1]); }
+        if (!(v = last.exec(m[1]))) continue;
+        var id = v[1].replace(/^0+(?=\d)/, ''); // /problem/0063 is problem 63 (ids are compared as strings)
+        if (!seen[id]) { seen[id] = true; ids.push(id); }
       }
     }
     return { handle: findHandle(html), solvedIds: ids };

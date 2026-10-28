@@ -19,7 +19,11 @@
     var data;
     try { data = await Promise.all([Q.loadProblems(), Q.fetchUserProgress(uid), Q.fetchProfiles()]); }
     catch (e) { root.innerHTML = '<p class="text-danger">Could not load user statistics.</p>'; return; }
-    var probs = data[0], solved = data[1], name = Q.nameOf(Q.profileMap(data[2]), uid);
+    var pmap = Q.profileMap(data[2]), probs = data[0], solved = data[1], name = Q.nameOf(pmap, uid);
+    if (Q.hasBackend() && !pmap.has(uid) && !solved.size) {
+      root.innerHTML = '<p class="text-muted" id="user-missing">User not found. Pick one from the <a href="leaderboard.html">leaderboard</a>.</p>';
+      return;
+    }
     document.title = name + ' - Premier Weekly';
     var lists = Q.lists(), total = 0, done = 0, body = '';
     lists.forEach(function (l) {

@@ -874,12 +874,17 @@
       if (done) burstParticles(btn);
 
       if (currentUser && sb) {
-        await sb.from('progress').upsert({
+        const { error } = await sb.from('progress').upsert({
           user_id:    currentUser.id,
           problem_id: id,
           done:       done,
           updated_at: new Date().toISOString()
         }, { onConflict: 'user_id,problem_id' });
+        if (error) {
+          // Don't show a state that wasn't saved (e.g. expired session).
+          card.classList.toggle('done', !done);
+          console.error('progress upsert failed', error);
+        }
       } else {
         localStorage.setItem(localKey(id), done ? '1' : '0');
       }
