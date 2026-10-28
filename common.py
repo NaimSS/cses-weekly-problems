@@ -35,8 +35,9 @@ def load_processed_ids(path: Path) -> set[str]:
             f.seek(0)
             reader = csv.reader(f)
             next(reader, None)          # skip header
-            return {row[0].strip() for row in reader if row}
-        return {row[id_col].strip() for row in reader}
+            return {row[0].strip() for row in reader if row and row[0].strip()}
+        # Short/blank rows yield None for missing columns; skip them instead of crashing.
+        return {(row[id_col] or "").strip() for row in reader} - {""}
 
 
 def pick(pool: list[dict], n: int, rng: random.Random) -> list[dict]:

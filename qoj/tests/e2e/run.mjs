@@ -562,13 +562,18 @@ try {
     await sleep(200);
     assert.equal(await p.eval(`document.querySelector('#pane-rankings').innerText.trim()`), 'Loading rankings…');
   });
-  await onPage('checkbox re-enables and reverts when setDone throws', `weeks/${W}.html`, { db: makeDb({ session: 'u1', throwOnUpsert: true }), wait: READY.week }, async (p) => {
+  await onPage('checkbox re-enables and reverts when setDone throws', `weeks/${W}.html`, { db: makeDb({ session: 'u1', throwOnUpsert: true }), wait: READY.week + ` && !document.querySelector('input.solve-check').disabled` }, async (p) => {
     await p.eval(`window.__alerts = []; window.alert = (m) => window.__alerts.push(m)`);
     const id = weekIds(W)[2];
     await p.click(`input.solve-check[data-id="${id}"]`);
     await p.waitFor(`!document.querySelector('input.solve-check[data-id="${id}"]').disabled`);
     assert.equal(await p.eval(`document.querySelector('input.solve-check[data-id="${id}"]').checked`), false);
     assert.match((await p.eval('window.__alerts'))[0], /Could not save: fake network failure/);
+  });
+  await onPage('week: checkboxes stay read-only until own progress loads', `weeks/${W}.html`, { db: makeDb({ session: 'u1', hang: ['progress'] }), wait: `/AliceQ/.test(document.querySelector('#auth-area').innerText)` }, async (p) => {
+    await sleep(200);
+    assert.equal(await p.eval(`[...document.querySelectorAll('input.solve-check')].every(c => c.disabled && c.title === 'Loading your progress…')`), true);
+    assert.equal(await p.eval(`!!document.querySelector('#signin-hint')`), false);
   });
   await onPage('rank: expanding a week with no enabled-list problems keeps it collapsible', 'rank.html', {
     db: makeDb({ session: 'u1' }), wait: `document.querySelector('table.rank-table tbody tr')`,

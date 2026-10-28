@@ -53,3 +53,63 @@ test('assignRanks handles ties', () => {
   const rows = Q.assignRanks([{ name: 'b', t: 2 }, { name: 'a', t: 2 }, { name: 'c', t: 5 }], r => r.t);
   assert.deepStrictEqual(JSON.parse(JSON.stringify(rows.map(r => [r.name, r.rank]))), [['c', 1], ['a', 2], ['b', 2]]);
 });
+
+function fakeClient({ getSession, signIn } = {}) {
+  const listeners = [];
+  const q = { select() { return q; }, eq() { return q; }, order() { return q; }, range() { return q; },
+    then(ok, bad) { return Promise.resolve({ data: [], count: 0, error: null }).then(ok, bad); } };
+  return {
+    listeners,
+    auth: {
+      getSession: getSession || (() => Promise.resolve({ data: { session: null } })),
+      onAuthStateChange(cb) { listeners.push(cb); },
+      signInWithOAuth: signIn || (() => Promise.resolve({ error: null })),
+    },
+    from() { return q; },
+  };
+}
+function loadWith(client, extra = {}) {
+  return load(Object.assign({ QOJ_CONFIG: { supabaseUrl: 'u', supabaseKey: 'k' }, supabase: { createClient: () => client } }, extra));
+}
+const tick = () => new Promise((r) => setTimeout(r, 5));
+
+test('auth listener is registered even when getSession rejects', async () => {
+  const client = fakeClient({ getSession: () => Promise.reject(new Error('storage blocked')) });
+  const Q = loadWith(client);
+  await Q.ready;
+  assert.strictEqual(client.listeners.length, 1);
+  const seen = [];
+  Q.onAuth((u) => seen.push(u && u.id));
+  client.listeners[0]('SIGNED_IN', { user: { id: 'u1' } });
+  await tick();
+  assert.deepStrictEqual(seen, ['u1']);
+  assert.strictEqual(Q.getUser().id, 'u1');
+});
+
+test('superseded auth events notify pages only with the latest user', async () => {
+  const client = fakeClient();
+  const Q = loadWith(client);
+  await Q.ready;
+  const seen = [];
+  Q.onAuth((u) => seen.push(u && u.id));
+  client.listeners[0]('SIGNED_IN', { user: { id: 'a' } });
+  client.listeners[0]('SIGNED_IN', { user: { id: 'b' } });
+  await tick();
+  assert.deepStrictEqual(seen, ['b']);
+});
+
+test('signIn surfaces OAuth errors instead of rejecting', async () => {
+  const alerts = [];
+  const Q = loadWith(fakeClient({ signIn: () => Promise.reject(new Error('popup blocked')) }), { alert: (m) => alerts.push(m) });
+  await Q.ready;
+  await Q.signIn();
+  assert.deepStrictEqual(alerts, ['Could not sign in: popup blocked']);
+});
+
+test('problemTableHtml labels checkboxes and uses the disabled tooltip', () => {
+  const Q = load();
+  const html = Q.problemTableHtml([{ id: '5', name: 'A "b"' }], { canEdit: false, disabledTitle: 'Loading…' });
+  assert.ok(html.includes('aria-label="Solved #5 A &quot;b&quot;"'));
+  assert.ok(html.includes('title="Loading…"'));
+  assert.ok(Q.problemTableHtml([{ id: '5', name: 'x' }], { canEdit: true }).indexOf('disabled') === -1);
+});

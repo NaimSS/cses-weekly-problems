@@ -4,7 +4,7 @@
   var Q = window.QOJ, page = window.QOJ_PAGE || {}, esc = Q.escapeHtml;
   var root = document.getElementById('page');
   var mine = new Set(), mineErr = false;
-  var activeTab = 'problems', isReady = false;
+  var activeTab = 'problems', isReady = false, loaded = false; // loaded: own progress fetched at least once
   var rankSeq = 0, refreshSeq = 0;
 
   function weekLists() {
@@ -24,7 +24,8 @@
     else if (mineErr) h += '<p class="text-danger" id="progress-error">Could not load your progress.</p>';
     weekLists().forEach(function (x) {
       h += '<h4 class="section-label">' + esc(x.l.label) + '</h4>' +
-        Q.problemTableHtml(x.ps, { checked: mine, canEdit: can });
+        // stay read-only until progress loads: a tick on a not-yet-checked box would be overwritten by the stale fetch
+        Q.problemTableHtml(x.ps, { checked: mine, canEdit: can && loaded, disabledTitle: can ? 'Loading your progress…' : null });
     });
     return h;
   }
@@ -107,7 +108,7 @@
     var seq = ++refreshSeq, m, err = false;
     try { m = await Q.fetchMyProgress(); } catch (e) { m = new Set(); err = true; }
     if (seq !== refreshSeq) return;
-    mine = m; mineErr = err;
+    mine = m; mineErr = err; loaded = true;
     show(activeTab);
   }
 

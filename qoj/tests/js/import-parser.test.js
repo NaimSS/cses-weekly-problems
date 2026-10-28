@@ -98,3 +98,8 @@ test('handle: og:url with content before property', () => {
   assert.strictEqual(parseQojProfile(page('', '<meta content="https://qoj.ac/user/profile/dave" property="og:url">')).handle, 'dave');
   assert.strictEqual(parseQojProfile(page('', '<link href="https://qoj.ac/user/profile/eve%21" rel="canonical">')).handle, 'eve!');
 });
+
+test('leading zeros in problem ids are normalized and deduplicated', () => {
+  const html = page(`<h4>Accepted problems</h4><p><a href="/problem/0063">63</a><a href="/problem/63">63</a><a href="/problem/0">0</a></p>`);
+  assert.deepStrictEqual(parseQojProfile(html).solvedIds, ['63', '0']);
+});

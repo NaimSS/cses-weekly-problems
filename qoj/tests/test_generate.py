@@ -164,6 +164,23 @@ class PickTests(TmpCase):
         self.assertIn("::warning::", out)
         self.assertIn("'999'", out)
 
+    def test_no_repeat_when_processed_log_missing_picks(self):
+        # processed.csv lost a week's rows (crash between writes): weeks_data still excludes them.
+        self.run_quiet(date="2026-10-25")
+        (self.dir / "processed.csv").write_text("id,name,list,url\n", encoding="utf-8")
+        self.run_quiet(date="2026-11-01")
+        w = self.weeks()
+        ids = lambda wk: {p["id"] for ps in wk.values() for p in ps}
+        self.assertFalse(ids(w["2026-10-25"]) & ids(w["2026-11-01"]))
+
+    def test_duplicate_ids_in_csv_not_picked_twice(self):
+        probs = [p for p in make_problems() if p["list"] in ("D", "C")]
+        d = [p for p in probs if p["list"] == "D"][:4]
+        c = [p for p in probs if p["list"] == "C"][:2]
+        premier.save_problems_csv(self.dir / "problems.csv", d + c + [dict(c[0]), dict(c[0])])
+        with self.assertRaises(SystemExit), contextlib.redirect_stdout(io.StringIO()):
+            self.run_gen()  # only 2 distinct C problems -> pool too small, not a repeat
+
     def test_refuses_existing_week(self):
         self.run_gen()
         before = (self.dir / "processed.csv").read_text(encoding="utf-8")

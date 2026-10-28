@@ -82,6 +82,9 @@ class _ListParser(HTMLParser):
             if row["id"] and row["name"]:
                 if row["url"].startswith("/"):
                     row["url"] = QOJ_BASE + row["url"]
+                if not row["url"].startswith(QOJ_BASE + "/"):
+                    # Rendered as an href: never keep javascript:/foreign links.
+                    row["url"] = f"{QOJ_BASE}/problem/{row['id']}"
                 row["source"] = " · ".join(row["source"])
                 self.problems.append(row)
             else:
