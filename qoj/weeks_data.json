@@ -64,5 +64,71 @@
         "url": "https://qoj.ac/problem/14805"
       }
     ]
+  },
+  "2026-11-01": {
+    "D": [
+      {
+        "id": "11110",
+        "name": "Witnessing the Miracle",
+        "list": "D",
+        "source": "CCPC Final 2024",
+        "tags": [],
+        "url": "https://qoj.ac/problem/11110"
+      },
+      {
+        "id": "1243",
+        "name": "Territories",
+        "list": "D",
+        "source": "Petrozavodsk Summer 2020 Day 1 · PA 2019 Final",
+        "tags": [],
+        "url": "https://qoj.ac/problem/1243"
+      },
+      {
+        "id": "4636",
+        "name": "Optimal Assortment",
+        "list": "D",
+        "source": "ByteDance-Moscow Workshops Camp 2022 Final",
+        "tags": [],
+        "url": "https://qoj.ac/problem/4636"
+      },
+      {
+        "id": "8650",
+        "name": "Island Hopping",
+        "list": "D",
+        "source": "JOISC 2024 Day 4 · JOIST 2024 Day 4",
+        "tags": [
+          "Interactive"
+        ],
+        "url": "https://qoj.ac/problem/8650"
+      }
+    ],
+    "C": [
+      {
+        "id": "7606",
+        "name": "Digital Nim",
+        "list": "C",
+        "source": "Universal Cup",
+        "tags": [],
+        "url": "https://qoj.ac/problem/7606"
+      },
+      {
+        "id": "10104",
+        "name": "World of Rains",
+        "list": "C",
+        "source": "The 2nd Universal Cup Finals",
+        "tags": [],
+        "url": "https://qoj.ac/problem/10104"
+      },
+      {
+        "id": "7535",
+        "name": "Limited Shuffle Restoring",
+        "list": "C",
+        "source": "Moscow Regional 2022",
+        "tags": [
+          "Interactive"
+        ],
+        "url": "https://qoj.ac/problem/7535"
+      }
+    ]
   }
 }
