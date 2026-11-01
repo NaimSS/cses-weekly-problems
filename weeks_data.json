@@ -2044,5 +2044,67 @@
         "url": "https://cses.fi/problemset/task/1629"
       }
     ]
+  },
+  "2026-11-01": {
+    "hard": [
+      {
+        "id": "2418",
+        "name": "Grid Path Construction",
+        "section": "Construction Problems",
+        "url": "https://cses.fi/problemset/task/2418"
+      },
+      {
+        "id": "3151",
+        "name": "Bubble Sort Rounds I",
+        "section": "Additional Problems I",
+        "url": "https://cses.fi/problemset/task/3151"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1098",
+        "name": "Nim Game II",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1098"
+      },
+      {
+        "id": "1693",
+        "name": "Teleporters Path",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1693"
+      },
+      {
+        "id": "2136",
+        "name": "Hamming Distance",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/2136"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1668",
+        "name": "Building Teams",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1668"
+      },
+      {
+        "id": "1639",
+        "name": "Edit Distance",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1639"
+      },
+      {
+        "id": "1745",
+        "name": "Money Sums",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1745"
+      },
+      {
+        "id": "1755",
+        "name": "Palindrome Reorder",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1755"
+      }
+    ]
   }
 }
