@@ -130,5 +130,67 @@
         "url": "https://qoj.ac/problem/7535"
       }
     ]
+  },
+  "2026-11-08": {
+    "D": [
+      {
+        "id": "5256",
+        "name": "Insertions",
+        "list": "D",
+        "source": "CERC 2022",
+        "tags": [],
+        "url": "https://qoj.ac/problem/5256"
+      },
+      {
+        "id": "7523",
+        "name": "Partially Free Meal",
+        "list": "D",
+        "source": "CCPC Online 2023 · Universal Cup",
+        "tags": [],
+        "url": "https://qoj.ac/problem/7523"
+      },
+      {
+        "id": "4212",
+        "name": "Brackets",
+        "list": "D",
+        "source": "RuCode 2020 Division A+B Championship",
+        "tags": [],
+        "url": "https://qoj.ac/problem/4212"
+      },
+      {
+        "id": "6521",
+        "name": "Swapping Operation",
+        "list": "D",
+        "source": "Universal Cup · Guangdong Provincial 2023",
+        "tags": [],
+        "url": "https://qoj.ac/problem/6521"
+      }
+    ],
+    "C": [
+      {
+        "id": "2563",
+        "name": "Curly Racetrack",
+        "list": "C",
+        "source": "Petrozavodsk Winter 2022 Day 2",
+        "tags": [],
+        "url": "https://qoj.ac/problem/2563"
+      },
+      {
+        "id": "8525",
+        "name": "Mercenaries",
+        "list": "C",
+        "source": "",
+        "tags": [],
+        "url": "https://qoj.ac/problem/8525"
+      },
+      {
+        "id": "4007",
+        "name": "树",
+        "list": "C",
+        "source": "ZJOI 2022 Day 1",
+        "tags": [],
+        "url": "https://qoj.ac/problem/4007"
+      }
+    ]
   }
 }
