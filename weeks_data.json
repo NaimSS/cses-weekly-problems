@@ -2106,5 +2106,67 @@
         "url": "https://cses.fi/problemset/task/1755"
       }
     ]
+  },
+  "2026-11-08": {
+    "hard": [
+      {
+        "id": "2176",
+        "name": "Counting Bishops",
+        "section": "Counting Problems",
+        "url": "https://cses.fi/problemset/task/2176"
+      },
+      {
+        "id": "3357",
+        "name": "Fixed Length Walk Queries",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3357"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2195",
+        "name": "Convex Hull",
+        "section": "Geometry",
+        "url": "https://cses.fi/problemset/task/2195"
+      },
+      {
+        "id": "1704",
+        "name": "Network Renovation",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1704"
+      },
+      {
+        "id": "1161",
+        "name": "Stick Divisions",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1161"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1731",
+        "name": "Word Combinations",
+        "section": "String Algorithms",
+        "url": "https://cses.fi/problemset/task/1731"
+      },
+      {
+        "id": "1094",
+        "name": "Increasing Array",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1094"
+      },
+      {
+        "id": "1193",
+        "name": "Labyrinth",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1193"
+      },
+      {
+        "id": "3220",
+        "name": "Sliding Window Sum",
+        "section": "Sliding Window Problems",
+        "url": "https://cses.fi/problemset/task/3220"
+      }
+    ]
   }
 }
