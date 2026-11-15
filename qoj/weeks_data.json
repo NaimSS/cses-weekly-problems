@@ -192,5 +192,67 @@
         "url": "https://qoj.ac/problem/4007"
       }
     ]
+  },
+  "2026-11-15": {
+    "D": [
+      {
+        "id": "6512",
+        "name": "Completely Multiplicative Function",
+        "list": "D",
+        "source": "CCPC Final 2022",
+        "tags": [],
+        "url": "https://qoj.ac/problem/6512"
+      },
+      {
+        "id": "8815",
+        "name": "Space Station",
+        "list": "D",
+        "source": "The 2nd Universal Cup Semifinals",
+        "tags": [],
+        "url": "https://qoj.ac/problem/8815"
+      },
+      {
+        "id": "6307",
+        "name": "Chase Game 2",
+        "list": "D",
+        "source": "EC-Final 2022",
+        "tags": [],
+        "url": "https://qoj.ac/problem/6307"
+      },
+      {
+        "id": "4561",
+        "name": "Catfish Farm",
+        "list": "D",
+        "source": "IOI 2022 Day 1",
+        "tags": [],
+        "url": "https://qoj.ac/problem/4561"
+      }
+    ],
+    "C": [
+      {
+        "id": "5378",
+        "name": "匹配问题",
+        "list": "C",
+        "source": "北大集训 2019 Day 4 · CTT 2019 Day 4",
+        "tags": [],
+        "url": "https://qoj.ac/problem/5378"
+      },
+      {
+        "id": "8522",
+        "name": "Waterfall Matrix",
+        "list": "C",
+        "source": "",
+        "tags": [],
+        "url": "https://qoj.ac/problem/8522"
+      },
+      {
+        "id": "7302",
+        "name": "Walk of Length 6",
+        "list": "C",
+        "source": "ICPCCamp 2017 Day 1 · Petrozavodsk Winter 2017 Day 2",
+        "tags": [],
+        "url": "https://qoj.ac/problem/7302"
+      }
+    ]
   }
 }
