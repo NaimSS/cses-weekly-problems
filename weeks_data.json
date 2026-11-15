@@ -2168,5 +2168,67 @@
         "url": "https://cses.fi/problemset/task/3220"
       }
     ]
+  },
+  "2026-11-15": {
+    "hard": [
+      {
+        "id": "1752",
+        "name": "Creating Offices",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/1752"
+      },
+      {
+        "id": "3360",
+        "name": "Corner Subgrid Check",
+        "section": "Advanced Techniques",
+        "url": "https://cses.fi/problemset/task/3360"
+      }
+    ],
+    "medium": [
+      {
+        "id": "1096",
+        "name": "Throwing Dice",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/1096"
+      },
+      {
+        "id": "1711",
+        "name": "Distinct Routes",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1711"
+      },
+      {
+        "id": "3396",
+        "name": "Next Prime",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/3396"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1674",
+        "name": "Subordinates",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/1674"
+      },
+      {
+        "id": "1667",
+        "name": "Message Route",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1667"
+      },
+      {
+        "id": "2216",
+        "name": "Collecting Numbers",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/2216"
+      },
+      {
+        "id": "1072",
+        "name": "Two Knights",
+        "section": "Introductory Problems",
+        "url": "https://cses.fi/problemset/task/1072"
+      }
+    ]
   }
 }
