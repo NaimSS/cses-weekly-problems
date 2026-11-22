@@ -254,5 +254,69 @@
         "url": "https://qoj.ac/problem/7302"
       }
     ]
+  },
+  "2026-11-22": {
+    "D": [
+      {
+        "id": "9695",
+        "name": "Trash Problem",
+        "list": "D",
+        "source": "",
+        "tags": [],
+        "url": "https://qoj.ac/problem/9695"
+      },
+      {
+        "id": "9538",
+        "name": "Closest Derangement",
+        "list": "D",
+        "source": "Chengdu Regional 2024",
+        "tags": [],
+        "url": "https://qoj.ac/problem/9538"
+      },
+      {
+        "id": "18206",
+        "name": "Guess the Permutation",
+        "list": "D",
+        "source": "The 3rd Universal Cup Finals",
+        "tags": [
+          "Interactive"
+        ],
+        "url": "https://qoj.ac/problem/18206"
+      },
+      {
+        "id": "6683",
+        "name": "Difficult Constructive Problem",
+        "list": "D",
+        "source": "Shandong Provincial 2023",
+        "tags": [],
+        "url": "https://qoj.ac/problem/6683"
+      }
+    ],
+    "C": [
+      {
+        "id": "7988",
+        "name": "史莱姆工厂",
+        "list": "C",
+        "source": "CCPC 2023 北京市赛 · Petrozavodsk Winter 2024 Day 2",
+        "tags": [],
+        "url": "https://qoj.ac/problem/7988"
+      },
+      {
+        "id": "7520",
+        "name": "Monster Generator",
+        "list": "C",
+        "source": "CCPC Online 2023 · Universal Cup",
+        "tags": [],
+        "url": "https://qoj.ac/problem/7520"
+      },
+      {
+        "id": "3047",
+        "name": "Wind of Change",
+        "list": "C",
+        "source": "Open Cup · XX Open Cup",
+        "tags": [],
+        "url": "https://qoj.ac/problem/3047"
+      }
+    ]
   }
 }
