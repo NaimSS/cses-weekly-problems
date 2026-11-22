@@ -2230,5 +2230,67 @@
         "url": "https://cses.fi/problemset/task/1072"
       }
     ]
+  },
+  "2026-11-22": {
+    "hard": [
+      {
+        "id": "3409",
+        "name": "MST Edge Cost",
+        "section": "Advanced Graph Problems",
+        "url": "https://cses.fi/problemset/task/3409"
+      },
+      {
+        "id": "1148",
+        "name": "Maximum Building II",
+        "section": "Additional Problems II",
+        "url": "https://cses.fi/problemset/task/1148"
+      }
+    ],
+    "medium": [
+      {
+        "id": "2134",
+        "name": "Path Queries II",
+        "section": "Tree Algorithms",
+        "url": "https://cses.fi/problemset/task/2134"
+      },
+      {
+        "id": "1684",
+        "name": "Giant Pizza",
+        "section": "Graph Algorithms",
+        "url": "https://cses.fi/problemset/task/1684"
+      },
+      {
+        "id": "1737",
+        "name": "Range Queries and Copies",
+        "section": "Range Queries",
+        "url": "https://cses.fi/problemset/task/1737"
+      }
+    ],
+    "easy": [
+      {
+        "id": "1141",
+        "name": "Playlist",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1141"
+      },
+      {
+        "id": "1746",
+        "name": "Array Description",
+        "section": "Dynamic Programming",
+        "url": "https://cses.fi/problemset/task/1746"
+      },
+      {
+        "id": "2182",
+        "name": "Divisor Analysis",
+        "section": "Mathematics",
+        "url": "https://cses.fi/problemset/task/2182"
+      },
+      {
+        "id": "1073",
+        "name": "Towers",
+        "section": "Sorting and Searching",
+        "url": "https://cses.fi/problemset/task/1073"
+      }
+    ]
   }
 }
